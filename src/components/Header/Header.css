@@ -1,0 +1,141 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+header {
+    width: 100%;
+    position: relative;
+    z-index: 10;
+}
+
+.header-content {
+    width: 100%;
+    height: 153px;
+    background-color: #F7D7B7;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 60px;
+    position: relative;
+    z-index: 2;
+}
+
+header img {
+    width: 298px;
+    height: 206px;
+    aspect-ratio: 77/59;
+    z-index: 5;
+    position: relative;
+    filter: drop-shadow(3px 8px 16px rgba(0, 0, 0, 0.32));
+}
+
+/* Detalhe de bordado / bico de crochê com pesponto */
+.crochet-border {
+    position: absolute;
+    bottom: -18px;
+    left: -18px;
+    width: calc(100% + 36px);
+    height: 28px;
+    z-index: 1;
+    pointer-events: none;
+    filter: drop-shadow(5px 8px 8px rgba(0, 0, 0, 0.827));
+}
+
+.crochet-border svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+nav ul {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    list-style: none;
+}
+
+nav ul li,
+li {
+    list-style: none;
+    border-radius: 38px;
+    background-color: #D99294;
+    box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(217, 146, 148, 0.4);
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.3s ease,
+        background-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+nav a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 32px;
+    color: #ffffff;
+    font-family: sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    text-decoration: none;
+}
+
+/* Hover suave e aveludado nos botões de navegação com sombra destacada */
+nav ul li:hover,
+li:hover {
+    background-color: #ce8587;
+    transform: translateY(-2px);
+    box-shadow: 3px 8px 20px rgba(0, 0, 0, 0.28), 0 4px 10px rgba(217, 146, 148, 0.5);
+}
+
+/* Active sutil e tátil */
+nav ul li:active,
+li:active {
+    background-color: #bf7779;
+    transform: translateY(0);
+    box-shadow: 1px 2px 6px rgba(0, 0, 0, 0.22);
+    transition-duration: 0.12s;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.header-actions a {
+    font-family: sans-serif;
+    text-decoration: none;
+    display: flex;
+    min-width: 114px;
+    height: 46px;
+    padding: 10px 16px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 38px;
+    border: 1px solid #D99294;
+    background-color: #FCC7C7;
+    color: #97644E;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+    box-shadow: 2px 4px 12px rgba(151, 100, 78, 0.24), 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease,
+        background-color 0.3s ease,
+        border-color 0.3s ease,
+        color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+/* Hover suave com sombra marcante nas ações */
+.header-actions a:hover {
+    background-color: #f7b7b7;
+    border-color: #c97e80;
+    color: #7b4935;
+    transform: translateY(-2px);
+    box-shadow: 3px 8px 18px rgba(151, 100, 78, 0.34), 0 3px 8px rgba(0, 0, 0, 0.14);
+}

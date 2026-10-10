@@ -1,0 +1,91 @@
+.hero-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.hero-img {
+    height: 80vh;
+    width: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Degradê suave extraído do Figma */
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to right,
+        rgba(247, 215, 183, 0.85) 0%,
+        rgba(247, 215, 183, 0.6) 40%,
+        rgba(247, 215, 183, 0) 80%
+    );
+    pointer-events: none;
+    z-index: 1;
+}
+
+h1 {
+    color: #000;
+    text-align: left;
+    font-family: "Great Vibes";
+    font-size: 111px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    margin: 0 0 10px 0;
+}
+
+p {
+    color: #000;
+    font-family: Inter, sans-serif;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.hero-text {
+    position: absolute;
+    text-align: start;
+    top: 50%;
+    left: 5%;
+    transform: translateY(-50%);
+    max-width: 50%;
+    z-index: 2;
+}
+
+.hero-btn {
+    margin-top: 20px;
+    padding: 12px 32px;
+    background-color: #D99294;
+    color: #ffffff;
+    border: none;
+    border-radius: 38px;
+    font-family: sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(217, 146, 148, 0.4);
+    transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hero-btn:hover {
+    background-color: #ce8587;
+    transform: translateY(-2px);
+    box-shadow: 3px 8px 20px rgba(0, 0, 0, 0.28), 0 4px 10px rgba(217, 146, 148, 0.5);
+}
+
+.hero-btn:active {
+    background-color: #bf7779;
+    transform: translateY(0);
+    box-shadow: 1px 2px 6px rgba(0, 0, 0, 0.22);
+    transition-duration: 0.12s;
+}

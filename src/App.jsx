@@ -1,10 +1,13 @@
 import './App.css'
-
+import Home from './pages/Home/Home';
 function App(){
   return (
+    <>
+    <Home />
     <main>
-      <h1>Mimos da Taty</h1>
+   
     </main>
+    </>
   )
 }
 
