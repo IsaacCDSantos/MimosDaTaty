@@ -14,7 +14,7 @@ function Header() {
         </nav>
 
         <div className='header-actions'>
-          <a href=""><svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <a href="/login"><svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M12 11.25C13.7949 11.25 15.25 9.79493 15.25 8C15.25 6.20507 13.7949 4.75 12 4.75C10.2051 4.75 8.75 6.20507 8.75 8C8.75 9.79493 10.2051 11.25 12 11.25Z" stroke="#875E4B" strokeWidth="1.8" />
             <path d="M5.5 19C5.9 15.8 8.35 13.5 12 13.5C15.65 13.5 18.1 15.8 18.5 19" stroke="#875E4B" strokeWidth="1.8" strokeLinecap="round" />
             <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#875E4B" strokeWidth="1.5" />
