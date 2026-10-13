@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import './Header.css'
 import logo from '../../assets/imagens/logo-mimos-da-taty.png'
 
 function Header({ onAbrirLogin }) {
+  const navigate = useNavigate()
+  const location = useLocation()
   const [isScrolled, setIsScrolled] = useState(false)
 
   useEffect(() => {
@@ -12,8 +15,6 @@ function Header({ onAbrirLogin }) {
       if (!ticking) {
         window.requestAnimationFrame(() => {
           const y = window.scrollY
-          // Histerese inteligente: ativa suavemente após rolar mais de 50px,
-          // e só volta ao estado expandido se o usuário retornar bem perto do topo (< 15px).
           setIsScrolled((prev) => {
             if (!prev && y > 50) return true
             if (prev && y < 15) return false
@@ -30,6 +31,18 @@ function Header({ onAbrirLogin }) {
   }, [])
 
   const rolarPara = (id) => {
+    if (location.pathname !== '/') {
+      navigate('/')
+      setTimeout(() => {
+        if (id === 'inicio') {
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+        } else {
+          document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+        }
+      }, 100)
+      return
+    }
+
     if (id === 'inicio') {
       window.scrollTo({ top: 0, behavior: 'smooth' })
       return
@@ -112,6 +125,7 @@ function Header({ onAbrirLogin }) {
               onClick={(e) => {
                 e.preventDefault()
                 if (onAbrirLogin) onAbrirLogin()
+                else navigate('/login')
               }}
               aria-label="Entrar na conta"
             >

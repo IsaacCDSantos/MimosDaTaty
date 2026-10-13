@@ -24,7 +24,7 @@ function Beneficios() {
         ))}
       </div>
 
-      {/* Divisória de crochê separando a seção de Benefícios da próxima seção */}
+
       <div className="beneficios-borda-croche" aria-hidden="true">
         <svg width="100%" height="28" xmlns="http://www.w3.org/2000/svg">
           <defs>

@@ -1,8 +1,3 @@
-/* ==========================================================================
-   Seção de Contato - Mimos da Taty
-   Design profissional, acolhedor e 100% harmonizado com o restante do site
-   ========================================================================== */
-
 .contato-secao {
   background-color: #f7d7b7;
   padding: 60px 24px 80px;
@@ -18,9 +13,6 @@
   z-index: 2;
 }
 
-/* --------------------------------------------------------------------------
-   Cabeçalho Editorial da Seção (Padrão idêntico à seção 'Sobre')
-   -------------------------------------------------------------------------- */
 .contato-cabecalho {
   margin-bottom: 40px;
   text-align: left;
@@ -65,9 +57,7 @@
   max-width: 720px;
 }
 
-/* --------------------------------------------------------------------------
-   Card Hero Panorâmico (Emoldurado na grade de 1140px do site)
-   -------------------------------------------------------------------------- */
+
 .contato-hero-card {
   width: 100%;
   aspect-ratio: 1440 / 395;
@@ -94,9 +84,7 @@
   display: block;
 }
 
-/* --------------------------------------------------------------------------
-   Grade dos Cards de Contato (WhatsApp e Instagram)
-   -------------------------------------------------------------------------- */
+
 .contato-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -114,8 +102,8 @@
   border: 1.5px solid rgba(217, 146, 148, 0.28);
   box-shadow: 0 10px 28px rgba(135, 94, 75, 0.08);
   transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1),
-              box-shadow 0.3s cubic-bezier(0.25, 1, 0.5, 1),
-              border-color 0.3s ease;
+    box-shadow 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+    border-color 0.3s ease;
 }
 
 .contato-card:hover {
@@ -124,7 +112,7 @@
   border-color: #d99294;
 }
 
-/* Cabeçalho do Card (Ícone e Badge de Status) */
+
 .contato-card-header {
   display: flex;
   align-items: center;
@@ -153,14 +141,12 @@
 }
 
 .contato-icone-container.icone-instagram {
-  background: radial-gradient(
-    circle at 30% 107%,
-    #fdf497 0%,
-    #fdf497 5%,
-    #fd5949 45%,
-    #d6249f 60%,
-    #285aeb 90%
-  );
+  background: radial-gradient(circle at 30% 107%,
+      #fdf497 0%,
+      #fdf497 5%,
+      #fd5949 45%,
+      #d6249f 60%,
+      #285aeb 90%);
 }
 
 .icone-social {
@@ -177,7 +163,7 @@
   height: 40px;
 }
 
-/* Badges de Status Refinados */
+
 .contato-badge-status {
   font-family: 'Inter', -apple-system, sans-serif;
   font-size: 13px;
@@ -218,7 +204,7 @@
   box-shadow: 0 0 6px rgba(225, 48, 108, 0.6);
 }
 
-/* Conteúdo de Texto do Card */
+
 .contato-conteudo {
   flex-grow: 1;
   margin-bottom: 28px;
@@ -242,7 +228,6 @@
   margin: 0;
 }
 
-/* Botões de Ação (CTA) com Seta de Interação */
 .contato-botao {
   display: flex;
   align-items: center;
@@ -281,9 +266,7 @@
   transform: translateX(4px);
 }
 
-/* --------------------------------------------------------------------------
-   Faixa Informativa de Atendimento Acolhedor
-   -------------------------------------------------------------------------- */
+
 .contato-info-wrapper {
   display: flex;
   justify-content: center;
@@ -321,9 +304,7 @@
   font-weight: 600;
 }
 
-/* --------------------------------------------------------------------------
-   Rodapé & Copyright
-   -------------------------------------------------------------------------- */
+
 .contato-rodape {
   text-align: center;
   padding-top: 10px;
@@ -336,9 +317,6 @@
   margin: 0;
 }
 
-/* --------------------------------------------------------------------------
-   Decoração Artística: Bonequinha e Corações no Canto Esquerdo
-   -------------------------------------------------------------------------- */
 .contato-decoracao-boneca {
   position: absolute;
   bottom: 0;
@@ -377,9 +355,7 @@
   opacity: 0.85;
 }
 
-/* --------------------------------------------------------------------------
-   Responsividade
-   -------------------------------------------------------------------------- */
+
 @media (max-width: 1100px) {
   .contato-decoracao-boneca {
     display: none;

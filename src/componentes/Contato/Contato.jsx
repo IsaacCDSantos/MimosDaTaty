@@ -9,7 +9,7 @@ function Contato() {
   return (
     <section className="contato-secao" id="contato" aria-labelledby="contato-titulo">
       <div className="contato-container">
-        {/* Cabeçalho da Seção (Harmonia com o padrão editorial da seção 'Sobre') */}
+
         <header className="contato-cabecalho">
           <div className="contato-tagline">
             <span className="linha-tagline" aria-hidden="true" />
@@ -26,7 +26,7 @@ function Contato() {
           </p>
         </header>
 
-        {/* Card Hero Panorâmico (Emoldurado dentro da grade de 1140px do site) */}
+
         <div className="contato-hero-card">
           <img
             src={bannerContato}
@@ -35,9 +35,9 @@ function Contato() {
           />
         </div>
 
-        {/* Grade de Cards de Ação (WhatsApp e Instagram) */}
+
         <div className="contato-grid">
-          {/* Card WhatsApp */}
+
           <article className="contato-card card-whatsapp">
             <div className="contato-card-header">
               <div className="contato-icone-container icone-whatsapp" aria-hidden="true">
@@ -75,7 +75,7 @@ function Contato() {
             </a>
           </article>
 
-          {/* Card Instagram */}
+
           <article className="contato-card card-instagram">
             <div className="contato-card-header">
               <div className="contato-icone-container icone-instagram" aria-hidden="true">
@@ -114,7 +114,7 @@ function Contato() {
           </article>
         </div>
 
-        {/* Faixa Informativa de Atendimento Acolhedor */}
+
         <div className="contato-info-wrapper">
           <div className="contato-info-atendimento">
             <span className="info-icone" aria-hidden="true">
@@ -133,19 +133,19 @@ function Contato() {
               </svg>
             </span>
             <p className="contato-horario">
-              Horário de atendimento: <strong>segunda a sábado, das 9h às 18h</strong>
+              Horário de atendimento: <strong>segunda a sexta, das 9h às 18h</strong>
             </p>
           </div>
         </div>
 
-        {/* Rodapé e Copyright */}
+
         <footer className="contato-rodape">
           <p className="contato-copyright">
             © 2026 Mimos da Taty · Feito à mão com carinho · Todos os direitos reservados.
           </p>
         </footer>
 
-        {/* Assinatura com a Bonequinha e Corações */}
+
         <div className="contato-decoracao-boneca" aria-hidden="true">
           <img src={coracao} alt="" className="decoracao-coracao coracao-1" />
           <img src={coracao} alt="" className="decoracao-coracao coracao-2" />

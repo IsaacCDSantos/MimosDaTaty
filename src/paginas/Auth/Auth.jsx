@@ -1,4 +1,5 @@
 import { useId, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Auth.css';
 
 function Icon({ name, ...props }) {
@@ -41,6 +42,7 @@ function DecorativeHeart({ className }) {
 }
 
 export default function Auth({ recovery = false, onNavigate }) {
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(() => new URLSearchParams(window.location.search).get('perfil') === 'admin' ? 'admin' : 'cliente');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -125,10 +127,9 @@ export default function Auth({ recovery = false, onNavigate }) {
                 className="auth-forgot"
                 href={`/recuperar-senha${profileQuery}`}
                 onClick={(e) => {
-                  if (onNavigate) {
-                    e.preventDefault();
-                    onNavigate('recuperar');
-                  }
+                  e.preventDefault();
+                  if (onNavigate) onNavigate('recuperar');
+                  else navigate(`/recuperar-senha${profileQuery}`);
                 }}
               >
                 Esqueceu a senha?
@@ -143,10 +144,9 @@ export default function Auth({ recovery = false, onNavigate }) {
               className="auth-back"
               href={`/login${profileQuery}`}
               onClick={(e) => {
-                if (onNavigate) {
-                  e.preventDefault();
-                  onNavigate('login');
-                }
+                e.preventDefault();
+                if (onNavigate) onNavigate('login');
+                else navigate(`/login${profileQuery}`);
               }}
             >
               Voltar ao login
@@ -158,10 +158,9 @@ export default function Auth({ recovery = false, onNavigate }) {
             href="/"
             style={{ marginTop: '14px', opacity: 0.8 }}
             onClick={(e) => {
-              if (onNavigate) {
-                e.preventDefault();
-                onNavigate('inicio');
-              }
+              e.preventDefault();
+              if (onNavigate) onNavigate('inicio');
+              else navigate('/');
             }}
           >
             ← Voltar ao início
