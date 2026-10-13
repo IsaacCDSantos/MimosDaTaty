@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import './Header.css'
 import logo from '../../assets/imagens/logo-mimos-da-taty.png'
 
-function Header() {
+function Header({ onAbrirLogin }) {
   const [isScrolled, setIsScrolled] = useState(false)
 
   useEffect(() => {
@@ -107,7 +107,14 @@ function Header() {
           </nav>
 
           <div className="header-acoes">
-            <a href="#" onClick={(e) => e.preventDefault()} aria-label="Entrar na conta">
+            <a
+              href="/login"
+              onClick={(e) => {
+                e.preventDefault()
+                if (onAbrirLogin) onAbrirLogin()
+              }}
+              aria-label="Entrar na conta"
+            >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <circle cx="12" cy="8" r="3.25" stroke="currentColor" strokeWidth="1.8" />
                 <path

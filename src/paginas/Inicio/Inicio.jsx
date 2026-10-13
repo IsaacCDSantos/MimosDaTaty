@@ -4,10 +4,10 @@ import Beneficios from '../../componentes/Beneficios/Beneficios'
 import Sobre from '../../componentes/Sobre/Sobre'
 import Contato from '../../componentes/Contato/Contato'
 
-function Inicio() {
+function Inicio({ onAbrirLogin }) {
   return (
     <>
-      <Header />
+      <Header onAbrirLogin={onAbrirLogin} />
       <Hero />
       <Beneficios />
       <Sobre />
