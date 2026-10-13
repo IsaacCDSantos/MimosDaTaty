@@ -1,224 +1,235 @@
 .sobre {
-  background: #f7d7b7;
-  padding: 80px 24px 100px;
-  position: relative;
+  background-color: #f7d7b7;
   overflow: hidden;
+  padding: 80px 24px 60px;
+  position: relative;
 }
 
-/* Container centralizado */
 .sobre-container {
-  max-width: 1240px;
   margin: 0 auto;
+  max-width: 1140px;
   position: relative;
   z-index: 2;
 }
 
-/* Cabeçalho */
+/* Cabeçalho da Seção alinhado à esquerda conforme imagem de referência */
 .sobre-cabecalho {
-  text-align: center;
-  margin-bottom: 70px;
+  margin-bottom: 48px;
+  text-align: left;
+}
+
+.sobre-tagline {
+  align-items: center;
+  color: #92614b;
+  display: inline-flex;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  gap: 12px;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.linha-tagline {
+  background-color: #92614b;
+  display: block;
+  height: 1.5px;
+  width: 36px;
 }
 
 .sobre-titulo {
+  color: #7f533f;
   font-family: 'Great Vibes', cursive;
-  font-size: clamp(52px, 7vw, 96px);
+  font-size: clamp(52px, 5.6vw, 76px);
   font-weight: 400;
-  color: #875e4b;
+  line-height: 1.1;
   margin: 0 0 16px;
-  line-height: 1.15;
 }
 
 .sobre-subtitulo {
+  color: #5e3f32;
   font-family: 'Alice', serif;
-  font-size: clamp(18px, 2.2vw, 28px);
+  font-size: clamp(18px, 1.8vw, 22px);
   font-weight: 400;
-  color: #6b7280;
-  max-width: 860px;
-  margin: 0 auto;
-  line-height: 1.45;
+  line-height: 1.55;
+  margin: 0 0 24px;
+  max-width: 660px;
 }
 
-/* Grid com as duas colunas */
-.sobre-grid {
+.sobre-badge {
+  background: #fff8f3;
+  border: 1px solid rgba(146, 97, 75, 0.24);
+  border-radius: 9999px;
+  box-shadow: 0 2px 8px rgba(127, 83, 63, 0.06);
+  display: inline-flex;
+  padding: 8px 24px;
+}
+
+.sobre-badge span {
+  color: #7f533f;
+  font-family: 'Alice', serif;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* Grade 2x2 tipo mosaico alternado (texto / foto / foto / texto) */
+.sobre-grid-mosaico {
   display: grid;
-  grid-template-columns: minmax(320px, 420px) minmax(360px, 1fr);
-  gap: 56px;
-  align-items: start;
+  gap: 26px;
+  grid-template-columns: repeat(2, 1fr);
 }
 
-.sobre-coluna {
+/* Cards de texto brancos compactos com proporção elegante */
+.card-conteudo {
+  background: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 24px;
+  box-shadow: 0 4px 18px rgba(127, 83, 63, 0.07);
   display: flex;
   flex-direction: column;
+  height: 280px;
+  justify-content: center;
+  padding: 30px 38px;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1),
+              box-shadow 0.35s ease;
 }
 
-/* Coluna 1 (Tati) */
-.coluna-tati {
-  gap: 28px;
+.card-conteudo:hover {
+  box-shadow: 0 10px 26px rgba(127, 83, 63, 0.12);
+  transform: translateY(-3px);
 }
 
-/* Coluna 2 (Ateliê) */
-.coluna-atelie {
-  gap: 28px;
-}
-
-/* Cards de imagem com cantos arredondados e sombras do Figma */
-.card-imagem {
-  border-radius: 40px;
-  overflow: hidden;
-  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-              box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-.card-tati {
-  width: 100%;
-  height: 350px;
-  box-shadow: 10px 7px 4px rgba(135, 94, 75, 0.5);
-}
-
-.card-atelie {
-  width: 100%;
-  height: 350px;
-  box-shadow: 6px 11px 4px rgba(135, 94, 75, 0.75);
-}
-
-.card-imagem:hover {
-  transform: translateY(-6px);
-}
-
-.card-tati:hover {
-  box-shadow: 14px 12px 14px rgba(135, 94, 75, 0.4);
-}
-
-.card-atelie:hover {
-  box-shadow: 10px 16px 14px rgba(135, 94, 75, 0.65);
-}
-
-.foto-tati,
-.foto-atelie {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-/* Tipografia dos textos internos */
-.conteudo-texto {
-  color: #875e4b;
-}
-
-.topico-titulo {
+.card-topico-titulo {
+  color: #7f533f;
   font-family: 'Alice', serif;
-  font-size: clamp(24px, 2.5vw, 32px);
+  font-size: 26px;
   font-weight: 400;
-  color: #875e4b;
-  margin: 0 0 16px;
   line-height: 1.2;
+  margin: 0 0 14px;
 }
 
-.topico-descricao {
+.card-topico-texto {
+  color: #624336;
   font-family: 'Alice', serif;
-  font-size: clamp(17px, 1.8vw, 24px);
+  font-size: 15.5px;
   font-weight: 400;
-  color: #875e4b;
-  line-height: 1.5;
+  line-height: 1.6;
   margin: 0;
 }
 
-/* Elementos decorativos (Figma) */
-.decoracao-floral {
-  position: absolute;
-  top: 140px;
-  left: -40px;
-  width: 230px;
-  height: auto;
-  opacity: 0.7;
-  transform: rotate(-150deg);
+/* Containers das fotos com altura controlada e enquadramento nos produtos */
+.card-foto-wrapper {
+  display: flex;
+  height: 280px;
+  position: relative;
+  width: 100%;
+}
+
+.card-foto {
+  border: 4px solid #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 4px 18px rgba(127, 83, 63, 0.08);
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1),
+              box-shadow 0.35s ease;
+  width: 100%;
+  z-index: 2;
+}
+
+.card-foto:hover {
+  box-shadow: 0 10px 28px rgba(127, 83, 63, 0.14);
+  transform: translateY(-3px);
+}
+
+.imagem-mosaico {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+/* Enquadramento focado para exibir com perfeição os produtos e bordados principais */
+.wrapper-foto-verde .imagem-mosaico {
+  object-position: center 18%;
+}
+
+.wrapper-foto-rosa .imagem-mosaico {
+  object-position: center 18%;
+}
+
+/* Decorações botânicas e pontilhadas sutis */
+.decoracao-pontilhado {
   pointer-events: none;
+  position: absolute;
+  right: -24px;
+  top: -26px;
   z-index: 1;
 }
 
-.decoracao-coracoes {
-  position: absolute;
-  right: 15px;
-  bottom: 40px;
-  width: 220px;
-  height: 220px;
+.decoracao-ramo {
   pointer-events: none;
+  position: absolute;
   z-index: 1;
 }
 
-.coracao {
-  position: absolute;
-  opacity: 0.65;
-  filter: drop-shadow(7px 4px 4px rgba(135, 94, 75, 0.6));
-  transform: rotate(44deg);
+.decoracao-ramo-direita {
+  opacity: 0.9;
+  right: -28px;
+  top: -8px;
+  transform: rotate(18deg);
 }
 
-.coracao-1 {
-  width: 140px;
-  height: 140px;
-  right: 0;
-  bottom: 0;
-}
-
-.coracao-2 {
-  width: 105px;
-  height: 105px;
-  right: 50px;
-  bottom: 60px;
-  opacity: 0.55;
-}
-
-.coracao-3 {
-  width: 80px;
-  height: 80px;
-  right: 110px;
+.decoracao-ramo-esquerda {
   bottom: 20px;
-  opacity: 0.45;
+  left: -32px;
+  opacity: 0.9;
+  transform: rotate(-12deg);
 }
 
-/* Responsividade */
-@media (max-width: 980px) {
-  .sobre-grid {
+/* Responsividade Tablet e Mobile */
+@media (max-width: 900px) {
+  .sobre-grid-mosaico {
+    gap: 20px;
     grid-template-columns: 1fr;
-    gap: 48px;
-    max-width: 600px;
+    max-width: 540px;
     margin: 0 auto;
   }
 
-  .coluna-atelie {
-    display: flex;
-    flex-direction: column-reverse;
+  .card-conteudo {
+    height: auto;
+    min-height: 200px;
+    padding: 28px 26px;
   }
 
-  .card-tati,
-  .card-atelie {
-    height: 300px;
+  .card-foto-wrapper {
+    height: 250px;
   }
 
-  .decoracao-floral {
-    width: 160px;
-    top: 80px;
-    left: -60px;
-  }
-
-  .decoracao-coracoes {
+  .decoracao-ramo-direita,
+  .decoracao-ramo-esquerda,
+  .decoracao-pontilhado {
     display: none;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 520px) {
   .sobre {
-    padding: 60px 18px 80px;
+    padding: 50px 18px 80px;
   }
 
   .sobre-cabecalho {
-    margin-bottom: 40px;
+    margin-bottom: 34px;
   }
 
-  .card-tati,
-  .card-atelie {
+  .card-conteudo {
+    padding: 28px 24px;
+  }
+
+  .card-foto {
     height: 240px;
-    border-radius: 28px;
+    border-radius: 20px;
   }
 }

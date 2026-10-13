@@ -1,0 +1,428 @@
+/* ==========================================================================
+   Seção de Contato - Mimos da Taty
+   Design profissional, acolhedor e 100% harmonizado com o restante do site
+   ========================================================================== */
+
+.contato-secao {
+  background-color: #f7d7b7;
+  padding: 60px 24px 80px;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+.contato-container {
+  max-width: 1140px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+/* --------------------------------------------------------------------------
+   Cabeçalho Editorial da Seção (Padrão idêntico à seção 'Sobre')
+   -------------------------------------------------------------------------- */
+.contato-cabecalho {
+  margin-bottom: 40px;
+  text-align: left;
+}
+
+.contato-tagline {
+  align-items: center;
+  color: #92614b;
+  display: inline-flex;
+  font-family: 'Inter', Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  gap: 12px;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.linha-tagline {
+  background-color: #92614b;
+  display: block;
+  height: 1.5px;
+  width: 36px;
+}
+
+.contato-titulo {
+  color: #7f533f;
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(52px, 5.6vw, 76px);
+  font-weight: 400;
+  line-height: 1.1;
+  margin: 0 0 16px;
+}
+
+.contato-subtitulo {
+  color: #5e3f32;
+  font-family: 'Alice', serif;
+  font-size: clamp(18px, 1.8vw, 22px);
+  font-weight: 400;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 720px;
+}
+
+/* --------------------------------------------------------------------------
+   Card Hero Panorâmico (Emoldurado na grade de 1140px do site)
+   -------------------------------------------------------------------------- */
+.contato-hero-card {
+  width: 100%;
+  aspect-ratio: 1440 / 395;
+  border-radius: 28px;
+  overflow: hidden;
+  margin-bottom: 44px;
+  box-shadow: 0 14px 36px rgba(135, 94, 75, 0.14);
+  border: 2px solid rgba(217, 146, 148, 0.35);
+  background-color: #f7d7b7;
+  position: relative;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.contato-hero-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 44px rgba(135, 94, 75, 0.18);
+}
+
+.contato-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* --------------------------------------------------------------------------
+   Grade dos Cards de Contato (WhatsApp e Instagram)
+   -------------------------------------------------------------------------- */
+.contato-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px;
+  margin-bottom: 40px;
+}
+
+.contato-card {
+  background-color: #ffffff;
+  border-radius: 28px;
+  padding: 38px 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1.5px solid rgba(217, 146, 148, 0.28);
+  box-shadow: 0 10px 28px rgba(135, 94, 75, 0.08);
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+              box-shadow 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+              border-color 0.3s ease;
+}
+
+.contato-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(135, 94, 75, 0.16);
+  border-color: #d99294;
+}
+
+/* Cabeçalho do Card (Ícone e Badge de Status) */
+.contato-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.contato-icone-container {
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  transition: transform 0.3s ease;
+}
+
+.contato-card:hover .contato-icone-container {
+  transform: scale(1.06);
+}
+
+.contato-icone-container.icone-whatsapp {
+  background-color: #25d366;
+}
+
+.contato-icone-container.icone-instagram {
+  background: radial-gradient(
+    circle at 30% 107%,
+    #fdf497 0%,
+    #fdf497 5%,
+    #fd5949 45%,
+    #d6249f 60%,
+    #285aeb 90%
+  );
+}
+
+.icone-social {
+  display: block;
+}
+
+.icone-whatsapp-img {
+  width: 40px;
+  height: 40px;
+}
+
+.icone-instagram-img {
+  width: 40px;
+  height: 40px;
+}
+
+/* Badges de Status Refinados */
+.contato-badge-status {
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge-whatsapp {
+  background-color: rgba(37, 211, 102, 0.12);
+  color: #17823e;
+  border: 1px solid rgba(37, 211, 102, 0.25);
+}
+
+.badge-instagram {
+  background-color: rgba(225, 48, 108, 0.12);
+  color: #b81d58;
+  border: 1px solid rgba(225, 48, 108, 0.25);
+}
+
+.ponto-status {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.ponto-verde {
+  background-color: #25d366;
+  box-shadow: 0 0 6px rgba(37, 211, 102, 0.6);
+}
+
+.ponto-rosa {
+  background-color: #e1306c;
+  box-shadow: 0 0 6px rgba(225, 48, 108, 0.6);
+}
+
+/* Conteúdo de Texto do Card */
+.contato-conteudo {
+  flex-grow: 1;
+  margin-bottom: 28px;
+}
+
+.contato-card-titulo {
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: #7a4a3a;
+  margin: 0 0 12px;
+  line-height: 1.2;
+}
+
+.contato-card-texto {
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Botões de Ação (CTA) com Seta de Interação */
+.contato-botao {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #d99294;
+  color: #ffffff;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 15px 28px;
+  border-radius: 36px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 4px 14px rgba(217, 146, 148, 0.35);
+}
+
+.contato-botao:hover {
+  background-color: #c47d7f;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(196, 125, 127, 0.45);
+}
+
+.contato-botao:active {
+  transform: translateY(0);
+}
+
+.icone-seta {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.25s ease;
+}
+
+.contato-botao:hover .icone-seta {
+  transform: translateX(4px);
+}
+
+/* --------------------------------------------------------------------------
+   Faixa Informativa de Atendimento Acolhedor
+   -------------------------------------------------------------------------- */
+.contato-info-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.contato-info-atendimento {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(217, 146, 148, 0.32);
+  border-radius: 24px;
+  padding: 14px 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 16px rgba(135, 94, 75, 0.06);
+}
+
+.info-icone {
+  color: #92614b;
+  display: flex;
+  align-items: center;
+}
+
+.contato-horario {
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-size: 15px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.contato-horario strong {
+  color: #7a4a3a;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   Rodapé & Copyright
+   -------------------------------------------------------------------------- */
+.contato-rodape {
+  text-align: center;
+  padding-top: 10px;
+}
+
+.contato-copyright {
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-size: 14px;
+  color: #92614b;
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Decoração Artística: Bonequinha e Corações no Canto Esquerdo
+   -------------------------------------------------------------------------- */
+.contato-decoracao-boneca {
+  position: absolute;
+  bottom: 0;
+  left: -20px;
+  width: 190px;
+  height: 210px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.decoracao-bonequinha {
+  position: absolute;
+  bottom: 0;
+  left: 20px;
+  width: 145px;
+  height: auto;
+  filter: drop-shadow(6px 4px 5px rgba(135, 94, 75, 0.3));
+}
+
+.decoracao-coracao {
+  position: absolute;
+  filter: drop-shadow(4px 4px 4px rgba(135, 94, 75, 0.25));
+}
+
+.decoracao-coracao.coracao-1 {
+  width: 70px;
+  bottom: 115px;
+  left: 0;
+  opacity: 0.85;
+}
+
+.decoracao-coracao.coracao-2 {
+  width: 80px;
+  bottom: 65px;
+  left: 85px;
+  opacity: 0.85;
+}
+
+/* --------------------------------------------------------------------------
+   Responsividade
+   -------------------------------------------------------------------------- */
+@media (max-width: 1100px) {
+  .contato-decoracao-boneca {
+    display: none;
+  }
+}
+
+@media (max-width: 860px) {
+  .contato-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .contato-card {
+    padding: 30px 24px;
+  }
+
+  .contato-hero-card {
+    border-radius: 20px;
+    margin-bottom: 32px;
+  }
+
+  .contato-cabecalho {
+    margin-bottom: 30px;
+  }
+}
+
+@media (max-width: 520px) {
+  .contato-secao {
+    padding: 44px 16px 60px;
+  }
+
+  .contato-card-titulo {
+    font-size: 22px;
+  }
+
+  .contato-card-texto {
+    font-size: 15px;
+  }
+
+  .contato-info-atendimento {
+    padding: 12px 18px;
+    border-radius: 18px;
+    font-size: 13px;
+    text-align: center;
+  }
+}
