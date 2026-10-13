@@ -1,0 +1,117 @@
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@400;500;600&display=swap');
+
+.recuperacao-container {
+  background-color: #FCE4CD; /* Cor pêssego do fundo */
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+}
+
+.recuperacao-card {
+  background: white;
+  border-radius: 24px;
+  padding: 40px;
+  width: 100%;
+  max-width: 450px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  z-index: 2;
+}
+
+.recuperacao-titulo {
+  font-family: 'Great Vibes', cursive; /* Fonte cursiva para o título */
+  color: #8C5A4F;
+  font-size: 3rem;
+  margin-bottom: 10px;
+}
+
+.recuperacao-subtitulo {
+  color: #8C5A4F;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 15px;
+}
+
+.recuperacao-texto {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 30px;
+  line-height: 1.5;
+}
+
+.input-group {
+  text-align: left;
+  margin-bottom: 25px;
+}
+
+.input-group label {
+  display: block;
+  color: #8C5A4F;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  background: #FDF3EA;
+  border: 1px solid #E6BFA3;
+  border-radius: 20px;
+  padding: 10px 15px;
+}
+
+.input-icon {
+  margin-right: 10px;
+  color: #8C5A4F;
+}
+
+.input-wrapper input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  color: #333;
+}
+
+.btn-enviar {
+  background-color: #DE9393; /* Rosa do botão */
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 12px;
+  width: 100%;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 15px;
+  font-weight: 500;
+  box-shadow: 0 4px 6px rgba(222, 147, 147, 0.3);
+}
+
+.btn-voltar {
+  background: none;
+  border: none;
+  color: #DE9393;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-bottom: 30px;
+}
+
+.recuperacao-rodape {
+  font-size: 0.75rem;
+  color: #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  background-color: #DE9393;
+  border-radius: 50%;
+}
