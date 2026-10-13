@@ -1,0 +1,53 @@
+<svg width="1454" height="49" viewBox="0 0 1454 49" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g filter="url(#filter0_d_90_130)">
+<circle cx="19.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="58.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="97.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="136.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="175.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="214.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="253.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="292.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="331.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="370.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="409.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="448.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="487.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="526.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="565.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="604.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="643.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="682.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="721.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="760.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="799.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="838.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="877.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="916.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="955.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="994.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="1033.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="1072.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="1111.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="1150.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="1189.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="1228.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="1267.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="1306.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="1345.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="1384.5" cy="19.5" r="19.5" fill="#D99294"/>
+<circle cx="1423.5" cy="19.5" r="19.5" fill="#D99294"/>
+</g>
+<defs>
+<filter id="filter0_d_90_130" x="0" y="0" width="1454" height="49" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dx="7" dy="6"/>
+<feGaussianBlur stdDeviation="2"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_90_130"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_90_130" result="shape"/>
+</filter>
+</defs>
+</svg>

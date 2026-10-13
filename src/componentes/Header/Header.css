@@ -1,0 +1,330 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+
+.site-header-wrapper {
+  height: 153px;
+  position: relative;
+  width: 100%;
+  z-index: 1000;
+}
+
+
+.site-header {
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.header-conteudo {
+  align-items: center;
+  background-color: #f7d7b7;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  box-shadow: 0 0 0 rgba(135, 94, 75, 0);
+  display: flex;
+  height: 153px;
+  padding: 0 54px;
+  position: relative;
+  z-index: 2;
+  transition: height 0.48s cubic-bezier(0.25, 1, 0.4, 1),
+    background-color 0.45s ease,
+    box-shadow 0.45s ease,
+    backdrop-filter 0.45s ease,
+    -webkit-backdrop-filter 0.45s ease;
+  will-change: height, background-color, box-shadow;
+}
+
+/* Estado compacto ao rolar a página: 88px com logo ampla e respiração visual */
+.site-header.scrolled .header-conteudo {
+  height: 88px;
+  background-color: rgba(247, 215, 183, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 6px 22px rgba(135, 94, 75, 0.18);
+}
+
+/* Área da Logo: mantém largura estável para não empurrar os links lateralmente */
+.marca {
+  align-items: center;
+  display: flex;
+  flex: 0 0 250px;
+  height: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+.marca a {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  position: relative;
+  width: 100%;
+}
+
+.marca img {
+  filter: drop-shadow(3px 6px 12px rgba(0, 0, 0, 0.28));
+  height: 206px;
+  left: -12px;
+  max-width: none;
+  object-fit: contain;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: height 0.48s cubic-bezier(0.25, 1, 0.4, 1),
+    filter 0.45s ease;
+  will-change: height;
+  cursor: auto;
+}
+
+/* Logo aumentada de 64px para 90px ao encolher, mantendo todos os detalhes legíveis */
+.site-header.scrolled .marca img {
+  height: 90px;
+  filter: drop-shadow(2px 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+/* Navegação central estável */
+.site-header nav {
+  flex: 1;
+}
+
+.site-header nav ul {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  list-style: none;
+}
+
+.site-header nav li {
+  background: #d99294;
+  border-radius: 38px;
+  box-shadow: 2px 3px 4px rgba(0, 0, 0, 0.22);
+  list-style: none;
+  transition: transform 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.site-header nav li:hover {
+  background: #c97e80;
+  box-shadow: 2px 6px 14px rgba(0, 0, 0, 0.26), 0 2px 6px rgba(217, 146, 148, 0.4);
+  transform: translateY(-2px);
+}
+
+.site-header nav li:active {
+  background: #b96f74;
+  box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.25);
+  transform: translateY(1px);
+}
+
+/* 
+  Os links mantêm dimensões consistentes tanto no estado inicial quanto no scroll.
+  Isso evita qualquer 'empurrão', recálculo de fonte ou salto lateral nos botões.
+*/
+.site-header nav a {
+  color: #fff;
+  display: flex;
+  font: 600 16px Inter, Arial, sans-serif;
+  justify-content: center;
+  padding: 11px 28px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+
+.header-acoes {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
+
+.header-acoes a {
+  align-items: center;
+  background: #fcc7c7;
+  border: 1px solid #d99294;
+  border-radius: 38px;
+  color: #97644e;
+  display: flex;
+  font: 700 16px Inter, Arial, sans-serif;
+  gap: 8px;
+  height: 44px;
+  justify-content: center;
+  padding: 8px 16px;
+  text-decoration: none;
+  transition: transform 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+  white-space: nowrap;
+}
+
+.header-acoes a:hover {
+  background: #f7b7b7;
+  box-shadow: 2px 6px 12px rgba(151, 100, 78, 0.28);
+  transform: translateY(-2px);
+}
+
+.header-acoes a:active {
+  background: #eaa9ad;
+  box-shadow: 1px 2px 4px rgba(151, 100, 78, 0.2);
+  transform: translateY(1px);
+}
+
+
+.borda-croche {
+  bottom: -27px;
+  filter: drop-shadow(4px 6px 6px rgba(0, 0, 0, 0.35));
+  height: 28px;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  width: 100%;
+  z-index: -1;
+  transition: opacity 0.28s ease, transform 0.28s ease, visibility 0.28s ease;
+}
+
+.borda-croche svg {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+
+.site-header.scrolled .borda-croche {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px);
+  visibility: hidden;
+}
+
+/* Responsividade Tablet */
+@media (max-width: 1120px) {
+  .header-conteudo {
+    padding: 0 24px;
+  }
+
+  .marca {
+    flex: 0 0 190px;
+  }
+
+  .marca img {
+    height: 140px;
+  }
+
+  .site-header.scrolled .marca img {
+    height: 74px;
+  }
+
+  .site-header nav ul {
+    gap: 10px;
+  }
+
+  .site-header nav a {
+    font-size: 14px;
+    padding: 9px 18px;
+  }
+
+  .header-acoes a {
+    font-size: 14px;
+    height: 40px;
+    padding: 7px 12px;
+  }
+}
+
+
+@media (max-width: 820px) {
+  .site-header-wrapper {
+    height: 136px;
+  }
+
+  .header-conteudo {
+    flex-wrap: wrap;
+    height: 136px;
+    padding: 8px 18px 12px;
+  }
+
+  .marca {
+    flex: 0 0 140px;
+    height: 60px;
+  }
+
+  .marca img {
+    height: 72px;
+    left: 0;
+  }
+
+  .site-header.scrolled .header-conteudo {
+    height: 98px;
+    padding: 6px 14px;
+  }
+
+  .site-header.scrolled .marca img {
+    height: 56px;
+  }
+
+  .site-header nav {
+    order: 3;
+    width: 100%;
+  }
+
+  .site-header nav ul {
+    gap: 8px;
+  }
+
+  .site-header nav a {
+    font-size: 13px;
+    padding: 6px 14px;
+  }
+
+  .site-header.scrolled nav a {
+    padding: 5px 11px;
+    font-size: 12px;
+  }
+
+  .header-acoes {
+    margin-left: auto;
+  }
+
+  .header-acoes a {
+    font-size: 13px;
+    height: 36px;
+    padding: 6px 12px;
+  }
+
+  .borda-croche {
+    bottom: -22px;
+    height: 22px;
+  }
+}
+
+
+@media (max-width: 480px) {
+  .site-header-wrapper {
+    height: 140px;
+  }
+
+  .site-header nav ul {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .site-header nav a {
+    font-size: 11px;
+    padding: 5px 8px;
+  }
+
+  .header-acoes a span {
+    display: none;
+  }
+
+  .header-acoes a {
+    height: 34px;
+    min-width: 36px;
+    padding: 6px 8px;
+  }
+}

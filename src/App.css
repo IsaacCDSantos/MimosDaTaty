@@ -1,4 +1,9 @@
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 106px;
+}
+
 body {
-  background-color: antiquewhite;
+  background-color: #f7d7b7;
   overflow-x: hidden;
 }

@@ -1,13 +1,12 @@
+import { BrowserRouter } from 'react-router-dom'
+import Rotas from './rotas'
 import './App.css'
-import Home from './pages/Home/Home';
-function App(){
+
+function App() {
   return (
-    <>
-    <Home />
-    <main>
-   
-    </main>
-    </>
+    <BrowserRouter>
+      <Rotas />
+    </BrowserRouter>
   )
 }
 
