@@ -15,13 +15,13 @@ export const rotasPublicas = (
     <Route path="/login" element={<Auth />} />
 
     {/* Tela de Recuperação de Senha */}
-    <Route path="/recuperar-senha" element={<Auth recovery={true} />} />
+    <Route path="/recuperar-senha" element={<Recuperacao />} />
+    <Route path="/recuperacao" element={<Recuperacao />} />
+
+    {/* Tela de confirmação de envio de e-mail */}
+    <Route path="/confirmacao" element={<ConfirmacaoEnvio />} />
 
     {/* Tela de checkout-pagamento */}
     <Route path="/checkout" element={<Checkout />} />
-    {/* Tela de Recuperção de senha */}
-    <Route path="/recuperacao" element={<Recuperacao />} />
-    {/* Tela de confirmação de recuperação */}
-    <Route path="/confirmacao" element={<ConfirmacaoEnvio />} />
   </>
 )

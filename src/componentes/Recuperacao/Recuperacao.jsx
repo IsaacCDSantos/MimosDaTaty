@@ -11,7 +11,7 @@ function Recuperacao({ aoVoltar, aoEnviar }) {
   // Função que verifica o campo antes de avançar
   const lidarComEnvio = () => {
     if (email.trim() === '') {
-      setErro('Por favor, introduza o seu e-mail ou utilizador.');
+      setErro('Por favor, digite o seu e-mail.');
       return; // Bloqueia a execução e não muda de ecrã
     }
     
@@ -34,18 +34,18 @@ function Recuperacao({ aoVoltar, aoEnviar }) {
         <h2 className="recuperacao-subtitulo">Esqueceu sua senha?</h2>
         
         <p className="recuperacao-texto">
-          Digite seu e-mail ou usuário cadastrado e enviaremos as instruções para redefinir sua senha.
+          Digite seu e-mail cadastrado e enviaremos as instruções para redefinir sua senha.
         </p>
 
         <div className="input-group">
-          <label>E-mail ou usuário</label>
+          <label>E-mail</label>
           <div 
             className="input-wrapper" 
             style={{ border: erro ? '1px solid #DE9393' : '1px solid #E6BFA3' }}
           >
-            <span className="input-icon">👤</span>
+            <span className="input-icon">✉️</span>
             <input 
-              type="text" 
+              type="email" 
               placeholder="nome@exemplo.com" 
               value={email}
               onChange={(e) => {

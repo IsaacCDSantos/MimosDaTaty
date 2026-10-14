@@ -125,11 +125,10 @@ export default function Auth({ recovery = false, onNavigate }) {
               </div>
               <a
                 className="auth-forgot"
-                href={`/recuperar-senha${profileQuery}`}
+                href="/recuperacao"
                 onClick={(e) => {
                   e.preventDefault();
-                  if (onNavigate) onNavigate('recuperar');
-                  else navigate(`/recuperar-senha${profileQuery}`);
+                  navigate('/recuperacao');
                 }}
               >
                 Esqueceu a senha?
