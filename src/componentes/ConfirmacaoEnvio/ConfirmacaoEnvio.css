@@ -1,5 +1,6 @@
 .confirmacao-container {
-  background-color: #FCE4CD; /* Fundo pêssego padrão do seu projeto */
+  background-color: #f7d7b7;
+  /* Fundo pêssego padrão do seu projeto */
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -15,7 +16,7 @@
   width: 100%;
   max-width: 450px;
   text-align: center;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
 .icone-email {
@@ -39,7 +40,8 @@
 }
 
 .btn-voltar-login {
-  background-color: #DE9393; /* Rosa padrão do projeto */
+  background-color: #DE9393;
+  /* Rosa padrão do projeto */
   color: white;
   border: none;
   border-radius: 20px;

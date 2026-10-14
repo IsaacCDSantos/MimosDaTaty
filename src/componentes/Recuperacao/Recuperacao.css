@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@400;500;600&display=swap');
 
 .recuperacao-container {
-  background-color: #FCE4CD; /* Cor pêssego do fundo */
+  background-color: #f7d7b7;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -18,12 +18,13 @@
   width: 100%;
   max-width: 450px;
   text-align: center;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   z-index: 2;
 }
 
 .recuperacao-titulo {
-  font-family: 'Great Vibes', cursive; /* Fonte cursiva para o título */
+  font-family: 'Great Vibes', cursive;
+  /* Fonte cursiva para o título */
   color: #8C5A4F;
   font-size: 3rem;
   margin-bottom: 10px;
@@ -78,7 +79,8 @@
 }
 
 .btn-enviar {
-  background-color: #DE9393; /* Rosa do botão */
+  background-color: #DE9393;
+  /* Rosa do botão */
   color: white;
   border: none;
   border-radius: 20px;
