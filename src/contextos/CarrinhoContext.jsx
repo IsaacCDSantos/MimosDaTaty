@@ -1,38 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { CarrinhoContext } from './carrinhoBase'
 import { ITENS_PADRAO } from './carrinhoDados'
-import kitBercoImg from '../assets/imagens/kit_berco_florido_figma.png'
-import mantaCrocheImg from '../assets/imagens/manta_croche_bebe_figma.png'
-import trocadorCrocheImg from '../assets/imagens/trocador_croche_figma.png'
 
 export function CarrinhoProvider({ children }) {
-  const [itens, setItens] = useState(() => {
-    try {
-      const salvo = localStorage.getItem('@mimos-taty:carrinho')
-      if (salvo) {
-        const parsed = JSON.parse(salvo)
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed.map((item) => {
-            if (item.id === 'kit-berco-florido') return { ...item, imagem: kitBercoImg }
-            if (item.id === 'manta-croche-bebe') return { ...item, imagem: mantaCrocheImg }
-            if (item.id === 'trocador-croche') return { ...item, imagem: trocadorCrocheImg }
-            return item
-          })
-        }
-      }
-    } catch {
-      // Ignora erro de JSON e usa os padrões
-    }
-    return ITENS_PADRAO
-  })
-
-  useEffect(() => {
-    try {
-      localStorage.setItem('@mimos-taty:carrinho', JSON.stringify(itens))
-    } catch {
-      // Ignora erro em caso de bloqueio de armazenamento
-    }
-  }, [itens])
+  // Estado puramente em memória (sem persistência)
+  const [itens, setItens] = useState(ITENS_PADRAO)
 
   const subtotal = itens.reduce((acc, item) => acc + item.preco * item.quantidade, 0)
   const frete = itens.length > 0 ? 25.0 : 0.0
