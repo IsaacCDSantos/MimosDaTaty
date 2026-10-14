@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCarrinho } from '../../contextos/useCarrinho';
 import './Checkout.css';
 
 function Checkout({ aoNavegar }) {
   const navigate = useNavigate();
-  const { subtotal, frete, desconto, total } = useCarrinho();
   const [formaPagamento, setFormaPagamento] = useState('cartao');
 
   const navegar = (destino) => {
@@ -14,13 +12,6 @@ function Checkout({ aoNavegar }) {
     } else {
       navigate(destino);
     }
-  };
-
-  const formatarMoeda = (valor) => {
-    return valor.toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    });
   };
 
   return (
@@ -44,21 +35,21 @@ function Checkout({ aoNavegar }) {
           <div className="resumo-linhas">
             <div className="resumo-linha">
               <span>Subtotal</span>
-              <strong>{formatarMoeda(subtotal)}</strong>
+              <strong>R$ 407,00</strong>
             </div>
             <div className="resumo-linha">
               <span>Frete</span>
-              <strong>{formatarMoeda(frete)}</strong>
+              <strong>R$ 25,00</strong>
             </div>
             <div className="resumo-linha">
               <span>Desconto</span>
-              <strong>{formatarMoeda(desconto)}</strong>
+              <strong>R$ 0,00</strong>
             </div>
           </div>
 
           <div className="resumo-total">
             <span>Total</span>
-            <span className="valor-total">{formatarMoeda(total)}</span>
+            <span className="valor-total">R$ 432,00</span>
           </div>
           <p className="total-obs">Valor estimado para o envio padrão.</p>
 

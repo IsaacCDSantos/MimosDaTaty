@@ -40,7 +40,6 @@
   will-change: height, background-color, box-shadow;
 }
 
-/* Estado compacto ao rolar a página: 88px com logo ampla e respiração visual */
 .site-header.scrolled .header-conteudo {
   height: 88px;
   background-color: rgba(247, 215, 183, 0.94);
@@ -49,7 +48,6 @@
   box-shadow: 0 6px 22px rgba(135, 94, 75, 0.18);
 }
 
-/* Área da Logo: mantém largura estável para não empurrar os links lateralmente */
 .marca {
   align-items: center;
   display: flex;
@@ -82,13 +80,11 @@
   cursor: auto;
 }
 
-/* Logo aumentada de 64px para 90px ao encolher, mantendo todos os detalhes legíveis */
 .site-header.scrolled .marca img {
   height: 90px;
   filter: drop-shadow(2px 4px 8px rgba(0, 0, 0, 0.2));
 }
 
-/* Navegação central estável */
 .site-header nav {
   flex: 1;
 }
@@ -123,10 +119,6 @@
   transform: translateY(1px);
 }
 
-/* 
-  Os links mantêm dimensões consistentes tanto no estado inicial quanto no scroll.
-  Isso evita qualquer 'empurrão', recálculo de fonte ou salto lateral nos botões.
-*/
 .site-header nav a {
   color: #fff;
   display: flex;
