@@ -8,6 +8,8 @@ function Header({ onAbrirLogin }) {
   const location = useLocation()
   const [isScrolled, setIsScrolled] = useState(false)
 
+
+
   useEffect(() => {
     let ticking = false
 
@@ -29,6 +31,8 @@ function Header({ onAbrirLogin }) {
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+
 
   const rolarPara = (id) => {
     if (location.pathname !== '/') {
@@ -52,6 +56,8 @@ function Header({ onAbrirLogin }) {
       elemento.scrollIntoView({ behavior: 'smooth' })
     }
   }
+
+
 
   return (
     <div className="site-header-wrapper">
@@ -84,15 +90,7 @@ function Header({ onAbrirLogin }) {
                 </a>
               </li>
               <li>
-                <a
-                  href="#catalogo"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    rolarPara('catalogo')
-                  }}
-                >
-                  Catálogo
-                </a>
+                <a href="/catalogo">Catálogo</a>
               </li>
               <li>
                 <a

@@ -194,7 +194,7 @@
   visibility: hidden;
 }
 
-/* Responsividade Tablet */
+
 @media (max-width: 1120px) {
   .header-conteudo {
     padding: 0 24px;

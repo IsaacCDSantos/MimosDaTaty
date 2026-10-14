@@ -6,7 +6,7 @@ function Sobre() {
   return (
     <section className="sobre" id="sobre" aria-labelledby="sobre-titulo">
       <div className="sobre-container">
-        {/* Cabeçalho da Seção com alinhamento à esquerda conforme o layout de referência */}
+
         <header className="sobre-cabecalho">
           <div className="sobre-tagline">
             <span className="linha-tagline" aria-hidden="true" />
@@ -27,9 +27,8 @@ function Sobre() {
           </div>
         </header>
 
-        {/* Grade 2x2: Card texto / Foto / Foto / Card texto */}
         <div className="sobre-grid-mosaico">
-          {/* Card 1 (Topo-Esquerda): Quem sou eu */}
+
           <article className="card-conteudo card-quem-sou-eu">
             <h3 className="card-topico-titulo">Quem sou eu</h3>
             <p className="card-topico-texto">
@@ -39,9 +38,9 @@ function Sobre() {
             </p>
           </article>
 
-          {/* Card 2 (Topo-Direita): Foto Ninho Verde "Felipe" */}
+
           <div className="card-foto-wrapper wrapper-foto-verde">
-            {/* Decorações sutis: pontilhismo e raminho botânico */}
+
             <div className="decoracao-pontilhado" aria-hidden="true">
               <svg width="68" height="68" viewBox="0 0 68 68" fill="none">
                 <circle cx="12" cy="14" r="1.8" fill="#B37A62" opacity="0.65" />
@@ -106,7 +105,7 @@ function Sobre() {
             </div>
           </div>
 
-          {/* Card 3 (Base-Esquerda): Foto Kit Berço Rosa "Luna" */}
+
           <div className="card-foto-wrapper wrapper-foto-rosa">
             <div className="decoracao-ramo decoracao-ramo-esquerda" aria-hidden="true">
               <svg width="52" height="62" viewBox="0 0 52 62" fill="none">
@@ -152,7 +151,7 @@ function Sobre() {
             </div>
           </div>
 
-          {/* Card 4 (Base-Direita): O ateliê */}
+
           <article className="card-conteudo card-o-atelie">
             <h3 className="card-topico-titulo">O ateliê</h3>
             <p className="card-topico-texto">

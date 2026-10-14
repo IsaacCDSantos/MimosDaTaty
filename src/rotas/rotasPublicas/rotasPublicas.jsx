@@ -5,6 +5,7 @@ import Carrinho from '../../componentes/Carrinho/Carrinho'
 import Checkout from '../../componentes/Checkout/Checkout'
 import RecuperacaoSenha from '../../componentes/RecuperacaoSenha/RecuperacaoSenha'
 import ConfirmacaoEnvioEmail from '../../componentes/ConfirmacaoEnvioEmail/ConfirmacaoEnvioEmail'
+import Catalogo from '../../componentes/Catalogo/Catalogo'
 
 // Rotas públicas: acessíveis por qualquer usuário diretamente no navegador
 export const rotasPublicas = (
@@ -14,6 +15,8 @@ export const rotasPublicas = (
 
     {/* Tela de Login (Usuário e Admin) */}
     <Route path="/login" element={<Login />} />
+
+    <Route path="/catalogo" element={<Catalogo />} />
 
     {/* Tela de Carrinho */}
     <Route path="/carrinho" element={<Carrinho />} />
