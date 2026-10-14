@@ -65,6 +65,14 @@ A aplicação foi planejada para unir a sensibilidade e o acolhimento do artesan
   - Tela dedicada para solicitação de redefinição de acesso por e-mail.
   - Tela de confirmação e orientação com ações rápidas para retornar ao login ou página inicial.
 
+- 🛒 **Tela de Carrinho de Compras (`/carrinho`)**:
+  - Implementação fidedigna ao protótipo do Figma com layout acolhedor em tons rosé e pêssego.
+  - Listagem dos itens selecionados com fotografias em alta resolução, descrições detalhadas e prazos de entrega.
+  - Ajuste interativo de quantidades (+ / -) e remoção de itens em tempo real diretamente no front-end.
+  - Painel de resumo lateral com cálculo dinâmico de subtotal, frete estimado e valor total.
+  - Navegação integrada com atalhos de retorno ao catálogo e botão direto para o fluxo de checkout (`/checkout`).
+  - Tratamento de estado vazio (*empty state*) com opções para voltar à vitrine ou restaurar itens de demonstração.
+
 - 🛍️ **Fluxo de Checkout (`/checkout`)**:
   - Resumo de valores em tempo real: Subtotal, frete estimado, cupons de desconto e total final.
   - Seleção de formas de pagamento (Cartão de Crédito com parcelamento, PIX com aprovação instantânea e Boleto Bancário).
@@ -108,6 +116,7 @@ Sistema Web Mimos da Taty/
 │   │   └── videos/         # Mídias e vídeos promocionais
 │   ├── componentes/        # Componentes de interface e seções reutilizáveis
 │   │   ├── Beneficios/     # Cards de benefícios e diferenciais do ateliê
+│   │   ├── Carrinho/       # Tela e componentes do carrinho de compras (fiel ao Figma)
 │   │   ├── Checkout/       # Tela e resumo do processo de checkout/pagamento
 │   │   ├── ConfirmacaoEnvioEmail/ # Tela de feedback pós-solicitação de e-mail
 │   │   ├── Contato/        # Seção e formulário para contato com o ateliê
@@ -140,6 +149,7 @@ Sistema Web Mimos da Taty/
 | :--- | :--- | :--- | :--- |
 | `/` | `Inicio` | **Público** | Página inicial (Landing page com catálogo, sobre, benefícios e contato). |
 | `/login` | `Login` | **Público** | Página de autenticação para clientes e administradores. |
+| `/carrinho` | `Carrinho` | **Público** | Visualização do carrinho, controle de itens/quantidades e resumo de compras. |
 | `/recuperar-senha` | `RecuperacaoSenha` | **Público** | Formulário para envio de redefinição de senha por e-mail. |
 | `/confirmacao` | `ConfirmacaoEnvioEmail` | **Público** | Tela de confirmação e orientações após a solicitação de redefinição. |
 | `/checkout` | `Checkout` | **Público** | Revisão de pedido, resumo financeiro e seleção de método de pagamento. |
@@ -218,11 +228,11 @@ Para manter o histórico e a qualidade de engenharia do repositório, recomenda-
 - [x] Arquitetura de roteamento centralizada com suporte a rotas públicas e privadas;
 - [x] Tela de autenticação flexível (Cliente e Admin);
 - [x] Telas do fluxo de recuperação de senha e confirmação de e-mail;
+- [x] Implementação de carrinho de compras (layout fidedigno ao Figma e interatividade front-end);
 - [x] Layout e componentes de checkout com resumo de compras e formas de pagamento;
 - [ ] Implementação do lado admin;
 - [ ] Integração com backend / API REST para persistência de dados;
 - [ ] Integração com gateway de pagamentos real (PIX dinâmico, cartão);
-- [ ] Implementação de carrinho de compras;
 - [ ] Painel Administrativo privado para gerenciamento de pedidos e produtos.
 
 ---
