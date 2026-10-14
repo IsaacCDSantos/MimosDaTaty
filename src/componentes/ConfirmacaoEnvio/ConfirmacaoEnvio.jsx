@@ -1,7 +1,17 @@
-import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './ConfirmacaoEnvio.css';
 
 function ConfirmacaoEnvio({ aoVoltar }) {
+  const navigate = useNavigate();
+
+  const lidarComVoltar = () => {
+    if (typeof aoVoltar === 'function') {
+      aoVoltar();
+    } else {
+      navigate('/login');
+    }
+  };
+
   return (
     <div className="confirmacao-container">
       <div className="confirmacao-card">
@@ -14,7 +24,7 @@ function ConfirmacaoEnvio({ aoVoltar }) {
           Por favor, verifique a sua caixa de entrada e também a pasta de spam (lixo eletrônico).
         </p>
 
-        <button className="btn-voltar-login" onClick={aoVoltar}>
+        <button className="btn-voltar-login" onClick={lidarComVoltar}>
           Voltar ao login
         </button>
       </div>

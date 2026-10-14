@@ -1,17 +1,27 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Checkout.css';
 
 function Checkout({ aoNavegar }) {
+  const navigate = useNavigate();
   const [formaPagamento, setFormaPagamento] = useState('cartao');
+
+  const navegar = (destino) => {
+    if (typeof aoNavegar === 'function') {
+      aoNavegar(destino);
+    } else {
+      navigate(destino);
+    }
+  };
 
   return (
     <div className="checkout-container">
       {/* Menu Superior */}
       <nav className="checkout-nav">
-        <button className="nav-btn">Home</button>
-        <button className="nav-btn">Catálogo</button>
-        <button className="nav-btn">Sobre Nós</button>
-        <button className="nav-btn">Contato</button>
+        <button className="nav-btn" onClick={() => navegar('/')}>Home</button>
+        <button className="nav-btn" onClick={() => navegar('/#catalogo')}>Catálogo</button>
+        <button className="nav-btn" onClick={() => navegar('/#sobre')}>Sobre Nós</button>
+        <button className="nav-btn" onClick={() => navegar('/#contato')}>Contato</button>
       </nav>
 
       <div className="checkout-content">

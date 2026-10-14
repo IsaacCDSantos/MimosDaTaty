@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Recuperacao.css';
 
 function Recuperacao({ aoVoltar, aoEnviar }) {
+  const navigate = useNavigate();
   // Estados para guardar o texto do e-mail e possíveis erros
   const [email, setEmail] = useState('');
   const [erro, setErro] = useState('');
@@ -15,7 +17,11 @@ function Recuperacao({ aoVoltar, aoEnviar }) {
     
     // Se o campo estiver preenchido, limpa o erro e avança para a confirmação
     setErro('');
-    aoEnviar();
+    if (typeof aoEnviar === 'function') {
+      aoEnviar();
+    } else {
+      navigate('/confirmacao');
+    }
   };
 
   return (
@@ -56,7 +62,16 @@ function Recuperacao({ aoVoltar, aoEnviar }) {
           Enviar instruções ➔
         </button>
 
-        <button className="btn-voltar" onClick={aoVoltar}>
+        <button
+          className="btn-voltar"
+          onClick={() => {
+            if (typeof aoVoltar === 'function') {
+              aoVoltar();
+            } else {
+              navigate('/login');
+            }
+          }}
+        >
           Voltar ao login
         </button>
 
