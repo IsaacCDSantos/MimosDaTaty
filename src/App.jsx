@@ -1,11 +1,14 @@
 import { BrowserRouter } from 'react-router-dom'
+import { CarrinhoProvider } from './contextos/CarrinhoContext'
 import Rotas from './rotas'
 import './App.css'
 
 function App() {
   return (
     <BrowserRouter>
-      <Rotas />
+      <CarrinhoProvider>
+        <Rotas />
+      </CarrinhoProvider>
     </BrowserRouter>
   )
 }

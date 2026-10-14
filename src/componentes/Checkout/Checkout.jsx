@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCarrinho } from '../../contextos/useCarrinho';
 import './Checkout.css';
 
 function Checkout({ aoNavegar }) {
   const navigate = useNavigate();
+  const { subtotal, frete, desconto, total } = useCarrinho();
   const [formaPagamento, setFormaPagamento] = useState('cartao');
 
   const navegar = (destino) => {
@@ -12,6 +14,13 @@ function Checkout({ aoNavegar }) {
     } else {
       navigate(destino);
     }
+  };
+
+  const formatarMoeda = (valor) => {
+    return valor.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    });
   };
 
   return (
@@ -35,25 +44,27 @@ function Checkout({ aoNavegar }) {
           <div className="resumo-linhas">
             <div className="resumo-linha">
               <span>Subtotal</span>
-              <strong>R$ 407,00</strong>
+              <strong>{formatarMoeda(subtotal)}</strong>
             </div>
             <div className="resumo-linha">
               <span>Frete</span>
-              <strong>R$ 25,00</strong>
+              <strong>{formatarMoeda(frete)}</strong>
             </div>
             <div className="resumo-linha">
               <span>Desconto</span>
-              <strong>R$ 0,00</strong>
+              <strong>{formatarMoeda(desconto)}</strong>
             </div>
           </div>
 
           <div className="resumo-total">
             <span>Total</span>
-            <span className="valor-total">R$ 432,00</span>
+            <span className="valor-total">{formatarMoeda(total)}</span>
           </div>
           <p className="total-obs">Valor estimado para o envio padrão.</p>
 
-          <button className="btn-editar-carrinho">Editar carrinho</button>
+          <button className="btn-editar-carrinho" onClick={() => navegar('/carrinho')}>
+            Editar carrinho
+          </button>
         </div>
 
         {/* Painel Direito - Formulário Checkout */}

@@ -1,6 +1,7 @@
 import { Route } from 'react-router-dom'
 import Inicio from '../../paginas/Inicio/Inicio'
 import Login from '../../paginas/Login/Login'
+import Carrinho from '../../componentes/Carrinho/Carrinho'
 import Checkout from '../../componentes/Checkout/Checkout'
 import RecuperacaoSenha from '../../componentes/RecuperacaoSenha/RecuperacaoSenha'
 import ConfirmacaoEnvioEmail from '../../componentes/ConfirmacaoEnvioEmail/ConfirmacaoEnvioEmail'
@@ -13,6 +14,9 @@ export const rotasPublicas = (
 
     {/* Tela de Login (Usuário e Admin) */}
     <Route path="/login" element={<Login />} />
+
+    {/* Tela de Carrinho */}
+    <Route path="/carrinho" element={<Carrinho />} />
 
     {/* Tela de Recuperação de Senha */}
     <Route path="/recuperar-senha" element={<RecuperacaoSenha />} />

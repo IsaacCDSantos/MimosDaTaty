@@ -1,12 +1,19 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { useCarrinho } from '../../contextos/useCarrinho'
 import './Header.css'
 import logo from '../../assets/imagens/logo-mimos-da-taty.png'
 
 function Header({ onAbrirLogin }) {
   const navigate = useNavigate()
   const location = useLocation()
+  const { total, quantidadeTotal } = useCarrinho()
   const [isScrolled, setIsScrolled] = useState(false)
+
+  const totalFormatado = total.toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  })
 
   useEffect(() => {
     let ticking = false
@@ -141,7 +148,14 @@ function Header({ onAbrirLogin }) {
               </svg>
               <span>Login</span>
             </a>
-            <a href="#" onClick={(e) => e.preventDefault()} aria-label="Carrinho: R$ 0,00">
+            <a
+              href="/carrinho"
+              onClick={(e) => {
+                e.preventDefault()
+                navigate('/carrinho')
+              }}
+              aria-label={`Carrinho: ${totalFormatado} (${quantidadeTotal} itens)`}
+            >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path
                   d="M1 2h4l2.68 12.39A2 2 0 0 0 9.68 16H19.4a2 2 0 0 0 2-1.61L23 6H6"
@@ -153,7 +167,7 @@ function Header({ onAbrirLogin }) {
                 <circle cx="9" cy="21" r="1" fill="currentColor" />
                 <circle cx="20" cy="21" r="1" fill="currentColor" />
               </svg>
-              <span>R$0,00</span>
+              <span>{totalFormatado}</span>
             </a>
           </div>
         </div>
