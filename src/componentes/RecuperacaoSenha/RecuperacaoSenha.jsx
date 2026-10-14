@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Recuperacao.css';
+import './RecuperacaoSenha.css';
 
-function Recuperacao({ aoVoltar, aoEnviar }) {
+function RecuperacaoSenha({ aoVoltar, aoEnviar }) {
   const navigate = useNavigate();
   // Estados para guardar o texto do e-mail e possíveis erros
   const [email, setEmail] = useState('');
@@ -83,4 +83,4 @@ function Recuperacao({ aoVoltar, aoEnviar }) {
   );
 }
 
-export default Recuperacao;
+export default RecuperacaoSenha;

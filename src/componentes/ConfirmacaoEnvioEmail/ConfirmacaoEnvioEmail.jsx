@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import './ConfirmacaoEnvio.css';
+import './ConfirmacaoEnvioEmail.css';
 
-function ConfirmacaoEnvio({ aoVoltar }) {
+function ConfirmacaoEnvioEmail({ aoVoltar }) {
   const navigate = useNavigate();
 
   const lidarComVoltar = () => {
@@ -32,4 +32,4 @@ function ConfirmacaoEnvio({ aoVoltar }) {
   );
 }
 
-export default ConfirmacaoEnvio;
+export default ConfirmacaoEnvioEmail;

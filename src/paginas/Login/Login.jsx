@@ -1,6 +1,6 @@
 import { useId, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Auth.css';
+import './Login.css';
 
 function Icon({ name, ...props }) {
   const paths = {
@@ -41,7 +41,7 @@ function DecorativeHeart({ className }) {
   );
 }
 
-export default function Auth({ recovery = false, onNavigate }) {
+export default function Login({ recovery = false, onNavigate }) {
   const navigate = useNavigate();
   const [profile, setProfile] = useState(() => new URLSearchParams(window.location.search).get('perfil') === 'admin' ? 'admin' : 'cliente');
   const [username, setUsername] = useState('');
