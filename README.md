@@ -223,7 +223,7 @@ Para manter o histórico e a qualidade de engenharia do repositório, recomenda-
 - [ ] Integração com backend / API REST para persistência de dados;
 - [ ] Integração com gateway de pagamentos real (PIX dinâmico, cartão);
 - [ ] Implementação de carrinho de compras;
-- [ ] Painel Administrativo privado para gerenciamento de pedidos, produtos e clientes.
+- [ ] Painel Administrativo privado para gerenciamento de pedidos e produtos.
 
 ---
 
