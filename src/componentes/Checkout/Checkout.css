@@ -1,0 +1,271 @@
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@400;500;600;700&display=swap');
+
+.checkout-container {
+  background-color: #FCE4CD;
+  min-height: 100vh;
+  padding: 30px 20px;
+  font-family: 'Inter', sans-serif;
+}
+
+.checkout-nav {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.nav-btn {
+  background-color: #DE9393;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 25px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+}
+
+.checkout-content {
+  display: flex;
+  gap: 25px;
+  max-width: 1100px;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+
+.script-title {
+  font-family: 'Great Vibes', cursive;
+  color: #8C5A4F;
+  font-size: 2.8rem;
+  margin: 0 0 5px 0;
+  font-weight: normal;
+}
+
+.card-subtitle {
+  color: #7A7A7A;
+  font-size: 0.85rem;
+  margin-bottom: 25px;
+}
+
+/* Card Resumo */
+.card-resumo {
+  background: white;
+  border-radius: 24px;
+  padding: 30px;
+  width: 320px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.resumo-linhas {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #F0F0F0;
+  padding-bottom: 20px;
+}
+
+.resumo-linha {
+  display: flex;
+  justify-content: space-between;
+  color: #7A7A7A;
+  font-size: 0.95rem;
+}
+
+.resumo-linha strong {
+  color: #8C5A4F;
+}
+
+.resumo-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.resumo-total span {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #8C5A4F;
+}
+
+.resumo-total .valor-total {
+  font-size: 1.5rem;
+}
+
+.total-obs {
+  font-size: 0.75rem;
+  color: #A0A0A0;
+  margin-bottom: 100px;
+}
+
+.btn-editar-carrinho {
+  background-color: #DE9393;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 12px;
+  width: 100%;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Card Checkout */
+.card-checkout {
+  background: white;
+  border-radius: 24px;
+  padding: 35px;
+  flex: 1;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.secao-checkout {
+  margin-bottom: 25px;
+}
+
+.secao-titulo {
+  color: #8C5A4F;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.opcoes-pagamento {
+  display: flex;
+  gap: 15px;
+}
+
+.opcao-card {
+  flex: 1;
+  border: 1px solid #E6BFA3;
+  background-color: #FDF3EA;
+  border-radius: 16px;
+  padding: 15px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.opcao-card input {
+  margin-top: 4px;
+  accent-color: #DE9393;
+}
+
+.opcao-card strong {
+  color: #8C5A4F;
+  display: block;
+  font-size: 0.95rem;
+}
+
+.opcao-card p {
+  margin: 3px 0 0 0;
+  font-size: 0.75rem;
+  color: #7A7A7A;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+
+.form-group label {
+  font-size: 0.8rem;
+  color: #8C5A4F;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  background-color: #FDF3EA;
+  border: 1px solid #E6BFA3;
+  border-radius: 20px;
+  padding: 10px 15px;
+  outline: none;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.form-row {
+  display: flex;
+  gap: 12px;
+}
+
+.flex-1 { flex: 1; }
+.flex-2 { flex: 2; }
+
+.checkbox-salvar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: #7A7A7A;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.checkbox-salvar input {
+  accent-color: #DE9393;
+}
+
+.banner-seguranca {
+  background-color: #FDF3EA;
+  border: 1px solid #E6BFA3;
+  border-radius: 20px;
+  padding: 12px 18px;
+  font-size: 0.85rem;
+  color: #8C5A4F;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.checkmark {
+  background: #DE9393;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+}
+
+.btn-pagar {
+  background-color: #DE9393;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 14px;
+  width: 100%;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rodape-obs {
+  text-align: center;
+  font-size: 0.75rem;
+  color: #A0A0A0;
+  margin-top: 10px;
+}
+
+.btn-trocar-tela {
+  margin-top: 25px;
+  background: transparent;
+  border: 1px dashed #DE9393;
+  color: #DE9393;
+  padding: 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 0.85rem;
+}

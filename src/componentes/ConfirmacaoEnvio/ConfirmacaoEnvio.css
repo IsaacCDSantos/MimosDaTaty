@@ -1,0 +1,52 @@
+.confirmacao-container {
+  background-color: #FCE4CD; /* Fundo pêssego padrão do seu projeto */
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', sans-serif;
+  padding: 20px;
+}
+
+.confirmacao-card {
+  background: white;
+  border-radius: 24px;
+  padding: 50px 40px;
+  width: 100%;
+  max-width: 450px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.icone-email {
+  font-size: 4rem;
+  margin-bottom: 15px;
+}
+
+.confirmacao-titulo {
+  font-family: 'Great Vibes', cursive;
+  color: #8C5A4F;
+  font-size: 3.5rem;
+  margin: 0 0 15px 0;
+  font-weight: normal;
+}
+
+.confirmacao-texto {
+  color: #666;
+  font-size: 1rem;
+  margin-bottom: 35px;
+  line-height: 1.6;
+}
+
+.btn-voltar-login {
+  background-color: #DE9393; /* Rosa padrão do projeto */
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 14px;
+  width: 100%;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(222, 147, 147, 0.3);
+}
