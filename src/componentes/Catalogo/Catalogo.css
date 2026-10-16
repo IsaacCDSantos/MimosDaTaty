@@ -2,23 +2,23 @@
 
 /* Variáveis de Cores Pastéis/Terrosas do Projeto Mimos da Taty */
 :root {
-    --color-bg-primary: #F7D7B7;
-    --color-card-bg: #FFFFFF;
-    --color-item-bg: #FBEFE4;
-    --color-accent-pink: #D99294;
-    --color-accent-light-pink: #FCC7C7;
-    --color-text-brown: #875E4B;
-    --color-text-subtle: #6B7280;
-    --color-text-muted: #9CA3AF;
-    --color-text-dark: #000000;
-    --color-white: #FFFFFF;
+    --cor-fundo-primaria: #F7D7B7;
+    --cor-fundo-card: #FFFFFF;
+    --cor-fundo-item: #FBEFE4;
+    --cor-destaque-rosa: #D99294;
+    --cor-destaque-rosa-claro: #FCC7C7;
+    --cor-texto-marrom: #875E4B;
+    --cor-texto-suave: #6B7280;
+    --cor-texto-apagado: #9CA3AF;
+    --cor-texto-escuro: #000000;
+    --cor-branco: #FFFFFF;
 }
 
 .catalogoContainer {
     width: 100%;
     max-width: 1440px;
     margin: 0 auto;
-    background-color: var(--color-bg-primary);
+    background-color: var(--cor-fundo-primaria);
     padding: 34px 48px;
     box-sizing: border-box;
     font-family: 'Inter', sans-serif;
@@ -39,8 +39,8 @@
 }
 
 .navBtn {
-    background: var(--color-accent-pink);
-    color: var(--color-white);
+    background: var(--cor-destaque-rosa);
+    color: var(--cor-branco);
     border: none;
     padding: 12px 24px;
     border-radius: 38px;
@@ -56,29 +56,41 @@
     opacity: 0.9;
 }
 
-.cartBadge {
-    background: var(--color-accent-light-pink);
-    border: 1px solid var(--color-accent-pink);
-    border-radius: 38px;
-    padding: 10px 20px;
-    display: flex;
+.botaoCarrinho {
     align-items: center;
-    gap: 12px;
-    color: var(--color-text-brown);
-    font-weight: 600;
-    font-size: 18px;
+    background: #fcc7c7;
+    border: 1px solid #d99294;
+    border-radius: 38px;
+    color: #97644e;
+    display: flex;
+    font: 700 16px Inter, Arial, sans-serif;
+    gap: 8px;
+    height: 44px;
+    justify-content: center;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: transform 0.2s ease,
+        background-color 0.2s ease,
+        box-shadow 0.2s ease;
+    white-space: nowrap;
     cursor: pointer;
 }
 
-.cartIcon {
-    width: 24px;
-    height: 24px;
-    stroke: var(--color-text-brown);
+.botaoCarrinho:hover {
+    background: #f7b7b7;
+    box-shadow: 2px 6px 12px rgba(151, 100, 78, 0.28);
+    transform: translateY(-2px);
+}
+
+.botaoCarrinho:active {
+    background: #eaa9ad;
+    box-shadow: 1px 2px 4px rgba(151, 100, 78, 0.2);
+    transform: translateY(1px);
 }
 
 /* Banner Superior */
 .catalogoBanner {
-    background: var(--color-card-bg);
+    background: var(--cor-fundo-card);
     box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.25);
     border-radius: 45px;
     padding: 20px 40px;
@@ -92,37 +104,37 @@
 .bannerTexto {
     font-family: 'Great Vibes', cursive;
     font-size: 48px;
-    color: var(--color-text-brown);
+    color: var(--cor-texto-marrom);
     text-align: center;
     flex: 1;
 }
 
-.bannerImgContainer {
+.bannerImagemContainer {
     width: 474px;
     height: 211px;
     border-radius: 45px;
     overflow: hidden;
-    border: 1px solid var(--color-accent-pink);
+    border: 1px solid var(--cor-destaque-rosa);
     flex-shrink: 0;
 }
 
-.bannerImg {
+.bannerImagem {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
 /* Card Principal dos Produtos */
-.mainCard {
-    background: var(--color-card-bg);
+.cardPrincipal {
+    background: var(--cor-fundo-card);
     box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.25);
     border-radius: 45px;
     padding: 40px;
 }
 
 /* Barra de Filtros de Categorias */
-.categoriasBar {
-    background: var(--color-item-bg);
+.barraCategorias {
+    background: var(--cor-fundo-item);
     border-radius: 45px;
     padding: 20px 30px;
     display: flex;
@@ -135,7 +147,7 @@
 .categoriasTitulo {
     font-weight: 600;
     font-size: 24px;
-    color: var(--color-text-dark);
+    color: var(--cor-texto-escuro);
 }
 
 .categoriaItem {
@@ -144,41 +156,41 @@
     gap: 10px;
     font-weight: 600;
     font-size: 18px;
-    color: var(--color-text-dark);
+    color: var(--cor-texto-escuro);
     cursor: pointer;
 }
 
 .categoriaItem input[type="checkbox"] {
     width: 18px;
     height: 18px;
-    accent-color: var(--color-accent-pink);
+    accent-color: var(--cor-destaque-rosa);
     cursor: pointer;
 }
 
 /* Lista de Produtos */
-.cartItemsList {
+.listaProdutos {
     display: flex;
     flex-direction: column;
     gap: 22px;
 }
 
-.cartItem {
+.itemCatalogo {
     display: flex;
     align-items: center;
     padding: 20px;
     gap: 20px;
-    background: var(--color-item-bg);
+    background: var(--cor-fundo-item);
     border-radius: 24px;
 }
 
-.itemImg {
+.itemImagem {
     width: 120px;
     height: 120px;
     border-radius: 16px;
     object-fit: cover;
 }
 
-.itemContent {
+.itemConteudo {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -194,43 +206,43 @@
 .itemTitulo {
     font-weight: 700;
     font-size: 22px;
-    color: var(--color-text-brown);
+    color: var(--cor-texto-marrom);
     margin: 0;
 }
 
 .itemPreco {
     font-weight: 700;
     font-size: 22px;
-    color: var(--color-text-brown);
+    color: var(--cor-texto-marrom);
 }
 
 .itemDescricao {
     font-size: 16px;
     line-height: 150%;
-    color: var(--color-text-subtle);
+    color: var(--cor-texto-suave);
     margin: 0;
 }
 
-.itemControls {
+.itemControles {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-top: 6px;
 }
 
-.qtdSelector {
+.seletorQtd {
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
 .btnQtd {
-    background: var(--color-white);
-    border: 1px solid var(--color-accent-pink);
+    background: var(--cor-branco);
+    border: 1px solid var(--cor-destaque-rosa);
     border-radius: 24px;
     width: 39px;
     height: 34px;
-    color: var(--color-text-brown);
+    color: var(--cor-texto-marrom);
     font-weight: 600;
     font-size: 16px;
     cursor: pointer;
@@ -239,34 +251,34 @@
     justify-content: center;
 }
 
-.qtdDisplay {
-    background: var(--color-white);
-    border: 1px solid var(--color-accent-pink);
+.exibicaoQtd {
+    background: var(--cor-branco);
+    border: 1px solid var(--cor-destaque-rosa);
     border-radius: 20px;
     padding: 6px 14px;
     font-weight: 600;
     font-size: 14px;
-    color: var(--color-text-brown);
+    color: var(--cor-texto-marrom);
 }
 
 .prazoEntrega {
     font-size: 14px;
-    color: var(--color-text-muted);
+    color: var(--cor-texto-apagado);
     margin-left: 12px;
 }
 
-.btnAddCart {
-    background: var(--color-white);
-    border: 1px solid var(--color-accent-pink);
+.btnAdicionarCarrinho {
+    background: var(--cor-branco);
+    border: 1px solid var(--cor-destaque-rosa);
     border-radius: 20px;
     padding: 8px 16px;
     font-weight: 600;
     font-size: 14px;
-    color: var(--color-text-brown);
+    color: var(--cor-texto-marrom);
     cursor: pointer;
     transition: background-color 0.2s ease-in-out;
 }
 
-.btnAddCart:hover {
-    background: var(--color-item-bg);
+.btnAdicionarCarrinho:hover {
+    background: var(--cor-fundo-item);
 }

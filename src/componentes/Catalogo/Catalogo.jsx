@@ -63,7 +63,7 @@ export default function Catalogo() {
 
     const adicionarAoCarrinho = (produto) => {
         const valorAdicionado = produto.preco * produto.quantidade;
-        setTotalCarrinho(prevTotal => prevTotal + valorAdicionado);
+        setTotalCarrinho(totalAnterior => totalAnterior + valorAdicionado);
     };
 
     return (
@@ -77,19 +77,25 @@ export default function Catalogo() {
                     <Link to="/contato" className={'navBtn'}>Contato</Link>
                 </nav>
 
-                {/* Carrinho de Compras com SVG Inline */}
-                <div className={'cartBadge'}>
-                    <svg
-                        className={'cartIcon'}
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        viewBox="0 0 24 24"
-                    >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+                {/* Botão do Carrinho de Compras */}
+                <Link
+                    to="/carrinho"
+                    className={'botaoCarrinho'}
+                    aria-label="Ir para o carrinho"
+                >
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path
+                            d="M1 2h4l2.68 12.39A2 2 0 0 0 9.68 16H19.4a2 2 0 0 0 2-1.61L23 6H6"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                        <circle cx="9" cy="21" r="1" fill="currentColor" />
+                        <circle cx="20" cy="21" r="1" fill="currentColor" />
                     </svg>
-                    <span>R$ {totalCarrinho.toFixed(2).replace('.', ',')}</span>
-                </div>
+                    <span>R${totalCarrinho.toFixed(2).replace('.', ',')}</span>
+                </Link>
             </header>
 
             {/* Banner da Página */}
@@ -97,19 +103,19 @@ export default function Catalogo() {
                 <h1 className={'bannerTexto'}>
                     "Nosso Catálogo" - Encontre o mimo perfeito feito à mão com carinho
                 </h1>
-                <div className={'bannerImgContainer'}>
+                <div className={'bannerImagemContainer'}>
                     <img
                         src="https://via.placeholder.com/474x211"
                         alt="Produtos Artesanais"
-                        className={'bannerImg'}
+                        className={'bannerImagem'}
                     />
                 </div>
             </div>
 
             {/* Conteúdo Principal */}
-            <main className={'mainCard'}>
+            <main className={'cardPrincipal'}>
                 {/* Filtros de Categorias */}
-                <section className={'categoriasBar'}>
+                <section className={'barraCategorias'}>
                     <span className={'categoriasTitulo'}>Categorias:</span>
                     <label className={'categoriaItem'}>
                         <input type="checkbox" /> Maternidade
@@ -126,15 +132,15 @@ export default function Catalogo() {
                 </section>
 
                 {/* Mapeamento de Produtos */}
-                <section className={'cartItemsList'}>
+                <section className={'listaProdutos'}>
                     {produtos.map((produto) => (
-                        <div key={produto.id} className={'cartItem'}>
+                        <div key={produto.id} className={'itemCatalogo'}>
                             <img
                                 src={produto.imagem}
                                 alt={produto.nome}
-                                className={'itemImg'}
+                                className={'itemImagem'}
                             />
-                            <div className={'itemContent'}>
+                            <div className={'itemConteudo'}>
                                 <div className={'itemHeader'}>
                                     <h2 className={'itemTitulo'}>{produto.nome}</h2>
                                     <span className={'itemPreco'}>
@@ -144,15 +150,15 @@ export default function Catalogo() {
 
                                 <p className={'itemDescricao'}>{produto.descricao}</p>
 
-                                <div className={'itemControls'}>
-                                    <div className={'qtdSelector'}>
+                                <div className={'itemControles'}>
+                                    <div className={'seletorQtd'}>
                                         <button
                                             className={'btnQtd'}
                                             onClick={() => alterarQuantidade(produto.id, -1)}
                                         >
                                             -
                                         </button>
-                                        <span className={'qtdDisplay'}>Qtd: {produto.quantidade}</span>
+                                        <span className={'exibicaoQtd'}>Qtd: {produto.quantidade}</span>
                                         <button
                                             className={'btnQtd'}
                                             onClick={() => alterarQuantidade(produto.id, 1)}
@@ -165,7 +171,7 @@ export default function Catalogo() {
                                     </div>
 
                                     <button
-                                        className={'.btnAddCart'}
+                                        className={'btnAdicionarCarrinho'}
                                         onClick={() => adicionarAoCarrinho(produto)}
                                     >
                                         Adicionar ao carrinho
