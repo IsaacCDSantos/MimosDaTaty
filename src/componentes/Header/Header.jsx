@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import './Header.css'
 import logo from '../../assets/imagens/logo-mimos-da-taty.png'
@@ -61,7 +61,7 @@ function Header({ onAbrirLogin }) {
     window.requestAnimationFrame(animarPasso)
   }
 
-  const rolarPara = (id) => {
+  const rolarPara = useCallback((id) => {
     const executarRolagem = () => {
       if (id === 'inicio') {
         rolarSuavemente(0, 750)
@@ -87,7 +87,7 @@ function Header({ onAbrirLogin }) {
     }
 
     executarRolagem()
-  }
+  }, [location.pathname, navigate, isScrolled])
 
   // Executa rolagem suave caso o usuário chegue na página inicial com hash (#sobre ou #contato)
   useEffect(() => {
@@ -96,7 +96,7 @@ function Header({ onAbrirLogin }) {
       const timer = setTimeout(() => rolarPara(id), 200)
       return () => clearTimeout(timer)
     }
-  }, [location.pathname, location.hash])
+  }, [location.pathname, location.hash, rolarPara])
 
 
 
