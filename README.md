@@ -30,7 +30,7 @@
 - [Scripts Disponíveis](#-scripts-disponíveis)
 - [Padrões de Desenvolvimento](#-padrões-de-desenvolvimento)
 - [Roadmap de Evolução](#-roadmap-de-evolução)
-- [Autores e Colaboradores](#-autores-e-colaboradores)
+- [Desenvolvedores](#-desenvolvedores)
 - [Licença](#-licença)
 
 ---
@@ -237,24 +237,9 @@ Para manter o histórico e a qualidade de engenharia do repositório, recomenda-
 
 ---
 
-## 👥 Autores e Colaboradores
+## 👥 Desenvolvedores
 
 Projeto desenvolvido com carinho para o ateliê **Mimos da Taty** (artesanato infantil e enxovais personalizados desde 2006).
-
-### 💻 Desenvolvedor Principal
-<table>
-  <tr>
-    <td align="center">
-      <a href="https://github.com/IsaacCDSantos">
-        <img src="https://github.com/IsaacCDSantos.png" width="90px;" alt="Isaac Coelho Santos" style="border-radius: 50%;"/><br />
-        <sub><b>Isaac Coelho Santos</b></sub>
-      </a>
-    </td>
-  </tr>
-</table>
-
-### 🤝 Contribuidores
-Agradecimentos especiais aos colegas que contribuíram com o desenvolvimento e evolução do projeto:
 
 <table>
   <tr>
@@ -262,6 +247,12 @@ Agradecimentos especiais aos colegas que contribuíram com o desenvolvimento e e
       <a href="https://github.com/guirodrigues140507-code">
         <img src="https://github.com/guirodrigues140507-code.png" width="90px;" alt="Guilherme Rodrigues" style="border-radius: 50%;"/><br />
         <sub><b>Guilherme Rodrigues</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/IsaacCDSantos">
+        <img src="https://github.com/IsaacCDSantos.png" width="90px;" alt="Isaac Coelho Santos" style="border-radius: 50%;"/><br />
+        <sub><b>Isaac Coelho Santos</b></sub>
       </a>
     </td>
     <td align="center">
@@ -273,9 +264,9 @@ Agradecimentos especiais aos colegas que contribuíram com o desenvolvimento e e
   </tr>
 </table>
 
-- **Isaac Coelho Santos** — [@IsaacCDSantos](https://github.com/IsaacCDSantos) *(Desenvolvedor Principal)*
-- **Guilherme Rodrigues** — [@guirodrigues140507-code](https://github.com/guirodrigues140507-code) *(Contribuidor)*
-- **Vinicius Caminha** — [@ViniciusCaminha](https://github.com/ViniciusCaminha) *(Contribuidor)*
+- **Guilherme Rodrigues** — [@guirodrigues140507-code](https://github.com/guirodrigues140507-code)
+- **Isaac Coelho Santos** — [@IsaacCDSantos](https://github.com/IsaacCDSantos)
+- **Vinicius Caminha** — [@ViniciusCaminha](https://github.com/ViniciusCaminha)
 
 ---
 
