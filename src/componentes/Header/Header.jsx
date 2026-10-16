@@ -34,17 +34,17 @@ function Header({ onAbrirLogin }) {
 
 
 
-  // Função de rolagem com início rápido e desaceleração suave progressiva (ease-out)
-  const rolarSuavemente = (posicaoFinal, duracao = 800) => {
+  // Função de rolagem com início rápido e desaceleração suave progressiva e lenta (ease-out)
+  const rolarSuavemente = (posicaoFinal, duracao = 1600) => {
     const posicaoInicial = window.scrollY
     const distancia = posicaoFinal - posicaoInicial
     if (Math.abs(distancia) < 4) return
 
     let inicioTempo = null
 
-    // Curva ease-out quádrica: arranca imediatamente rápida e pousa bem devagar
+    // Curva ease-out quíntica: arranca rápida e tem uma longa e suave desaceleração
     const curvaSuave = (t) => {
-      return 1 - Math.pow(1 - t, 4)
+      return 1 - Math.pow(1 - t, 5)
     }
 
     const animarPasso = (tempoAtual) => {
@@ -65,7 +65,7 @@ function Header({ onAbrirLogin }) {
   const rolarPara = useCallback((id) => {
     const executarRolagem = () => {
       if (id === 'inicio') {
-        rolarSuavemente(0, 750)
+        rolarSuavemente(0, 1500)
         return
       }
 
@@ -75,7 +75,8 @@ function Header({ onAbrirLogin }) {
         const compensacaoHeader = isScrolled ? 88 : 96
         const posicaoDestino = Math.max(0, elemento.getBoundingClientRect().top + window.scrollY - compensacaoHeader)
         const distancia = Math.abs(posicaoDestino - window.scrollY)
-        const duracao = Math.min(Math.max(distancia * 0.65, 700), 1050)
+        // Duração ampliada para 1400ms - 2000ms para um movimento bem calmo e perceptível
+        const duracao = Math.min(Math.max(distancia * 1.1, 1400), 2000)
 
         rolarSuavemente(posicaoDestino, duracao)
       }
