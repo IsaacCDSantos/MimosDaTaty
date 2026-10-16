@@ -73,8 +73,8 @@ export default function Catalogo() {
                 <nav className={'catalogoNav'}>
                     <Link to="/" className={'navBtn'}>Home</Link>
                     <Link to="/catalogo" className={'navBtn'}>Catálogo</Link>
-                    <Link to="/sobre" className={'navBtn'}>Sobre Nós</Link>
-                    <Link to="/contato" className={'navBtn'}>Contato</Link>
+                    <Link to="/#sobre" className={'navBtn'}>Sobre Nós</Link>
+                    <Link to="/#contato" className={'navBtn'}>Contato</Link>
                 </nav>
 
                 {/* Botão do Carrinho de Compras */}

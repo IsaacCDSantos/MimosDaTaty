@@ -34,28 +34,69 @@ function Header({ onAbrirLogin }) {
 
 
 
+  // Função de rolagem com animação suave e desaceleração progressiva (easeInOutCubic)
+  const rolarSuavemente = (posicaoFinal, duracao = 850) => {
+    const posicaoInicial = window.scrollY
+    const distancia = posicaoFinal - posicaoInicial
+    if (Math.abs(distancia) < 4) return
+
+    let inicioTempo = null
+
+    const curvaSuave = (t) => {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+    }
+
+    const animarPasso = (tempoAtual) => {
+      if (!inicioTempo) inicioTempo = tempoAtual
+      const decorrido = tempoAtual - inicioTempo
+      const progresso = Math.min(decorrido / duracao, 1)
+
+      window.scrollTo(0, posicaoInicial + distancia * curvaSuave(progresso))
+
+      if (decorrido < duracao) {
+        window.requestAnimationFrame(animarPasso)
+      }
+    }
+
+    window.requestAnimationFrame(animarPasso)
+  }
+
   const rolarPara = (id) => {
+    const executarRolagem = () => {
+      if (id === 'inicio') {
+        rolarSuavemente(0, 750)
+        return
+      }
+
+      const elemento = document.getElementById(id)
+      if (elemento) {
+        // Compensa a altura do header fixo para dar respiro visual ao título
+        const compensacaoHeader = isScrolled ? 88 : 96
+        const posicaoDestino = Math.max(0, elemento.getBoundingClientRect().top + window.scrollY - compensacaoHeader)
+        const distancia = Math.abs(posicaoDestino - window.scrollY)
+        const duracao = Math.min(Math.max(distancia * 0.65, 700), 1050)
+
+        rolarSuavemente(posicaoDestino, duracao)
+      }
+    }
+
     if (location.pathname !== '/') {
       navigate('/')
-      setTimeout(() => {
-        if (id === 'inicio') {
-          window.scrollTo({ top: 0, behavior: 'smooth' })
-        } else {
-          document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
-        }
-      }, 100)
+      setTimeout(executarRolagem, 150)
       return
     }
 
-    if (id === 'inicio') {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-      return
-    }
-    const elemento = document.getElementById(id)
-    if (elemento) {
-      elemento.scrollIntoView({ behavior: 'smooth' })
-    }
+    executarRolagem()
   }
+
+  // Executa rolagem suave caso o usuário chegue na página inicial com hash (#sobre ou #contato)
+  useEffect(() => {
+    if (location.pathname === '/' && location.hash) {
+      const id = location.hash.replace('#', '')
+      const timer = setTimeout(() => rolarPara(id), 200)
+      return () => clearTimeout(timer)
+    }
+  }, [location.pathname, location.hash])
 
 
 
