@@ -1,5 +1,7 @@
 import { useId, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import imagemAtelie from '../../assets/imagens/banner-principal.png';
+import logoMimos from '../../assets/imagens/logo-mimos-da-taty.png';
 import './Login.css';
 
 function Icon({ name, ...props }) {
@@ -49,8 +51,10 @@ export default function Login({ recovery = false, onNavigate }) {
   const [showPassword, setShowPassword] = useState(false);
   const [notice, setNotice] = useState('');
   const profileQuery = profile === 'admin' ? '?perfil=admin' : '';
+  const isAdmin = profile === 'admin';
 
   function selectProfile(nextProfile) {
+    if (nextProfile === profile) return;
     setProfile(nextProfile);
     setPassword('');
     setShowPassword(false);
@@ -62,7 +66,8 @@ export default function Login({ recovery = false, onNavigate }) {
 
     if (!username.trim()) {
       setNotice('Informe seu e-mail ou usuário.');
-      event.currentTarget.elements.username.focus();
+      const input = event.currentTarget.querySelector('input[name="username"]');
+      if (input) input.focus();
       return;
     }
 
@@ -72,8 +77,181 @@ export default function Login({ recovery = false, onNavigate }) {
       : 'O acesso ainda não está disponível. Tente novamente em breve.');
   }
 
+  function renderFormPane(paneProfile) {
+    const isPaneActive = recovery ? paneProfile === 'cliente' : profile === paneProfile;
+    const isPaneAdmin = paneProfile === 'admin';
+    const prefix = `auth-${paneProfile}`;
+
+    return (
+      <div
+        className={`auth-pane auth-pane--${paneProfile}${isPaneActive ? ' auth-pane--active' : ''}`}
+        aria-hidden={!isPaneActive}
+      >
+        <div className="auth-pane-inner">
+          <span className="auth-badge">
+            <Icon name={isPaneAdmin ? 'shield' : 'heart'} />
+            {isPaneAdmin ? 'Gestão do Ateliê' : 'Espaço do Cliente'}
+          </span>
+
+          <h1 id={!isPaneAdmin ? 'auth-title' : undefined} className="auth-title">
+            {recovery ? 'Recuperação' : 'Entrar'}
+          </h1>
+
+          {recovery ? (
+            <div className="auth-intro">
+              <p className="auth-subtitle">Esqueceu sua senha?</p>
+              <p className="auth-description">
+                Digite seu e-mail ou usuário cadastrado e enviaremos as instruções para redefinir sua senha.
+              </p>
+            </div>
+          ) : (
+            <>
+              <p className="auth-welcome">
+                {isPaneAdmin
+                  ? 'Acesse o painel administrativo para gerenciar encomendas, catálogo e clientes.'
+                  : 'Que alegria ter você aqui! Entre para acompanhar seus pedidos e mimos especiais.'}
+              </p>
+
+              <div className="auth-profiles" role="group" aria-label="Perfil de acesso">
+                <button
+                  className={`auth-profile${profile === 'cliente' ? ' auth-profile--active' : ''}`}
+                  type="button"
+                  tabIndex={isPaneActive ? 0 : -1}
+                  aria-pressed={profile === 'cliente'}
+                  onClick={() => selectProfile('cliente')}
+                >
+                  <Icon name="heart" /> Cliente
+                </button>
+                <button
+                  className={`auth-profile${profile === 'admin' ? ' auth-profile--active' : ''}`}
+                  type="button"
+                  tabIndex={isPaneActive ? 0 : -1}
+                  aria-pressed={profile === 'admin'}
+                  onClick={() => selectProfile('admin')}
+                >
+                  <Icon name="shield" /> Admin
+                </button>
+              </div>
+            </>
+          )}
+
+          <form className="auth-form" onSubmit={handleSubmit} onChange={() => setNotice('')}>
+            <div className="auth-field">
+              <label htmlFor={`${prefix}-username`}>
+                {recovery ? 'E-mail ou usuário' : isPaneAdmin ? 'Usuário ou e-mail administrativo' : 'E-mail ou usuário'}
+              </label>
+              <div className="auth-input-wrap">
+                <Icon name="user" />
+                <input
+                  id={`${prefix}-username`}
+                  name="username"
+                  type="text"
+                  tabIndex={isPaneActive ? 0 : -1}
+                  value={username}
+                  onChange={(event) => setUsername(event.target.value)}
+                  placeholder={isPaneAdmin ? 'admin@mimosdataty.com' : 'nome@exemplo.com'}
+                  autoComplete="username"
+                  autoCapitalize="none"
+                  spellCheck={false}
+                  required
+                  aria-describedby={notice && isPaneActive ? `${prefix}-notice` : undefined}
+                />
+              </div>
+            </div>
+
+            {!recovery && (
+              <>
+                <div className="auth-field auth-field--password">
+                  <label htmlFor={`${prefix}-password`}>Senha</label>
+                  <div className="auth-input-wrap">
+                    <Icon name="lock" />
+                    <input
+                      id={`${prefix}-password`}
+                      name="password"
+                      type={showPassword ? 'text' : 'password'}
+                      tabIndex={isPaneActive ? 0 : -1}
+                      value={password}
+                      onChange={(event) => setPassword(event.target.value)}
+                      placeholder="••••••••"
+                      autoComplete="current-password"
+                      required
+                      aria-describedby={notice && isPaneActive ? `${prefix}-notice` : undefined}
+                    />
+                    <button
+                      className="auth-password-toggle"
+                      type="button"
+                      tabIndex={isPaneActive ? 0 : -1}
+                      aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                      aria-pressed={showPassword}
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      <Icon name={showPassword ? 'eyeOff' : 'eye'} />
+                    </button>
+                  </div>
+                </div>
+                <a
+                  className="auth-forgot"
+                  href="/recuperacao"
+                  tabIndex={isPaneActive ? 0 : -1}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate('/recuperacao');
+                  }}
+                >
+                  Esqueceu a senha?
+                </a>
+              </>
+            )}
+
+            <button className="auth-submit" type="submit" tabIndex={isPaneActive ? 0 : -1}>
+              {recovery ? 'Enviar instruções' : isPaneAdmin ? 'Entrar como Admin' : 'Entrar'} <Icon name="arrow" />
+            </button>
+
+            {recovery && (
+              <a
+                className="auth-back"
+                href={`/login${profileQuery}`}
+                tabIndex={isPaneActive ? 0 : -1}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (onNavigate) onNavigate('login');
+                  else navigate(`/login${profileQuery}`);
+                }}
+              >
+                Voltar ao login
+              </a>
+            )}
+
+            {notice && isPaneActive && (
+              <p id={`${prefix}-notice`} className="auth-notice" role="status">
+                {notice}
+              </p>
+            )}
+
+            <a
+              className="auth-back auth-back--home"
+              href="/"
+              tabIndex={isPaneActive ? 0 : -1}
+              onClick={(e) => {
+                e.preventDefault();
+                if (onNavigate) onNavigate('inicio');
+                else navigate('/');
+              }}
+            >
+              ← Voltar ao início
+            </a>
+          </form>
+
+          <p className="auth-privacy">
+            <span aria-hidden="true" /> Acesso seguro e privacidade garantida
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <main className={`auth-page${profile === 'admin' ? ' auth-page--admin' : ''}`} lang="pt-BR">
+    <main className={`auth-page${isAdmin ? ' auth-page--admin' : ''}`} lang="pt-BR">
       <div className="auth-corner auth-corner--left" aria-hidden="true" />
       <div className="auth-corner auth-corner--right" aria-hidden="true" />
       <div className="auth-hearts" aria-hidden="true">
@@ -83,91 +261,47 @@ export default function Login({ recovery = false, onNavigate }) {
       </div>
       <div className="auth-border" aria-hidden="true" />
 
-      <section className={`auth-card${recovery ? ' auth-card--recovery' : ''}`} aria-labelledby="auth-title">
-        <h1 id="auth-title" className="auth-title">{recovery ? 'Recuperação' : 'Entrar'}</h1>
+      <section
+        className={`auth-card${recovery ? ' auth-card--recovery' : ''}${isAdmin && !recovery ? ' auth-card--admin' : ''}`}
+        aria-labelledby="auth-title"
+      >
+        <div className="auth-split">
+          {renderFormPane('cliente')}
+          {!recovery && renderFormPane('admin')}
+        </div>
 
-        {recovery ? (
-          <div className="auth-intro">
-            <p className="auth-subtitle">Esqueceu sua senha?</p>
-            <p className="auth-description">Digite seu e-mail ou usuário cadastrado e enviaremos as instruções para redefinir sua senha.</p>
-          </div>
-        ) : (
-          <div className="auth-profiles" role="group" aria-label="Perfil de acesso">
-            <button className={`auth-profile${profile === 'cliente' ? ' auth-profile--active' : ''}`} type="button" aria-pressed={profile === 'cliente'} onClick={() => selectProfile('cliente')}>
-              <Icon name="heart" /> Cliente
-            </button>
-            <button className={`auth-profile${profile === 'admin' ? ' auth-profile--active' : ''}`} type="button" aria-pressed={profile === 'admin'} onClick={() => selectProfile('admin')}>
-              <Icon name="shield" /> Admin
-            </button>
-          </div>
-        )}
+        {!recovery && (
+          <aside className="auth-visual-overlay" aria-hidden="true">
+            <div className="auth-visual-track">
+              <img
+                src={imagemAtelie}
+                alt="Bonequinha de crochê e linhas do ateliê Mimos da Taty"
+                className="auth-visual-img"
+              />
+              <div className="auth-visual-gradient" />
 
-        <form className="auth-form" onSubmit={handleSubmit} onChange={() => setNotice('')}>
-          <div className="auth-field">
-            <label htmlFor="auth-username">{recovery ? 'E-mail ou usuário' : 'Usuário'}</label>
-            <div className="auth-input-wrap">
-              <Icon name="user" />
-              <input id="auth-username" name="username" type="text" value={username} onChange={(event) => setUsername(event.target.value)} placeholder="nome@exemplo.com" autoComplete="username" autoCapitalize="none" spellCheck={false} required aria-describedby={notice ? 'auth-notice' : undefined} />
-            </div>
-          </div>
+              <div className="auth-visual-content">
+                <div className="auth-visual-top">
+                  <img src={logoMimos} alt="" className="auth-visual-logo" />
+                  <span className="auth-visual-tag">Ateliê Mimos da Taty</span>
+                </div>
 
-          {!recovery && (
-            <>
-              <div className="auth-field auth-field--password">
-                <label htmlFor="auth-password">Senha</label>
-                <div className="auth-input-wrap">
-                  <Icon name="lock" />
-                  <input id="auth-password" name="password" type={showPassword ? 'text' : 'password'} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="••••••••" autoComplete="current-password" required aria-describedby={notice ? 'auth-notice' : undefined} />
-                  <button className="auth-password-toggle" type="button" aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'} aria-pressed={showPassword} onClick={() => setShowPassword(!showPassword)}>
-                    <Icon name={showPassword ? 'eyeOff' : 'eye'} />
-                  </button>
+                <div className="auth-visual-Quote">
+                  <h2 className="auth-visual-heading">
+                    {isAdmin ? 'Amor em cada detalhe artesanal' : 'Cada ponto feito com muito amor'}
+                  </h2>
+                  <p className="auth-visual-text">
+                    {isAdmin
+                      ? 'Organize pedidos, acompanhe a produção do ateliê e cuide de cada enxoval com carinho.'
+                      : 'Enxovais personalizados em crochê e bordado para tornar cada momento do seu bebê único.'}
+                  </p>
                 </div>
               </div>
-              <a
-                className="auth-forgot"
-                href="/recuperacao"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigate('/recuperacao');
-                }}
-              >
-                Esqueceu a senha?
-              </a>
-            </>
-          )}
-
-          <button className="auth-submit" type="submit">{recovery ? 'Enviar instruções' : 'Entrar'} <Icon name="arrow" /></button>
-
-          {recovery && (
-            <a
-              className="auth-back"
-              href={`/login${profileQuery}`}
-              onClick={(e) => {
-                e.preventDefault();
-                if (onNavigate) onNavigate('login');
-                else navigate(`/login${profileQuery}`);
-              }}
-            >
-              Voltar ao login
-            </a>
-          )}
-          {notice && <p id="auth-notice" className="auth-notice" role="status">{notice}</p>}
-          <a
-            className="auth-back"
-            href="/"
-            style={{ marginTop: '14px', opacity: 0.8 }}
-            onClick={(e) => {
-              e.preventDefault();
-              if (onNavigate) onNavigate('inicio');
-              else navigate('/');
-            }}
-          >
-            ← Voltar ao início
-          </a>
-        </form>
-
-        <p className="auth-privacy"><span aria-hidden="true" /> Acesso seguro e privacidade garantida</p>
+            </div>
+          </aside>
+        )}
       </section>
     </main>
   );
 }
+
