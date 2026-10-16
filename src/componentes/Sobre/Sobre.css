@@ -194,57 +194,61 @@
    ========================================================= */
 .sobre .animar-rolagem {
   opacity: 0;
-  filter: blur(5px);
+  filter: blur(8px);
   transition:
-    opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.85s cubic-bezier(0.22, 1, 0.36, 1),
-    filter 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1.05s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.9s cubic-bezier(0.16, 1, 0.3, 1),
     box-shadow 0.35s ease;
   will-change: opacity, transform, filter;
 }
 
 .sobre .animar-cima {
-  transform: translate3d(0, 36px, 0);
+  transform: translate3d(0, 60px, 0) scale(0.95);
 }
 
 .sobre .animar-esquerda {
-  transform: translate3d(-32px, 0, 0);
+  transform: translate3d(-60px, 0, 0);
 }
 
 .sobre .animar-escala {
-  transform: translate3d(0, 24px, 0) scale(0.92);
+  transform: translate3d(0, 42px, 0) scale(0.82);
+  transition:
+    opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1s cubic-bezier(0.34, 1.56, 0.64, 1),
+    filter 0.85s ease;
 }
 
 .sobre .animar-card-esquerda {
-  transform: translate3d(-48px, 38px, 0) scale(0.97);
+  transform: translate3d(-90px, 65px, 0) rotate(-2.5deg) scale(0.91);
 }
 
 .sobre .animar-card-direita {
-  transform: translate3d(48px, 38px, 0) scale(0.97);
+  transform: translate3d(90px, 65px, 0) rotate(2.5deg) scale(0.91);
 }
 
 .sobre .atraso-1 {
-  transition-delay: 0.12s;
+  transition-delay: 0.16s;
 }
 
 .sobre .atraso-2 {
-  transition-delay: 0.24s;
+  transition-delay: 0.3s;
 }
 
 .sobre .atraso-3 {
-  transition-delay: 0.36s;
+  transition-delay: 0.44s;
 }
 
 .sobre .animar-rolagem.visivel {
   opacity: 1;
   filter: blur(0);
-  transform: translate3d(0, 0, 0) scale(1);
+  transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
 }
 
 /* Preserva a fluidez imediata do hover nos cards após a entrada */
 .sobre .card-conteudo.visivel:hover {
   box-shadow: 0 12px 28px rgba(127, 83, 63, 0.14);
-  transform: translate3d(0, -4px, 0) scale(1);
+  transform: translate3d(0, -4px, 0) rotate(0deg) scale(1);
   transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1),
               box-shadow 0.35s ease;
 }
@@ -253,7 +257,7 @@
 .sobre-tagline.animar-rolagem .linha-tagline {
   transform: scaleX(0);
   transform-origin: left center;
-  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.15s;
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.18s;
 }
 
 .sobre-tagline.animar-rolagem.visivel .linha-tagline {
@@ -264,28 +268,28 @@
 .card-conteudo.animar-rolagem .card-topico-titulo,
 .card-conteudo.animar-rolagem .card-topico-texto {
   opacity: 0;
-  transform: translateY(16px);
+  transform: translateY(28px);
   transition:
-    opacity 0.65s ease,
-    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .card-conteudo.animar-rolagem.visivel .card-topico-titulo {
   opacity: 1;
   transform: translateY(0);
-  transition-delay: 0.18s;
+  transition-delay: 0.22s;
 }
 
 .card-conteudo.animar-rolagem.visivel .card-topico-texto {
   opacity: 1;
   transform: translateY(0);
-  transition-delay: 0.28s;
+  transition-delay: 0.36s;
 }
 
 /* Efeito cinematográfico de zoom suave nas imagens do mosaico */
 .card-foto-wrapper.animar-rolagem .imagem-mosaico {
-  transform: scale(1.09);
-  transition: transform 1.25s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: scale(1.18);
+  transition: transform 1.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .card-foto-wrapper.animar-rolagem.visivel .imagem-mosaico {
@@ -293,17 +297,17 @@
 }
 
 .card-foto-wrapper.animar-rolagem.visivel .card-foto:hover .imagem-mosaico {
-  transform: scale(1.04);
+  transform: scale(1.05);
   transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 /* Desabrochar das decorações botânicas ao redor das fotos */
 .card-foto-wrapper.animar-rolagem .decoracao-pontilhado {
   opacity: 0;
-  transform: scale(0.75) rotate(-8deg);
+  transform: scale(0.5) rotate(-18deg);
   transition:
-    opacity 0.75s ease 0.32s,
-    transform 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.32s;
+    opacity 0.85s ease 0.38s,
+    transform 0.95s cubic-bezier(0.34, 1.56, 0.64, 1) 0.38s;
 }
 
 .card-foto-wrapper.animar-rolagem.visivel .decoracao-pontilhado {
@@ -313,10 +317,10 @@
 
 .card-foto-wrapper.animar-rolagem .decoracao-ramo-direita {
   opacity: 0;
-  transform: translateY(14px) rotate(4deg) scale(0.85);
+  transform: translateY(24px) rotate(-15deg) scale(0.65);
   transition:
-    opacity 0.8s ease 0.38s,
-    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.38s;
+    opacity 0.85s ease 0.44s,
+    transform 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.44s;
 }
 
 .card-foto-wrapper.animar-rolagem.visivel .decoracao-ramo-direita {
@@ -326,30 +330,15 @@
 
 .card-foto-wrapper.animar-rolagem .decoracao-ramo-esquerda {
   opacity: 0;
-  transform: translateY(14px) rotate(-26deg) scale(0.85);
+  transform: translateY(24px) rotate(-42deg) scale(0.65);
   transition:
-    opacity 0.8s ease 0.32s,
-    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.32s;
+    opacity 0.85s ease 0.38s,
+    transform 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.38s;
 }
 
 .card-foto-wrapper.animar-rolagem.visivel .decoracao-ramo-esquerda {
   opacity: 0.9;
   transform: translateY(0) rotate(-12deg) scale(1);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .sobre .animar-rolagem,
-  .card-conteudo.animar-rolagem .card-topico-titulo,
-  .card-conteudo.animar-rolagem .card-topico-texto,
-  .card-foto-wrapper.animar-rolagem .imagem-mosaico,
-  .card-foto-wrapper.animar-rolagem .decoracao-pontilhado,
-  .card-foto-wrapper.animar-rolagem .decoracao-ramo-direita,
-  .card-foto-wrapper.animar-rolagem .decoracao-ramo-esquerda {
-    opacity: 1 !important;
-    filter: none !important;
-    transform: none !important;
-    transition: none !important;
-  }
 }
 
 /* Responsividade Tablet e Mobile */

@@ -17,14 +17,14 @@ function Sobre() {
         entradas.forEach((entrada) => {
           if (entrada.isIntersecting) {
             entrada.target.classList.add('visivel')
-          } else if (entrada.boundingClientRect.top > window.innerHeight * 0.85) {
+          } else if (entrada.boundingClientRect.top > window.innerHeight * 0.75) {
             entrada.target.classList.remove('visivel')
           }
         })
       },
       {
-        threshold: 0.12,
-        rootMargin: '0px 0px -50px 0px',
+        threshold: 0.18,
+        rootMargin: '0px 0px -75px 0px',
       }
     )
 
