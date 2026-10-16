@@ -1,35 +1,70 @@
+import { useEffect, useRef } from 'react'
 import './Sobre.css'
 import fotoNinhoVerde from '../../assets/imagens/sobre-tati.png'
 import fotoBercoRosa from '../../assets/imagens/sobre-atelie.png'
 
 function Sobre() {
+  const secaoRef = useRef(null)
+
+  useEffect(() => {
+    const secaoAtual = secaoRef.current
+    if (!secaoAtual) return
+
+    const elementosAnimados = secaoAtual.querySelectorAll('.animar-rolagem')
+
+    const observador = new IntersectionObserver(
+      (entradas) => {
+        entradas.forEach((entrada) => {
+          if (entrada.isIntersecting) {
+            entrada.target.classList.add('visivel')
+          } else if (entrada.boundingClientRect.top > window.innerHeight * 0.85) {
+            entrada.target.classList.remove('visivel')
+          }
+        })
+      },
+      {
+        threshold: 0.12,
+        rootMargin: '0px 0px -50px 0px',
+      }
+    )
+
+    elementosAnimados.forEach((elemento) => observador.observe(elemento))
+
+    return () => observador.disconnect()
+  }, [])
+
   return (
-    <section className="sobre" id="sobre" aria-labelledby="sobre-titulo">
+    <section
+      ref={secaoRef}
+      className="sobre"
+      id="sobre"
+      aria-labelledby="sobre-titulo"
+    >
       <div className="sobre-container">
 
         <header className="sobre-cabecalho">
-          <div className="sobre-tagline">
+          <div className="sobre-tagline animar-rolagem animar-esquerda">
             <span className="linha-tagline" aria-hidden="true" />
             <span>MIMOS DA TATY</span>
           </div>
 
-          <h2 id="sobre-titulo" className="sobre-titulo">
+          <h2 id="sobre-titulo" className="sobre-titulo animar-rolagem animar-cima atraso-1">
             Sobre mim e meu ateliê
           </h2>
 
-          <p className="sobre-subtitulo">
+          <p className="sobre-subtitulo animar-rolagem animar-cima atraso-2">
             Um espaço dedicado à paixão pelo feito à mão, ao crochê, ao bordado e aos
             detalhes que transformam cada peça em uma lembrança especial.
           </p>
 
-          <div className="sobre-badge">
+          <div className="sobre-badge animar-rolagem animar-escala atraso-3">
             <span>Tati · artesã desde 2006</span>
           </div>
         </header>
 
         <div className="sobre-grid-mosaico">
 
-          <article className="card-conteudo card-quem-sou-eu">
+          <article className="card-conteudo card-quem-sou-eu animar-rolagem animar-card-esquerda">
             <h3 className="card-topico-titulo">Quem sou eu</h3>
             <p className="card-topico-texto">
               Olá! Eu sou a Tati, e desde 2006 sou artesã por paixão e por acreditar no
@@ -39,7 +74,7 @@ function Sobre() {
           </article>
 
 
-          <div className="card-foto-wrapper wrapper-foto-verde">
+          <div className="card-foto-wrapper wrapper-foto-verde animar-rolagem animar-card-direita atraso-1">
 
             <div className="decoracao-pontilhado" aria-hidden="true">
               <svg width="68" height="68" viewBox="0 0 68 68" fill="none">
@@ -106,7 +141,7 @@ function Sobre() {
           </div>
 
 
-          <div className="card-foto-wrapper wrapper-foto-rosa">
+          <div className="card-foto-wrapper wrapper-foto-rosa animar-rolagem animar-card-esquerda">
             <div className="decoracao-ramo decoracao-ramo-esquerda" aria-hidden="true">
               <svg width="52" height="62" viewBox="0 0 52 62" fill="none">
                 <path
@@ -152,7 +187,7 @@ function Sobre() {
           </div>
 
 
-          <article className="card-conteudo card-o-atelie">
+          <article className="card-conteudo card-o-atelie animar-rolagem animar-card-direita atraso-1">
             <h3 className="card-topico-titulo">O ateliê</h3>
             <p className="card-topico-texto">
               No ateliê, você encontra enxovais completos para bebê: mantas, toalhas,

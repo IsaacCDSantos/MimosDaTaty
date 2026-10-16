@@ -355,6 +355,209 @@
   opacity: 0.85;
 }
 
+/* =========================================================
+   Animações de Motion Design ao Rolar (Scroll Reveal)
+   ========================================================= */
+.contato-secao .animar-rolagem {
+  opacity: 0;
+  filter: blur(5px);
+  transition:
+    opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease,
+    border-color 0.3s ease;
+  will-change: opacity, transform, filter;
+}
+
+.contato-secao .animar-cima {
+  transform: translate3d(0, 36px, 0);
+}
+
+.contato-secao .animar-esquerda {
+  transform: translate3d(-32px, 0, 0);
+}
+
+.contato-secao .animar-banner {
+  transform: translate3d(0, 42px, 0) scale(0.96);
+}
+
+.contato-secao .animar-card-esquerda {
+  transform: translate3d(-46px, 40px, 0) scale(0.97);
+}
+
+.contato-secao .animar-card-direita {
+  transform: translate3d(46px, 40px, 0) scale(0.97);
+}
+
+.contato-secao .animar-escala {
+  transform: translate3d(0, 26px, 0) scale(0.92);
+}
+
+.contato-secao .atraso-1 {
+  transition-delay: 0.14s;
+}
+
+.contato-secao .atraso-2 {
+  transition-delay: 0.26s;
+}
+
+.contato-secao .animar-rolagem.visivel {
+  opacity: 1;
+  filter: blur(0);
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+/* Preserva a resposta imediata do hover após a entrada */
+.contato-secao .contato-hero-card.visivel:hover {
+  transform: translate3d(0, -3px, 0) scale(1);
+  box-shadow: 0 20px 44px rgba(135, 94, 75, 0.18);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.contato-secao .contato-card.visivel:hover {
+  transform: translate3d(0, -6px, 0) scale(1);
+  box-shadow: 0 18px 40px rgba(135, 94, 75, 0.16);
+  border-color: #d99294;
+  transition:
+    transform 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+    box-shadow 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+    border-color 0.3s ease;
+}
+
+/* Expansão da linha da tagline */
+.contato-tagline.animar-rolagem .linha-tagline {
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.15s;
+}
+
+.contato-tagline.animar-rolagem.visivel .linha-tagline {
+  transform: scaleX(1);
+}
+
+/* Efeito cinematográfico de zoom suave no banner de contato */
+.contato-hero-card.animar-rolagem .contato-hero-img {
+  transform: scale(1.07);
+  transition: transform 1.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.contato-hero-card.animar-rolagem.visivel .contato-hero-img {
+  transform: scale(1);
+}
+
+/* Coreografia interna dos elementos dentro dos cards de WhatsApp e Instagram */
+.contato-card.animar-rolagem .contato-icone-container {
+  opacity: 0;
+  transform: scale(0.6) rotate(-12deg);
+  transition:
+    opacity 0.6s ease 0.16s,
+    transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.16s;
+}
+
+.contato-card.animar-rolagem.visivel .contato-icone-container {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+.contato-card.animar-rolagem.visivel:hover .contato-icone-container {
+  transform: scale(1.06) rotate(0deg);
+  transition: transform 0.3s ease;
+}
+
+.contato-card.animar-rolagem .contato-badge-status {
+  opacity: 0;
+  transform: translateX(14px);
+  transition:
+    opacity 0.6s ease 0.24s,
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.24s;
+}
+
+.contato-card.animar-rolagem.visivel .contato-badge-status {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.contato-card.animar-rolagem .contato-card-titulo,
+.contato-card.animar-rolagem .contato-card-texto,
+.contato-card.animar-rolagem .contato-botao {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+.contato-card.animar-rolagem .contato-card-titulo {
+  transition:
+    opacity 0.6s ease 0.22s,
+    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.22s;
+}
+
+.contato-card.animar-rolagem .contato-card-texto {
+  transition:
+    opacity 0.6s ease 0.3s,
+    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.3s;
+}
+
+.contato-card.animar-rolagem .contato-botao {
+  transition:
+    opacity 0.6s ease 0.38s,
+    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.38s,
+    background-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.contato-card.animar-rolagem.visivel .contato-card-titulo,
+.contato-card.animar-rolagem.visivel .contato-card-texto,
+.contato-card.animar-rolagem.visivel .contato-botao {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.contato-card.animar-rolagem.visivel .contato-botao:hover {
+  transform: translateY(-2px);
+  transition:
+    background-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+/* Flutuação suave dos corações da bonequinha */
+@keyframes flutuarCoracao {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(4deg);
+  }
+}
+
+.contato-decoracao-boneca.visivel .coracao-1 {
+  animation: flutuarCoracao 3.6s ease-in-out infinite;
+}
+
+.contato-decoracao-boneca.visivel .coracao-2 {
+  animation: flutuarCoracao 4.2s ease-in-out 0.6s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contato-secao .animar-rolagem,
+  .contato-hero-card.animar-rolagem .contato-hero-img,
+  .contato-card.animar-rolagem .contato-icone-container,
+  .contato-card.animar-rolagem .contato-badge-status,
+  .contato-card.animar-rolagem .contato-card-titulo,
+  .contato-card.animar-rolagem .contato-card-texto,
+  .contato-card.animar-rolagem .contato-botao {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .contato-decoracao-boneca.visivel .coracao-1,
+  .contato-decoracao-boneca.visivel .coracao-2 {
+    animation: none !important;
+  }
+}
+
 
 @media (max-width: 1100px) {
   .contato-decoracao-boneca {
