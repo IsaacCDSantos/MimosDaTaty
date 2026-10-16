@@ -56,7 +56,7 @@ function Contato() {
           </h2>
 
           <p className="contato-subtitulo animar-rolagem animar-cima atraso-2">
-            Tire suas dúvidas, solicite um orçamento personalizado ou venha acompanhar de
+            Tire suas dúvidas ou venha acompanhar de
             pertinho a confecção de cada mimo para o seu bebê.
           </p>
         </header>
@@ -87,8 +87,7 @@ function Contato() {
             <div className="contato-conteudo">
               <h3 className="contato-card-titulo">WhatsApp</h3>
               <p className="contato-card-texto">
-                Fale diretamente com a Tati para tirar dúvidas, escolher tecidos, personalizar
-                bordados e solicitar seu orçamento sob medida.
+                Fale diretamente com a Tati para tirar dúvidas.
               </p>
             </div>
 
@@ -125,8 +124,7 @@ function Contato() {
             <div className="contato-conteudo">
               <h3 className="contato-card-titulo">Instagram</h3>
               <p className="contato-card-texto">
-                Acompanhe a rotina do ateliê, fotos de peças prontas, lançamentos exclusivos e
-                relatos de mães apaixonadas pelo feito à mão.
+                Acompanhe o ateliê, fotos de peças prontas e relatos apaixonados pelo nosso trabalho.
               </p>
             </div>
 
