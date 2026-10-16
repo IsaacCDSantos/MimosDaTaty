@@ -244,6 +244,12 @@ Projeto desenvolvido com carinho para o ateliê **Mimos da Taty** (artesanato in
 <table>
   <tr>
     <td align="center">
+      <a href="https://github.com/Fernandocarvalh01">
+        <img src="https://github.com/Fernandocarvalh01.png" width="90px;" alt="Fernando Carvalho" style="border-radius: 50%;"/><br />
+        <sub><b>Fernando Carvalho</b></sub>
+      </a>
+    </td>
+    <td align="center">
       <a href="https://github.com/guirodrigues140507-code">
         <img src="https://github.com/guirodrigues140507-code.png" width="90px;" alt="Guilherme Rodrigues" style="border-radius: 50%;"/><br />
         <sub><b>Guilherme Rodrigues</b></sub>
@@ -264,6 +270,7 @@ Projeto desenvolvido com carinho para o ateliê **Mimos da Taty** (artesanato in
   </tr>
 </table>
 
+- **Fernando Carvalho** — [@Fernandocarvalh01](https://github.com/Fernandocarvalh01)
 - **Guilherme Rodrigues** — [@guirodrigues140507-code](https://github.com/guirodrigues140507-code)
 - **Isaac Coelho Santos** — [@IsaacCDSantos](https://github.com/IsaacCDSantos)
 - **Vinicius Caminha** — [@ViniciusCaminha](https://github.com/ViniciusCaminha)
