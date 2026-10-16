@@ -34,16 +34,17 @@ function Header({ onAbrirLogin }) {
 
 
 
-  // Função de rolagem com animação suave e desaceleração progressiva (easeInOutCubic)
-  const rolarSuavemente = (posicaoFinal, duracao = 850) => {
+  // Função de rolagem com início rápido e desaceleração suave progressiva (ease-out)
+  const rolarSuavemente = (posicaoFinal, duracao = 800) => {
     const posicaoInicial = window.scrollY
     const distancia = posicaoFinal - posicaoInicial
     if (Math.abs(distancia) < 4) return
 
     let inicioTempo = null
 
+    // Curva ease-out quádrica: arranca imediatamente rápida e pousa bem devagar
     const curvaSuave = (t) => {
-      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+      return 1 - Math.pow(1 - t, 4)
     }
 
     const animarPasso = (tempoAtual) => {
