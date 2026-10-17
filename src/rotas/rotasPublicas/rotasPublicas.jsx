@@ -1,11 +1,11 @@
 import { Route } from 'react-router-dom'
 import Inicio from '../../paginas/Inicio/Inicio'
 import Login from '../../paginas/Login/Login'
-import Carrinho from '../../componentes/Carrinho/Carrinho'
-import Checkout from '../../componentes/Checkout/Checkout'
-import RecuperacaoSenha from '../../componentes/RecuperacaoSenha/RecuperacaoSenha'
-import ConfirmacaoEnvioEmail from '../../componentes/ConfirmacaoEnvioEmail/ConfirmacaoEnvioEmail'
-import Catalogo from '../../componentes/Catalogo/Catalogo'
+import Carrinho from '../../paginas/Carrinho/Carrinho'
+import Checkout from '../../paginas/Checkout/Checkout'
+import RecuperacaoSenha from '../../paginas/RecuperacaoSenha/RecuperacaoSenha'
+import ConfirmacaoEnvioEmail from '../../paginas/ConfirmacaoEnvioEmail/ConfirmacaoEnvioEmail'
+import Catalogo from '../../paginas/Catalogo/Catalogo'
 
 // Rotas públicas: acessíveis por qualquer usuário diretamente no navegador
 export const rotasPublicas = (
