@@ -6,6 +6,8 @@ import Checkout from '../../componentes/Checkout/Checkout'
 import RecuperacaoSenha from '../../componentes/RecuperacaoSenha/RecuperacaoSenha'
 import ConfirmacaoEnvioEmail from '../../componentes/ConfirmacaoEnvioEmail/ConfirmacaoEnvioEmail'
 import Catalogo from '../../componentes/Catalogo/Catalogo'
+import AdminEditarPeca from "../../componentes/AdminEditarPeca/AdminEditarPeca";
+import AdminAdicionarPeca from "../../componentes/AdminAdicionarPeca/AdminAdicionarPeca";
 
 // Rotas públicas: acessíveis por qualquer usuário diretamente no navegador
 export const rotasPublicas = (
@@ -30,5 +32,11 @@ export const rotasPublicas = (
 
     {/* Tela de checkout-pagamento */}
     <Route path="/checkout" element={<Checkout />} />
+
+    {/* Tela de edição de peça (Admin) */}
+    <Route path="/editar-peca" element={<AdminEditarPeca />} />
+
+    {/* Tela de adição de peça (Admin) */}
+    <Route path="/adicionar-peca" element={<AdminAdicionarPeca />} />
   </>
 )

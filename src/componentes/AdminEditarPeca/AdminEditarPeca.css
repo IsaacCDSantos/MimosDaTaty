@@ -1,0 +1,245 @@
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+
+/* Fundo geral da página seguindo o protótipo */
+.admin-page-bg {
+  background-color: #fce1cd; /* Tom pêssego do fundo */
+  min-height: 100vh;
+  padding: 30px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Navbar topo */
+.admin-nav {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1000px;
+  margin: 0 auto 30px auto;
+}
+
+.nav-links, .nav-user {
+  display: flex;
+  gap: 15px;
+}
+
+.nav-btn, .nav-btn-user {
+  background-color: #df9e9f;
+  border: none;
+  color: white;
+  padding: 8px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.nav-btn.ativo {
+  background-color: #c47679; /* Tom mais escuro para o ativo */
+}
+
+.nav-btn-user {
+  background-color: #f7ece9;
+  color: #c47679;
+}
+
+/* Cartão principal */
+.form-card {
+  background-color: white;
+  max-width: 1000px;
+  margin: 0 auto;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.btn-voltar {
+  background: none;
+  border: none;
+  color: #c47679;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+.titulo-editar {
+  font-family: 'Great Vibes', cursive;
+  font-size: 42px;
+  color: #a45a52;
+  margin: 0 0 10px 0;
+  font-weight: normal;
+}
+
+.subtitulo-editar {
+  color: #888;
+  font-size: 14px;
+  margin-bottom: 30px;
+}
+
+/* Grid do Formulário */
+.form-grid {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 40px;
+  margin-bottom: 50px;
+}
+
+/* Coluna da Foto */
+.coluna-foto {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.foto-placeholder {
+  background-color: #f7eee7;
+  border-radius: 12px;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #b0a39c;
+  font-size: 14px;
+}
+
+/* Campos de Input */
+.coluna-dados {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.campo label {
+  font-size: 13px;
+  color: #888;
+}
+
+.campo input, .campo textarea, .campo select {
+  padding: 12px;
+  border: 1px solid #ecc9c9;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #555;
+  outline: none;
+}
+
+.campo input:focus, .campo textarea:focus, .campo select:focus {
+  border-color: #df9e9f;
+}
+
+.linha-dupla {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* Toggle Switch (RF24) */
+.campo-toggle {
+  margin-top: 10px;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #df9e9f;
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+/* Botões Inferiores */
+.acoes-rodape {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 30px;
+}
+
+.acoes-direita {
+  display: flex;
+  gap: 15px;
+}
+
+.btn-outline {
+  background: white;
+  border: 1px solid #df9e9f;
+  color: #c47679;
+  padding: 10px 24px;
+  border-radius: 24px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.btn-outline:hover {
+  background-color: #fff5f5;
+}
+
+.btn-salvar {
+  background-color: #df9e9f;
+  border: none;
+  color: white;
+  padding: 10px 24px;
+  border-radius: 24px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.btn-salvar:hover {
+  background-color: #c47679;
+}
+/* Estilo para a imagem carregada */
+.foto-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
