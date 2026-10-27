@@ -6,6 +6,8 @@ import Checkout from '../../componentes/Checkout/Checkout'
 import RecuperacaoSenha from '../../componentes/RecuperacaoSenha/RecuperacaoSenha'
 import ConfirmacaoEnvioEmail from '../../componentes/ConfirmacaoEnvioEmail/ConfirmacaoEnvioEmail'
 import Catalogo from '../../componentes/Catalogo/Catalogo'
+import InicioAdmin from '../../paginas/Admin/InicioAdmin'
+import { DADOS_ADMIN_DEMONSTRACAO } from '../../paginas/Admin/dadosDemonstracao'
 
 // Rotas públicas: acessíveis por qualquer usuário diretamente no navegador
 export const rotasPublicas = (
@@ -17,6 +19,9 @@ export const rotasPublicas = (
     <Route path="/login" element={<Login />} />
 
     <Route path="/catalogo" element={<Catalogo />} />
+
+    {/* Previa publica com dados ficticios, separada da area administrativa. */}
+    <Route path="/previa/admin" element={<InicioAdmin dados={DADOS_ADMIN_DEMONSTRACAO} demonstracao />} />
 
     {/* Tela de Carrinho */}
     <Route path="/carrinho" element={<Carrinho />} />

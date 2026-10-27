@@ -153,6 +153,8 @@ Sistema Web Mimos da Taty/
 | `/recuperar-senha` | `RecuperacaoSenha` | **Público** | Formulário para envio de redefinição de senha por e-mail. |
 | `/confirmacao` | `ConfirmacaoEnvioEmail` | **Público** | Tela de confirmação e orientações após a solicitação de redefinição. |
 | `/checkout` | `Checkout` | **Público** | Revisão de pedido, resumo financeiro e seleção de método de pagamento. |
+| `/previa/admin` | `InicioAdmin` | **Público, demonstração** | Prévia do painel com dados fictícios, atalhos e detalhes de peças. |
+| `/admin/*` | `ExigirAdministrador` | **Restrito** | Bloqueado sem usuário autenticado com perfil admin; integração com backend pendente. |
 | `*` | Redirecionamento | — | Redireciona qualquer rota inválida ou inexistente para `/`. |
 
 ---
@@ -230,7 +232,7 @@ Para manter o histórico e a qualidade de engenharia do repositório, recomenda-
 - [x] Telas do fluxo de recuperação de senha e confirmação de e-mail;
 - [x] Implementação de carrinho de compras (layout fidedigno ao Figma e interatividade front-end);
 - [x] Layout e componentes de checkout com resumo de compras e formas de pagamento;
-- [ ] Implementação do lado admin;
+- [x] Página inicial do admin com prévia identificada e dados de exemplo;
 - [ ] Integração com backend / API REST para persistência de dados;
 - [ ] Integração com gateway de pagamentos real (PIX dinâmico, cartão);
 - [ ] Painel Administrativo privado para gerenciamento de pedidos e produtos.
