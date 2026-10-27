@@ -11,7 +11,7 @@ A interface reproduz a referência do painel da artesã com marca, acesso à vit
 
 Ver vitrine da loja abre o início existente. Ver todas abre o catálogo público existente. Selecionar uma peça abre os detalhes em diálogo nativo com suporte a Escape e retorno do foco ao botão de origem.
 
-Acessar Catálogo/Pedidos mostra que o gerenciamento ainda está indisponível. Não navega para páginas inexistentes nem simula alterações. No aviso do catálogo é possível abrir a vitrine pública.
+Acessar Pedidos abre a nova tela de pedidos no mesmo modo de acesso (prévia ou área protegida). Acessar Catálogo ainda informa indisponibilidade do gerenciamento e permite abrir a vitrine pública.
 
 ## Requisitos e próxima integração
 
