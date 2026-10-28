@@ -81,7 +81,7 @@ export default function InicioAdmin({ dados, demonstracao = false }) {
                   <h3>Catálogo da Loja</h3><p>Adicione novas peças, edite valores, descrições e controle o que fica visível na vitrine.</p>
                 </article>
                 <article className="admin-home-shortcut admin-home-shortcut--orders">
-                  <div className="admin-home-shortcut-top"><span className="admin-home-shortcut-icon"><IconeAdmin nome="pedidos" /></span><button type="button" onClick={() => setAreaSolicitada('pedidos')}>Acessar Pedidos <IconeAdmin nome="seta" /></button></div>
+                  <div className="admin-home-shortcut-top"><span className="admin-home-shortcut-icon"><IconeAdmin nome="pedidos" /></span><Link to={demonstracao ? '/previa/admin/pedidos' : '/admin/pedidos'}>Acessar Pedidos <IconeAdmin nome="seta" /></Link></div>
                   <h3>Painel de Pedidos</h3><p>Veja os pedidos novos, acompanhe a produção das encomendas e atualize o status de envio.</p>
                 </article>
               </div>

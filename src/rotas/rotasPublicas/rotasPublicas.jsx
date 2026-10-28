@@ -8,6 +8,8 @@ import ConfirmacaoEnvioEmail from '../../paginas/ConfirmacaoEnvioEmail/Confirmac
 import Catalogo from '../../paginas/Catalogo/Catalogo'
 import InicioAdmin from '../../paginas/Admin/InicioAdmin'
 import { DADOS_ADMIN_DEMONSTRACAO } from '../../paginas/Admin/dadosDemonstracao'
+import PedidosAdmin from '../../paginas/Admin/Pedidos/PedidosAdmin'
+import { PEDIDOS_DEMONSTRACAO } from '../../paginas/Admin/Pedidos/pedidosDemonstracao'
 
 // Rotas públicas: acessíveis por qualquer usuário diretamente no navegador
 export const rotasPublicas = (
@@ -22,6 +24,7 @@ export const rotasPublicas = (
 
     {/* Previa publica com dados ficticios, separada da area administrativa. */}
     <Route path="/previa/admin" element={<InicioAdmin dados={DADOS_ADMIN_DEMONSTRACAO} demonstracao />} />
+    <Route path="/previa/admin/pedidos" element={<PedidosAdmin pedidosIniciais={PEDIDOS_DEMONSTRACAO} demonstracao />} />
 
     {/* Tela de Carrinho */}
     <Route path="/carrinho" element={<Carrinho />} />

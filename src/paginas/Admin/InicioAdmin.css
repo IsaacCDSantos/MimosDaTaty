@@ -448,7 +448,7 @@
   color: var(--admin-ink);
 }
 
-.admin-home-shortcut-top button {
+.admin-home-shortcut-top :is(button, a) {
   align-items: center;
   background: #fff;
   border: 0;
@@ -465,12 +465,12 @@
   width: calc(var(--admin-unit) * 9.3);
 }
 
-.admin-home-shortcut-top button svg {
+.admin-home-shortcut-top :is(button, a) svg {
   height: .85em;
   width: .85em;
 }
 
-.admin-home-shortcut-top button:hover {
+.admin-home-shortcut-top :is(button, a):hover {
   background: #fff7f4;
   transform: translateY(-1px);
 }
@@ -918,7 +918,7 @@
     flex-wrap: wrap;
   }
 
-  .admin-home-shortcut-top button {
+  .admin-home-shortcut-top :is(button, a) {
     font-size: .75em;
     height: auto;
     min-height: 44px;
@@ -1121,7 +1121,7 @@
     min-height: 11em;
   }
 
-  .admin-home-shortcut-top button {
+  .admin-home-shortcut-top :is(button, a) {
     width: auto;
   }
 
