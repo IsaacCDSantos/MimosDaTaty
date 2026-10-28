@@ -1,13 +1,17 @@
 import { Route } from 'react-router-dom'
 import Inicio from '../../paginas/Inicio/Inicio'
 import Login from '../../paginas/Login/Login'
-import Carrinho from '../../componentes/Carrinho/Carrinho'
-import Checkout from '../../componentes/Checkout/Checkout'
-import RecuperacaoSenha from '../../componentes/RecuperacaoSenha/RecuperacaoSenha'
-import ConfirmacaoEnvioEmail from '../../componentes/ConfirmacaoEnvioEmail/ConfirmacaoEnvioEmail'
-import Catalogo from '../../componentes/Catalogo/Catalogo'
-import AdminEditarPeca from "../../componentes/AdminEditarPeca/AdminEditarPeca";
-import AdminAdicionarPeca from "../../componentes/AdminAdicionarPeca/AdminAdicionarPeca";
+import Carrinho from '../../paginas/Carrinho/Carrinho'
+import Checkout from '../../paginas/Checkout/Checkout'
+import RecuperacaoSenha from '../../paginas/RecuperacaoSenha/RecuperacaoSenha'
+import ConfirmacaoEnvioEmail from '../../paginas/ConfirmacaoEnvioEmail/ConfirmacaoEnvioEmail'
+import Catalogo from '../../paginas/Catalogo/Catalogo'
+import InicioAdmin from '../../paginas/Admin/InicioAdmin'
+import { DADOS_ADMIN_DEMONSTRACAO } from '../../paginas/Admin/dadosDemonstracao'
+import PedidosAdmin from '../../paginas/Admin/Pedidos/PedidosAdmin'
+import { PEDIDOS_DEMONSTRACAO } from '../../paginas/Admin/Pedidos/pedidosDemonstracao'
+import AdminEditarPeca from '../../paginas/Admin/EditarPeca/AdminEditarPeca'
+import AdminAdicionarPeca from '../../paginas/Admin/AdicionarPeca/AdminAdicionarPeca'
 
 // Rotas públicas: acessíveis por qualquer usuário diretamente no navegador
 export const rotasPublicas = (
@@ -19,6 +23,12 @@ export const rotasPublicas = (
     <Route path="/login" element={<Login />} />
 
     <Route path="/catalogo" element={<Catalogo />} />
+
+    {/* Previa publica com dados ficticios, separada da area administrativa. */}
+    <Route path="/previa/admin" element={<InicioAdmin dados={DADOS_ADMIN_DEMONSTRACAO} demonstracao />} />
+    <Route path="/previa/admin/pedidos" element={<PedidosAdmin pedidosIniciais={PEDIDOS_DEMONSTRACAO} demonstracao />} />
+    <Route path="/previa/admin/editar-peca" element={<AdminEditarPeca demonstracao />} />
+    <Route path="/previa/admin/adicionar-peca" element={<AdminAdicionarPeca demonstracao />} />
 
     {/* Tela de Carrinho */}
     <Route path="/carrinho" element={<Carrinho />} />
@@ -33,10 +43,10 @@ export const rotasPublicas = (
     {/* Tela de checkout-pagamento */}
     <Route path="/checkout" element={<Checkout />} />
 
-    {/* Tela de edição de peça (Admin) */}
-    <Route path="/editar-peca" element={<AdminEditarPeca />} />
+    {/* Endereços anteriores preservados como prévias sem persistência. */}
+    <Route path="/editar-peca" element={<AdminEditarPeca demonstracao />} />
 
     {/* Tela de adição de peça (Admin) */}
-    <Route path="/adicionar-peca" element={<AdminAdicionarPeca />} />
+    <Route path="/adicionar-peca" element={<AdminAdicionarPeca demonstracao />} />
   </>
 )

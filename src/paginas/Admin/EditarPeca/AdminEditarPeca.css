@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
 
 /* Fundo geral da página seguindo o protótipo */
-.admin-page-bg {
+.admin-editar-peca.admin-page-bg {
   background-color: #fce1cd; /* Tom pêssego do fundo */
   min-height: 100vh;
   padding: 30px;
@@ -9,19 +9,19 @@
 }
 
 /* Navbar topo */
-.admin-nav {
+.admin-editar-peca .admin-nav {
   display: flex;
   justify-content: space-between;
   max-width: 1000px;
   margin: 0 auto 30px auto;
 }
 
-.nav-links, .nav-user {
+.admin-editar-peca .nav-links, .admin-editar-peca .nav-user {
   display: flex;
   gap: 15px;
 }
 
-.nav-btn, .nav-btn-user {
+.admin-editar-peca .nav-btn, .admin-editar-peca .nav-btn-user {
   background-color: #df9e9f;
   border: none;
   color: white;
@@ -32,17 +32,17 @@
   font-size: 14px;
 }
 
-.nav-btn.ativo {
+.admin-editar-peca .nav-btn.ativo {
   background-color: #c47679; /* Tom mais escuro para o ativo */
 }
 
-.nav-btn-user {
+.admin-editar-peca .nav-btn-user {
   background-color: #f7ece9;
   color: #c47679;
 }
 
 /* Cartão principal */
-.form-card {
+.admin-editar-peca .form-card {
   background-color: white;
   max-width: 1000px;
   margin: 0 auto;
@@ -51,7 +51,7 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
-.btn-voltar {
+.admin-editar-peca .btn-voltar {
   background: none;
   border: none;
   color: #c47679;
@@ -61,7 +61,7 @@
   margin-bottom: 20px;
 }
 
-.titulo-editar {
+.admin-editar-peca .titulo-editar {
   font-family: 'Great Vibes', cursive;
   font-size: 42px;
   color: #a45a52;
@@ -69,14 +69,14 @@
   font-weight: normal;
 }
 
-.subtitulo-editar {
+.admin-editar-peca .subtitulo-editar {
   color: #888;
   font-size: 14px;
   margin-bottom: 30px;
 }
 
 /* Grid do Formulário */
-.form-grid {
+.admin-editar-peca .form-grid {
   display: grid;
   grid-template-columns: 300px 1fr;
   gap: 40px;
@@ -84,13 +84,13 @@
 }
 
 /* Coluna da Foto */
-.coluna-foto {
+.admin-editar-peca .coluna-foto {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-.foto-placeholder {
+.admin-editar-peca .foto-placeholder {
   background-color: #f7eee7;
   border-radius: 12px;
   height: 300px;
@@ -102,24 +102,24 @@
 }
 
 /* Campos de Input */
-.coluna-dados {
+.admin-editar-peca .coluna-dados {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-.campo {
+.admin-editar-peca .campo {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.campo label {
+.admin-editar-peca .campo label {
   font-size: 13px;
   color: #888;
 }
 
-.campo input, .campo textarea, .campo select {
+.admin-editar-peca .campo input, .admin-editar-peca .campo textarea, .admin-editar-peca .campo select {
   padding: 12px;
   border: 1px solid #ecc9c9;
   border-radius: 8px;
@@ -128,22 +128,22 @@
   outline: none;
 }
 
-.campo input:focus, .campo textarea:focus, .campo select:focus {
+.admin-editar-peca .campo input:focus, .admin-editar-peca .campo textarea:focus, .admin-editar-peca .campo select:focus {
   border-color: #df9e9f;
 }
 
-.linha-dupla {
+.admin-editar-peca .linha-dupla {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
 }
 
 /* Toggle Switch (RF24) */
-.campo-toggle {
+.admin-editar-peca .campo-toggle {
   margin-top: 10px;
 }
 
-.toggle-label {
+.admin-editar-peca .toggle-label {
   display: flex;
   align-items: center;
   gap: 20px;
@@ -152,19 +152,19 @@
   cursor: pointer;
 }
 
-.toggle-switch {
+.admin-editar-peca .toggle-switch {
   position: relative;
   width: 44px;
   height: 24px;
 }
 
-.toggle-switch input {
+.admin-editar-peca .toggle-switch input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.slider {
+.admin-editar-peca .slider {
   position: absolute;
   cursor: pointer;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -173,7 +173,7 @@
   border-radius: 24px;
 }
 
-.slider:before {
+.admin-editar-peca .slider:before {
   position: absolute;
   content: "";
   height: 18px;
@@ -185,16 +185,16 @@
   border-radius: 50%;
 }
 
-input:checked + .slider {
+.admin-editar-peca input:checked + .slider {
   background-color: #df9e9f;
 }
 
-input:checked + .slider:before {
+.admin-editar-peca input:checked + .slider:before {
   transform: translateX(20px);
 }
 
 /* Botões Inferiores */
-.acoes-rodape {
+.admin-editar-peca .acoes-rodape {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -202,12 +202,12 @@ input:checked + .slider:before {
   padding-top: 30px;
 }
 
-.acoes-direita {
+.admin-editar-peca .acoes-direita {
   display: flex;
   gap: 15px;
 }
 
-.btn-outline {
+.admin-editar-peca .btn-outline {
   background: white;
   border: 1px solid #df9e9f;
   color: #c47679;
@@ -218,11 +218,11 @@ input:checked + .slider:before {
   transition: 0.2s;
 }
 
-.btn-outline:hover {
+.admin-editar-peca .btn-outline:hover {
   background-color: #fff5f5;
 }
 
-.btn-salvar {
+.admin-editar-peca .btn-salvar {
   background-color: #df9e9f;
   border: none;
   color: white;
@@ -233,13 +233,33 @@ input:checked + .slider:before {
   transition: 0.2s;
 }
 
-.btn-salvar:hover {
+.admin-editar-peca .btn-salvar:hover {
   background-color: #c47679;
 }
 /* Estilo para a imagem carregada */
-.foto-preview-img {
+.admin-editar-peca .foto-preview-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: 12px;
+}
+
+.admin-editar-peca .nav-btn, .admin-editar-peca .btn-voltar, .admin-editar-peca .btn-outline { display: inline-block; text-decoration: none; }
+.admin-editar-peca .nav-btn, .admin-editar-peca .nav-btn-user, .admin-editar-peca .btn-outline, .admin-editar-peca .btn-salvar { box-sizing: border-box; font: inherit; }
+.admin-editar-peca .form-grid { grid-template-columns: minmax(0, 300px) minmax(0, 1fr); }
+.admin-editar-peca .campo, .admin-editar-peca .coluna-dados { min-width: 0; }
+.admin-editar-peca .campo input, .admin-editar-peca .campo select, .admin-editar-peca .campo textarea { min-width: 0; width: 100%; box-sizing: border-box; }
+.admin-editar-peca .foto-placeholder { width: 100%; border: 0; padding: 0; overflow: hidden; font: inherit; }
+.admin-editar-peca .aviso-demonstracao, .admin-editar-peca .aviso-formulario { padding: 12px 16px; border-radius: 8px; background: #fff5ed; color: #754945; line-height: 1.5; }
+.admin-editar-peca .aviso-demonstracao { margin: 0 0 24px; }
+.admin-editar-peca .aviso-formulario { margin: 0 0 20px; }
+.admin-editar-peca button:disabled { opacity: .5; cursor: not-allowed; }
+.admin-editar-peca a:focus-visible, .admin-editar-peca button:focus-visible, .admin-editar-peca .toggle-switch:focus-within { outline: 2px solid #a45a52; outline-offset: 3px; }
+@media (max-width: 760px) {
+  .admin-editar-peca.admin-page-bg { padding: 16px; }
+  .admin-editar-peca .admin-nav, .admin-editar-peca .nav-links, .admin-editar-peca .acoes-rodape, .admin-editar-peca .acoes-direita { flex-wrap: wrap; gap: 12px; }
+  .admin-editar-peca .form-card { padding: 24px 18px; }
+  .admin-editar-peca .form-grid { grid-template-columns: minmax(0, 1fr); gap: 24px; margin-bottom: 24px; }
+  .admin-editar-peca .coluna-foto { max-width: 300px; width: 100%; margin: 0 auto; }
+  .admin-editar-peca .linha-dupla { grid-template-columns: minmax(0, 1fr); }
 }
