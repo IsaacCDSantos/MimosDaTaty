@@ -30,6 +30,7 @@
 - [Scripts Disponíveis](#-scripts-disponíveis)
 - [Padrões de Desenvolvimento](#-padrões-de-desenvolvimento)
 - [Roadmap de Evolução](#-roadmap-de-evolução)
+- [Atualizações Recentes e Pendências](#-atualizações-recentes-e-pendências)
 - [Desenvolvedores](#-desenvolvedores)
 - [Licença](#-licença)
 
@@ -61,19 +62,23 @@ A aplicação foi planejada para unir a sensibilidade e o acolhimento do artesan
   - Alternância intuitiva de perfil entre **Cliente** e **Administrador** via estado e parâmetros de URL (`?perfil=admin`).
   - Formulário acessível, com alternância de visibilidade de senha e feedback de validação.
   - Link **Criar conta** disponível no perfil Cliente, levando a `/cadastro`.
+  - Login por e-mail e senha com verificação do perfil protegido em `public.perfis`, bloqueio de perfil incompatível e mensagens genéricas de credenciais inválidas.
+  - Cliente autenticado segue para `/`; administrador autenticado segue para `/admin`. A opção escolhida no formulário precisa corresponder ao perfil armazenado no banco.
+  - Rotas `/admin` verificam a conta no Supabase Auth e o perfil no banco antes de exibir as telas; a sessão é acompanhada ao entrar, sair e atualizar a página.
+  - O cabeçalho identifica a conta conectada por foto ou iniciais e oferece Perfil e Meus pedidos (em breve) e Sair (encerra a sessão neste navegador).
 
 - 🎀 **Cadastro de Clientes (`/cadastro`)**:
   - Página responsiva em `src/paginas/Cadastro`, com nome, e-mail, senha e confirmação de senha.
   - Validação de campos obrigatórios, senha com pelo menos 8 caracteres e confirmação coincidente.
   - Envio ao Supabase Auth isolado em `src/servicos/cadastro.js`, com feedback de erro e orientação para confirmar o e-mail quando necessário.
   - Utiliza `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY` em `.env.local`. O cadastro por e-mail deve estar habilitado no Supabase e a URL de retorno `/login` de cada ambiente deve estar autorizada nas configurações de autenticação.
-  - Login por e-mail e senha com verificação do perfil protegido em `public.perfis`, bloqueio de perfil incompatível e mensagens genéricas de credenciais inválidas.
-  - Rotas `/admin` verificam a conta no Supabase Auth e o perfil no banco antes de exibir as telas; a sessão é acompanhada ao entrar, sair e atualizar a página.
-  - O cabeçalho identifica a conta conectada por foto ou iniciais e oferece Perfil e Meus pedidos (em breve) e Sair (encerra a sessão neste navegador).
+  - A confirmação antes do primeiro login depende de **Authentication → Sign In / Providers → Email → Confirm email** no painel do Supabase.
+  - A tabela `perfis` e o trigger versionados criam novos perfis como `cliente`; o cadastro público não concede permissões administrativas.
 
 - 🔑 **Fluxo de Recuperação de Senha (`/recuperar-senha` e `/confirmacao`)**:
   - Tela dedicada para solicitação de redefinição de acesso por e-mail.
   - Tela de confirmação e orientação com ações rápidas para retornar ao login ou página inicial.
+  - Essas telas ainda são interfaces: o envio do e-mail e a redefinição da senha não estão integrados ao Supabase.
 
 - 🛒 **Tela de Carrinho de Compras (`/carrinho`)**:
   - Implementação fidedigna ao protótipo do Figma com layout acolhedor em tons rosé e pêssego.
@@ -85,12 +90,19 @@ A aplicação foi planejada para unir a sensibilidade e o acolhimento do artesan
 
 - 🛍️ **Fluxo de Checkout (`/checkout`)**:
   - Resumo de valores em tempo real: Subtotal, frete estimado, cupons de desconto e total final.
-  - Seleção de formas de pagamento (Cartão de Crédito com parcelamento, PIX com aprovação instantânea e Boleto Bancário).
+  - Seleção visual de formas de pagamento (Cartão de Crédito, PIX e Boleto Bancário), ainda sem processamento ou confirmação real de pagamentos.
   - Atalho para edição do carrinho e navegação de retorno.
 
 - 🧭 **Roteamento SPA Modularizado**:
-  - Separação arquitetural entre **Rotas Públicas** e **Rotas Privadas** (preparado para futura área restrita do cliente e dashboard administrativo).
+  - Separação entre **Rotas Públicas** e **Rotas Privadas**, com autenticação e verificação de perfil no acesso administrativo.
+  - Prévias públicas do administrador usam dados demonstrativos e ficam separadas das rotas restritas.
   - Tratamento de páginas inexistentes com redirecionamento automático (Fallback 404).
+
+- 🧵 **Área Administrativa**:
+  - Painel inicial, tela de pedidos e formulários de adicionar/editar peças com rotas administrativas protegidas.
+  - Formulários retornam ao painel correspondente ao modo atual: `/admin` ou `/previa/admin`.
+  - O atalho **Ver catálogo da loja** no aviso de gestão foi alterado para permanecer no painel; o catálogo administrativo ainda não foi implementado. A vitrine pública continua em `/catalogo`.
+  - Persistência de peças e pedidos ainda pendente; a autenticação funcional não significa que as operações de gestão já estejam conectadas ao banco.
 
 ---
 
@@ -102,6 +114,7 @@ A aplicação foi planejada para unir a sensibilidade e o acolhimento do artesan
 | **[React](https://react.dev/)** | `^19.2.8` | Biblioteca principal para criação de interfaces declarativas em componentes reutilizáveis. |
 | **[Vite](https://vite.dev/)** | `^8.3.0` | Ferramenta de build e bundling de última geração com inicialização instantânea e *Hot Module Replacement (HMR)*. |
 | **[React Router DOM](https://reactrouter.com/)** | `^7.18.4` | Gerenciamento de rotas e navegação client-side com URLs amigáveis. |
+| **[Supabase JS](https://supabase.com/docs/reference/javascript/introduction)** | `^2.118.0` | Cadastro, login, acompanhamento de sessão e consulta dos perfis de acesso. |
 | **CSS3 Puro & Modular** | — | Estilização temática sob medida com variáveis de cores pastéis/terrosas, animações e responsividade. |
 | **SVG Icons Inline** | — | Ícones vetoriais otimizados integrados aos componentes sem sobrecarga de bibliotecas externas pesadas. |
 
@@ -126,26 +139,32 @@ Sistema Web Mimos da Taty/
 │   │   └── videos/         # Mídias e vídeos promocionais
 │   ├── componentes/        # Componentes de interface e seções reutilizáveis
 │   │   ├── Beneficios/     # Cards de benefícios e diferenciais do ateliê
-│   │   ├── Carrinho/       # Tela e componentes do carrinho de compras (fiel ao Figma)
-│   │   ├── Checkout/       # Tela e resumo do processo de checkout/pagamento
-│   │   ├── ConfirmacaoEnvioEmail/ # Tela de feedback pós-solicitação de e-mail
 │   │   ├── Contato/        # Seção e formulário para contato com o ateliê
 │   │   ├── Header/         # Cabeçalho global com menu responsivo e navegação
 │   │   ├── Hero/           # Banner principal de boas-vindas e CTA
-│   │   ├── RecuperacaoSenha/    # Interface do formulário de recuperação de senha
 │   │   └── Sobre/          # Mosaico histórico da artesã e do ateliê
 │   ├── paginas/            # Páginas e visões completas da aplicação
-│   │   ├── Cadastro/        # Cadastro de clientes (JSX e CSS próprios)
-│   │   ├── Login/           # Tela de Login com troca de perfil (Cliente / Admin)
-│   │   └── Inicio/         # Landing Page consolidando as seções da vitrine
+│   │   ├── Admin/          # Painel, pedidos e formulários administrativos
+│   │   ├── Cadastro/       # Cadastro de clientes (JSX e CSS próprios)
+│   │   ├── Carrinho/       # Carrinho de compras
+│   │   ├── Catalogo/       # Vitrine pública
+│   │   ├── Checkout/       # Interface de checkout
+│   │   ├── ConfirmacaoEnvioEmail/ # Interface de confirmação da recuperação
+│   │   ├── Inicio/         # Landing page da loja
+│   │   ├── Login/          # Login com seleção Cliente / Admin
+│   │   └── RecuperacaoSenha/ # Interface de solicitação de recuperação
 │   ├── rotas/              # Configuração e orquestração do React Router
 │   │   ├── rotasPrivadas/  # Configuração isolada para rotas restritas e protegidas
 │   │   ├── rotasPublicas/  # Configuração isolada para rotas públicas e abertas
 │   │   └── index.jsx       # Ponto central de roteamento com fallback 404
+│   ├── servicos/           # Cliente Supabase, cadastro e consulta da conta/perfil
 │   ├── App.css             # Estilos globais e resets da aplicação
 │   ├── App.jsx             # Componente raiz estruturador
 │   └── main.jsx            # Ponto de entrada React montado no DOM
-├── .gitignore              # Arquivos e diretórios ignorados pelo Git
+├── supabase/migrations/    # SQL de perfis, permissões RLS e trigger de cadastro
+├── tests/                  # Testes automatizados do modelo de pedidos
+├── .env.example            # Modelo das variáveis públicas do Supabase
+├── .gitignore              # Ignora .env.local e arquivos gerados
 ├── eslint.config.js        # Configuração das regras do linter ESLint
 ├── index.html              # Template HTML principal da SPA
 ├── package.json            # Metadados do projeto, dependências e scripts npm
@@ -161,14 +180,21 @@ Sistema Web Mimos da Taty/
 | `/` | `Inicio` | **Público** | Página inicial (Landing page com catálogo, sobre, benefícios e contato). |
 | `/login` | `Login` | **Público** | Página de autenticação para clientes e administradores. |
 | `/cadastro` | `Cadastro` | **Público** | Criação de conta de cliente pelo Supabase Auth. |
+| `/catalogo` | `Catalogo` | **Público** | Vitrine de produtos; não é o gerenciamento administrativo. |
 | `/carrinho` | `Carrinho` | **Público** | Visualização do carrinho, controle de itens/quantidades e resumo de compras. |
-| `/recuperar-senha` | `RecuperacaoSenha` | **Público** | Formulário para envio de redefinição de senha por e-mail. |
+| `/recuperar-senha` | `RecuperacaoSenha` | **Público** | Interface de recuperação; envio e redefinição ainda pendentes. |
+| `/recuperacao` | `RecuperacaoSenha` | **Público** | Endereço alternativo da interface de recuperação; integração de envio pendente. |
 | `/confirmacao` | `ConfirmacaoEnvioEmail` | **Público** | Tela de confirmação e orientações após a solicitação de redefinição. |
 | `/checkout` | `Checkout` | **Público** | Revisão de pedido, resumo financeiro e seleção de método de pagamento. |
 | `/previa/admin` | `InicioAdmin` | **Público, demonstração** | Prévia do painel com dados fictícios, atalhos e detalhes de peças. |
 | `/previa/admin/pedidos` | `PedidosAdmin` | **Público, demonstração** | Busca, filtros, detalhes, rastreio e mudanças temporárias de status/observação em pedidos fictícios. |
-| `/admin/pedidos` | `ExigirAdministrador` + `PedidosAdmin` | **Restrito** | Tela reservada a administradores autenticados; backend pendente. |
-| `/admin/*` | `ExigirAdministrador` | **Restrito** | Bloqueado sem usuário autenticado com perfil admin; integração com backend pendente. |
+| `/previa/admin/adicionar-peca` | `AdminAdicionarPeca` | **Público, demonstração** | Prévia de formulário sem salvar peças. |
+| `/previa/admin/editar-peca` | `AdminEditarPeca` | **Público, demonstração** | Prévia de edição sem persistência. |
+| `/adicionar-peca`, `/editar-peca` | Formulários administrativos em demonstração | **Público, demonstração** | Endereços anteriores preservados sem operações reais. |
+| `/admin/adicionar-peca` | `ExigirAdministrador` + `AdminAdicionarPeca` | **Restrito** | Formulário protegido; persistência de peças pendente. |
+| `/admin/editar-peca` | `ExigirAdministrador` + `AdminEditarPeca` | **Restrito** | Formulário protegido; persistência de alterações pendente. |
+| `/admin/pedidos` | `ExigirAdministrador` + `PedidosAdmin` | **Restrito** | Autenticação implementada; persistência de pedidos pendente. |
+| `/admin/*` | `ExigirAdministrador` + `InicioAdmin` | **Restrito** | Painel liberado após verificar a sessão e o perfil admin no Supabase. |
 | `*` | Redirecionamento | — | Redireciona qualquer rota inválida ou inexistente para `/`. |
 
 ---
@@ -176,7 +202,7 @@ Sistema Web Mimos da Taty/
 ## 📋 Pré-requisitos
 
 Antes de iniciar, certifique-se de possuir em seu ambiente de desenvolvimento:
-- [Node.js](https://nodejs.org/) versão **18.x** ou superior instalada;
+- [Node.js](https://nodejs.org/) **22.13+ na série 22 ou 24+**, compatível com as versões atuais de Vite e ESLint utilizadas;
 - Gerenciador de pacotes **npm** (incluso com o Node) ou **yarn** / **pnpm**;
 - Navegador moderno (como [Brave](https://brave.com/), Chrome, Firefox ou Edge).
 
@@ -189,6 +215,10 @@ Antes de iniciar, certifique-se de possuir em seu ambiente de desenvolvimento:
 Copie `.env.example` para `.env.local` e preencha `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY`. Reinicie o Vite após alterar o arquivo. Na hospedagem, configure essas variáveis **antes do build**. Sem configuração válida, a vitrine continua acessível e o login/cadastro informam indisponibilidade.
 
 A estrutura de perfis está em `supabase/migrations/202610280001_perfis.sql`. Execute esse SQL no SQL Editor do projeto Supabase ao preparar um ambiente. Ele mantém os perfis existentes e cria automaticamente novos perfis como `cliente`. As contas administrativas devem ser promovidas por uma pessoa autorizada no banco; o cadastro público não concede esse acesso. A migração não é executada automaticamente pelo site.
+
+Para conceder acesso administrativo a outra conta, localize seu ID em **Authentication → Users**, encontre a mesma linha em **Table Editor → perfis** e altere `perfil` de `cliente` para `admin`. A pessoa deve sair e entrar novamente pela opção Admin. Essa permissão vale para o site, não para o painel de administração do Supabase.
+
+O Supabase trata tentativas de cadastro repetido com o mesmo e-mail. Conforme as configurações de confirmação, uma resposta sem sessão pode ocultar a existência de uma conta já cadastrada; a tela "Confira seu e-mail" não comprova criação de outra conta nem entrega de uma mensagem. A melhoria desse feedback está acompanhada na [issue #7](https://github.com/IsaacCDSantos/MimosDaTaty/issues/7).
 
 Habilite e-mail/senha no Supabase Auth e autorize a URL `/login` dos ambientes nas URLs de redirecionamento. A proteção de páginas não substitui as regras RLS das futuras tabelas de pedidos e produtos. As telas administrativas atuais ainda usam prévias e não persistem essas operações.
 
@@ -229,6 +259,7 @@ No arquivo `package.json`, estão configurados os seguintes comandos para o cicl
 | `npm run build` | Compila os ativos do projeto para produção na pasta `dist/`. |
 | `npm run preview` | Executa localmente o build de produção para testes pré-deploy. |
 | `npm run lint` | Executa a validação de sintaxe e boas práticas com o ESLint. |
+| `npm test` | Executa os testes automatizados com o runner nativo do Node.js. |
 
 ---
 
@@ -251,14 +282,31 @@ Para manter o histórico e a qualidade de engenharia do repositório, recomenda-
 - [x] Criação da vitrine institucional e seções da Landing Page;
 - [x] Arquitetura de roteamento centralizada com suporte a rotas públicas e privadas;
 - [x] Tela de autenticação flexível (Cliente e Admin);
-- [x] Telas do fluxo de recuperação de senha e confirmação de e-mail;
+- [x] Cadastro e login integrados ao Supabase Auth;
+- [x] Perfis protegidos, criação automática de clientes e acesso administrativo restrito;
+- [x] Identificação da conta no cabeçalho e saída da sessão;
+- [x] Interfaces do fluxo de recuperação de senha e confirmação de e-mail;
 - [x] Implementação de carrinho de compras (layout fidedigno ao Figma e interatividade front-end);
 - [x] Layout e componentes de checkout com resumo de compras e formas de pagamento;
 - [x] Página inicial do admin com prévia identificada e dados de exemplo;
 - [x] Interface de pedidos admin com filtros, detalhes, rastreio e alterações temporárias na prévia;
-- [ ] Integração com backend / API REST para persistência de dados;
+- [x] Migração SQL de perfis versionada e configuração por variáveis de ambiente;
+- [ ] Melhorar o retorno do cadastro com e-mail existente ([issue #7](https://github.com/IsaacCDSantos/MimosDaTaty/issues/7));
+- [ ] Implementar as telas Perfil e Meus pedidos do cliente;
+- [ ] Integrar envio de recuperação e redefinição de senha ao Supabase;
+- [ ] Implementar o catálogo administrativo e persistência de produtos e pedidos;
 - [ ] Integração com gateway de pagamentos real (PIX dinâmico, cartão);
-- [ ] Painel Administrativo privado para gerenciamento de pedidos e produtos.
+- [ ] Conectar as operações do painel privado à gestão persistente de pedidos e produtos.
+
+---
+
+## 📝 Atualizações Recentes e Pendências
+
+- **Autenticação:** Supabase Auth integrado, separação entre cliente e administrador, proteção das rotas e mensagens genéricas para falhas de credenciais/perfil.
+- **Sessão do cliente:** avatar com foto ou iniciais e menu com Perfil e Meus pedidos indicados como futuros e Sair funcional.
+- **Configuração:** a ausência de configuração válida do Supabase não derruba as páginas públicas; o README e `.env.example` orientam a configuração antes do build na hospedagem.
+- **Navegação administrativa:** o ajuste posterior à integração de autenticação manteve o atalho de catálogo no painel enquanto a gestão de catálogo não está disponível. As telas de peças continuam sem persistência.
+- **Pendência registrada:** [#7 — Cadastro com e-mail existente aparenta criar uma nova conta](https://github.com/IsaacCDSantos/MimosDaTaty/issues/7). O relato trata da apresentação do resultado; nos testes relatados não foi constatada duplicação do mesmo e-mail no banco.
 
 ---
 
