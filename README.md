@@ -70,9 +70,9 @@ A aplicação foi planejada para unir a sensibilidade e o acolhimento do artesan
 - 🎀 **Cadastro de Clientes (`/cadastro`)**:
   - Página responsiva em `src/paginas/Cadastro`, com nome, e-mail, senha e confirmação de senha.
   - Validação de campos obrigatórios, senha com pelo menos 8 caracteres e confirmação coincidente.
-  - Envio ao Supabase Auth isolado em `src/servicos/cadastro.js`, com feedback de erro e orientação para confirmar o e-mail quando necessário.
+  - Envio ao Supabase Auth isolado em `src/servicos/cadastro.js`, com feedback de erro. Quando a API devolve uma sessão, o cliente entra automaticamente e segue para a página inicial da loja.
   - Utiliza `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY` em `.env.local`. O cadastro por e-mail deve estar habilitado no Supabase e a URL de retorno `/login` de cada ambiente deve estar autorizada nas configurações de autenticação.
-  - A confirmação antes do primeiro login depende de **Authentication → Sign In / Providers → Email → Confirm email** no painel do Supabase.
+  - Nesta fase, desative **Authentication → Sign In / Providers → Email → Confirm email** no painel do Supabase para liberar o cadastro e o acesso imediato, sem confirmação de e-mail. Essa configuração pertence ao Supabase e não é alterada pelo frontend ou por uma migração SQL. Veja [a configuração e a verificação do cadastro](supabase/README.md).
   - A tabela `perfis` e o trigger versionados criam novos perfis como `cliente`; o cadastro público não concede permissões administrativas.
 
 - 🔑 **Fluxo de Recuperação de Senha (`/recuperar-senha` e `/confirmacao`)**:

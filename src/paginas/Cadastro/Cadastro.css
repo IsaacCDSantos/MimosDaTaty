@@ -130,6 +130,7 @@
   text-decoration: none;
   cursor: pointer;
   transition: background-color 0.2s;
+  margin-bottom: 10px;
 }
 .cadastro-botao:hover {
   background: #c97d80;

@@ -30,5 +30,7 @@ export async function cadastrarCliente({ nome, email, senha }) {
     throw new Error('Não foi possível concluir o cadastro. Tente novamente mais tarde.');
   }
 
+  // A confirmação é uma configuração do projeto Supabase, não do formulário.
+  // Sem essa exigência, a própria API já devolve e persiste a sessão do cliente.
   return { confirmarEmail: !data.session };
 }

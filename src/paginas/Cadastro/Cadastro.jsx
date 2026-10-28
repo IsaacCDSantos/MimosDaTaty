@@ -1,11 +1,12 @@
 import { useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { cadastrarCliente } from '../../servicos/cadastro';
 import imagemAtelie from '../../assets/imagens/banner-principal.png';
 import logoMimos from '../../assets/imagens/logo-mimos-da-taty.png';
 import './Cadastro.css';
 
 export default function Cadastro() {
+  const navigate = useNavigate();
   const [mostrarSenhas, setMostrarSenhas] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState('');
@@ -40,6 +41,12 @@ export default function Cadastro() {
       const resposta = await cadastrarCliente({ nome, email, senha });
       form.reset();
       setMostrarSenhas(false);
+      // Com Confirm email desativado no Supabase, signUp já cria a sessão.
+      // A vitrine acompanha essa sessão e passa a mostrar a conta conectada.
+      if (!resposta.confirmarEmail) {
+        navigate('/', { replace: true });
+        return;
+      }
       setResultado(resposta);
     } catch (error) {
       setErro(error.message || 'Não foi possível concluir o cadastro. Tente novamente.');
@@ -59,10 +66,8 @@ export default function Cadastro() {
 
           {resultado ? (
             <div className="cadastro-sucesso" role="status">
-              <h2>{resultado.confirmarEmail ? 'Confira seu e-mail' : 'Conta criada!'}</h2>
-              <p>{resultado.confirmarEmail
-                ? 'Se o cadastro puder ser realizado com este endereço, você receberá um e-mail para confirmar sua conta. Confira também a pasta de spam. Se já tiver uma conta, entre ou recupere sua senha.'
-                : 'Seu cadastro foi concluído com sucesso. Que alegria ter você por aqui!'}</p>
+              <h2>Confira seu e-mail</h2>
+              <p>Se o cadastro puder ser realizado com este endereço, você receberá um e-mail para confirmar sua conta. Confira também a pasta de spam. Se já tiver uma conta, entre ou recupere sua senha.</p>
               <Link className="cadastro-botao" to="/login">Voltar ao login</Link>
             </div>
           ) : (
