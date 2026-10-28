@@ -65,7 +65,7 @@ export default function Login({ recovery = false, onNavigate }) {
     event.preventDefault();
 
     if (!username.trim()) {
-      setNotice('Informe seu e-mail ou usuário.');
+      setNotice('Informe seu e-mail.');
       const input = event.currentTarget.querySelector('input[name="username"]');
       if (input) input.focus();
       return;
@@ -101,7 +101,7 @@ export default function Login({ recovery = false, onNavigate }) {
             <div className="auth-intro">
               <p className="auth-subtitle">Esqueceu sua senha?</p>
               <p className="auth-description">
-                Digite seu e-mail ou usuário cadastrado e enviaremos as instruções para redefinir sua senha.
+                Digite seu e-mail e enviaremos as instruções para redefinir sua senha.
               </p>
             </div>
           ) : (
@@ -138,14 +138,14 @@ export default function Login({ recovery = false, onNavigate }) {
           <form className="auth-form" onSubmit={handleSubmit} onChange={() => setNotice('')}>
             <div className="auth-field">
               <label htmlFor={`${prefix}-username`}>
-                {recovery ? 'E-mail ou usuário' : isPaneAdmin ? 'Usuário ou e-mail administrativo' : 'E-mail ou usuário'}
+                {recovery ? 'E-mail ou usuário' : isPaneAdmin ? 'E-mail administrativo' : 'E-mail'}
               </label>
               <div className="auth-input-wrap">
                 <Icon name="user" />
                 <input
                   id={`${prefix}-username`}
                   name="username"
-                  type="text"
+                  type="email"
                   tabIndex={isPaneActive ? 0 : -1}
                   value={username}
                   onChange={(event) => setUsername(event.target.value)}
