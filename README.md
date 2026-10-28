@@ -60,6 +60,16 @@ A aplicação foi planejada para unir a sensibilidade e o acolhimento do artesan
 - 🔐 **Autenticação Unificada (`/login`)**:
   - Alternância intuitiva de perfil entre **Cliente** e **Administrador** via estado e parâmetros de URL (`?perfil=admin`).
   - Formulário acessível, com alternância de visibilidade de senha e feedback de validação.
+  - Link **Criar conta** disponível no perfil Cliente, levando a `/cadastro`.
+
+- 🎀 **Cadastro de Clientes (`/cadastro`)**:
+  - Página responsiva em `src/paginas/Cadastro`, com nome, e-mail, senha e confirmação de senha.
+  - Validação de campos obrigatórios, senha com pelo menos 8 caracteres e confirmação coincidente.
+  - Envio ao Supabase Auth isolado em `src/servicos/cadastro.js`, com feedback de erro e orientação para confirmar o e-mail quando necessário.
+  - Utiliza `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY` em `.env.local`. O cadastro por e-mail deve estar habilitado no Supabase e a URL de retorno `/login` de cada ambiente deve estar autorizada nas configurações de autenticação.
+  - Login por e-mail e senha com verificação do perfil protegido em `public.perfis`, bloqueio de perfil incompatível e mensagens genéricas de credenciais inválidas.
+  - Rotas `/admin` verificam a conta no Supabase Auth e o perfil no banco antes de exibir as telas; a sessão é acompanhada ao entrar, sair e atualizar a página.
+  - O cabeçalho identifica a conta conectada por foto ou iniciais e oferece Perfil e Meus pedidos (em breve) e Sair (encerra a sessão neste navegador).
 
 - 🔑 **Fluxo de Recuperação de Senha (`/recuperar-senha` e `/confirmacao`)**:
   - Tela dedicada para solicitação de redefinição de acesso por e-mail.
@@ -125,6 +135,7 @@ Sistema Web Mimos da Taty/
 │   │   ├── RecuperacaoSenha/    # Interface do formulário de recuperação de senha
 │   │   └── Sobre/          # Mosaico histórico da artesã e do ateliê
 │   ├── paginas/            # Páginas e visões completas da aplicação
+│   │   ├── Cadastro/        # Cadastro de clientes (JSX e CSS próprios)
 │   │   ├── Login/           # Tela de Login com troca de perfil (Cliente / Admin)
 │   │   └── Inicio/         # Landing Page consolidando as seções da vitrine
 │   ├── rotas/              # Configuração e orquestração do React Router
@@ -149,6 +160,7 @@ Sistema Web Mimos da Taty/
 | :--- | :--- | :--- | :--- |
 | `/` | `Inicio` | **Público** | Página inicial (Landing page com catálogo, sobre, benefícios e contato). |
 | `/login` | `Login` | **Público** | Página de autenticação para clientes e administradores. |
+| `/cadastro` | `Cadastro` | **Público** | Criação de conta de cliente pelo Supabase Auth. |
 | `/carrinho` | `Carrinho` | **Público** | Visualização do carrinho, controle de itens/quantidades e resumo de compras. |
 | `/recuperar-senha` | `RecuperacaoSenha` | **Público** | Formulário para envio de redefinição de senha por e-mail. |
 | `/confirmacao` | `ConfirmacaoEnvioEmail` | **Público** | Tela de confirmação e orientações após a solicitação de redefinição. |
@@ -171,6 +183,14 @@ Antes de iniciar, certifique-se de possuir em seu ambiente de desenvolvimento:
 ---
 
 ## 🚀 Como Executar o Projeto
+
+### Configuração da autenticação
+
+Copie `.env.example` para `.env.local` e preencha `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY`. Reinicie o Vite após alterar o arquivo. Na hospedagem, configure essas variáveis **antes do build**. Sem configuração válida, a vitrine continua acessível e o login/cadastro informam indisponibilidade.
+
+A estrutura de perfis está em `supabase/migrations/202610280001_perfis.sql`. Execute esse SQL no SQL Editor do projeto Supabase ao preparar um ambiente. Ele mantém os perfis existentes e cria automaticamente novos perfis como `cliente`. As contas administrativas devem ser promovidas por uma pessoa autorizada no banco; o cadastro público não concede esse acesso. A migração não é executada automaticamente pelo site.
+
+Habilite e-mail/senha no Supabase Auth e autorize a URL `/login` dos ambientes nas URLs de redirecionamento. A proteção de páginas não substitui as regras RLS das futuras tabelas de pedidos e produtos. As telas administrativas atuais ainda usam prévias e não persistem essas operações.
 
 1. **Clone o repositório:**
    ```bash

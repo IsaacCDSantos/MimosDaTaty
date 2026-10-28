@@ -1,0 +1,305 @@
+@import url("https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@400;500;600&display=swap");
+
+.cadastro-page {
+  --cadastro-marrom: #8c5846;
+  --cadastro-rosa: #d99294;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: 44px 28px;
+  background: radial-gradient(circle at 50% 25%, #fbe5ce, #f7d7b7 70%);
+  color: var(--cadastro-marrom);
+  font-family: "Inter", sans-serif;
+}
+
+.cadastro-page *,
+.cadastro-page *::before,
+.cadastro-page *::after {
+  box-sizing: border-box;
+}
+.cadastro-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: min(980px, 100%);
+  overflow: hidden;
+  border-radius: 32px;
+  background: #fff;
+  box-shadow: 0 24px 60px #8c584629;
+}
+.cadastro-conteudo {
+  padding: 40px 48px;
+}
+.cadastro-badge {
+  display: block;
+  width: fit-content;
+  margin: 0 auto 12px;
+  padding: 5px 14px;
+  border: 1px solid #f4cbb6;
+  border-radius: 999px;
+  background: #fdf1e6;
+  font-size: 12px;
+  font-weight: 600;
+}
+.cadastro-page h1 {
+  margin: 0 0 8px;
+  color: var(--cadastro-marrom);
+  font-family: "Great Vibes", cursive;
+  font-size: 58px;
+  font-weight: 400;
+  line-height: 1.15;
+  text-align: center;
+}
+.cadastro-intro {
+  margin: 0 0 24px;
+  color: #6e7787;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
+}
+.cadastro-form fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.cadastro-campo {
+  margin-bottom: 16px;
+}
+.cadastro-campo label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.cadastro-campo input {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  border: 1.5px solid #f3b5ad;
+  border-radius: 24px;
+  background: #fdf4eb;
+  color: #4a3b34;
+  font: inherit;
+  font-size: 15px;
+}
+.cadastro-campo input::placeholder {
+  color: #757b87;
+}
+.cadastro-campo input:focus {
+  outline: 0;
+  border-color: var(--cadastro-marrom);
+  background: #fff;
+  box-shadow: 0 0 0 3px #95614e24;
+}
+.cadastro-ajuda {
+  margin: 6px 0 0;
+  color: #6e7787;
+  font-size: 12px;
+}
+.cadastro-mostrar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  font-size: 13px;
+  cursor: pointer;
+}
+.cadastro-mostrar input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--cadastro-marrom);
+}
+.cadastro-botao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 48px;
+  margin-top: 20px;
+  padding: 12px 20px;
+  border: 0;
+  border-radius: 24px;
+  background: var(--cadastro-rosa);
+  color: #fff;
+  box-shadow: 0 8px 18px #d992946b;
+  font: inherit;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.cadastro-botao:hover {
+  background: #c97d80;
+}
+.cadastro-form fieldset:disabled {
+  opacity: 0.7;
+}
+.cadastro-form fieldset:disabled button {
+  cursor: wait;
+}
+.cadastro-login {
+  margin: 22px 0 0;
+  color: #6e7787;
+  font-size: 13.5px;
+  text-align: center;
+}
+.cadastro-login a {
+  color: var(--cadastro-marrom);
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+.cadastro-voltar {
+  display: block;
+  margin-top: 16px;
+  color: var(--cadastro-marrom);
+  font-size: 13px;
+  text-align: center;
+  text-decoration: none;
+}
+.cadastro-voltar:hover {
+  text-decoration: underline;
+}
+.cadastro-page :is(a, button, input[type="checkbox"]):focus-visible {
+  outline: 2px solid var(--cadastro-marrom);
+  outline-offset: 4px;
+}
+.cadastro-erro,
+.cadastro-sucesso {
+  padding: 14px;
+  border: 1px solid #f2c4b0;
+  border-radius: 14px;
+  background: #fdf1e6;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.cadastro-sucesso h2 {
+  margin: 0 0 12px;
+  font-size: 22px;
+}
+.cadastro-sucesso p {
+  margin: 0;
+}
+.cadastro-visual {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 28px;
+  background: #8c5846;
+}
+.cadastro-imagem {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 72% center;
+}
+.cadastro-visual::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(180deg, #4a2a1f2e 0%, #44251ac7 100%);
+}
+.cadastro-marca {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 34px;
+  color: #fffaf5;
+  font-size: 13px;
+  font-weight: 600;
+}
+.cadastro-marca img {
+  width: 52px;
+  height: 52px;
+  padding: 2px;
+  border-radius: 50%;
+  background: #fff;
+  object-fit: contain;
+}
+.cadastro-mensagem {
+  position: absolute;
+  z-index: 1;
+  right: 32px;
+  bottom: 34px;
+  left: 32px;
+  padding: 22px 24px;
+  border: 1px solid #fff0e447;
+  border-radius: 22px;
+  background: #42241a6b;
+  backdrop-filter: blur(10px);
+  color: #fff7ef;
+}
+.cadastro-mensagem h2 {
+  margin: 0 0 8px;
+  font-family: "Great Vibes", cursive;
+  font-size: 38px;
+  font-weight: 400;
+  line-height: 1.15;
+}
+.cadastro-mensagem p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+.cadastro-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .cadastro-card {
+    grid-template-columns: 1fr;
+    width: min(520px, 100%);
+  }
+  .cadastro-conteudo {
+    padding: 32px 28px;
+  }
+  .cadastro-visual {
+    grid-row: 1;
+    height: 195px;
+    border-radius: 28px 28px 20px 20px;
+  }
+  .cadastro-marca {
+    padding: 16px 24px;
+  }
+  .cadastro-marca img {
+    width: 38px;
+    height: 38px;
+  }
+  .cadastro-mensagem {
+    right: 20px;
+    bottom: 16px;
+    left: 20px;
+    padding: 12px 16px;
+  }
+  .cadastro-mensagem h2 {
+    font-size: 28px;
+  }
+  .cadastro-mensagem p {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cadastro-page {
+    padding: 24px 16px;
+  }
+  .cadastro-conteudo {
+    padding: 26px 20px;
+  }
+  .cadastro-page h1 {
+    font-size: 52px;
+  }
+}

@@ -1,0 +1,55 @@
+.conta-header { position: relative; }
+
+.conta-header-avatar,
+.conta-header-carregando {
+  align-items: center;
+  background: #fcc7c7;
+  border: 2px solid #c97e80;
+  border-radius: 50%;
+  color: #704631;
+  display: flex;
+  flex: 0 0 auto;
+  font: 700 15px Inter, Arial, sans-serif;
+  height: 44px;
+  justify-content: center;
+  position: relative;
+  width: 44px;
+}
+
+.conta-header-avatar { cursor: pointer; transition: box-shadow .2s ease, background .2s ease; }
+.conta-header-avatar:hover { background: #f7b7b7; box-shadow: 0 3px 12px #97644e38; }
+.conta-header-avatar:focus-visible,
+.conta-header-painel button:focus-visible { outline: 3px solid #704631; outline-offset: 3px; }
+.conta-header-avatar img { border-radius: inherit; width: 100%; height: 100%; object-fit: cover; }
+.conta-header-status { position: absolute; right: -2px; bottom: 0; width: 11px; height: 11px; border: 2px solid #f7d7b7; border-radius: 50%; background: #527a4a; }
+
+.conta-header-painel {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: min(280px, calc(100vw - 36px));
+  padding: 8px;
+  border: 1px solid #e3b7a7;
+  border-radius: 18px;
+  background: #fffaf5;
+  box-shadow: 0 12px 32px #70463129;
+  color: #704631;
+  font: 14px/1.5 Inter, Arial, sans-serif;
+  z-index: 5;
+}
+.conta-header-identidade { display: grid; gap: 3px; padding: 10px 12px 14px; border-bottom: 1px solid #eedbd0; overflow-wrap: anywhere; }
+.conta-header-conectado { color: #527a4a; font-size: 11px; font-weight: 600; }
+.conta-header-email { color: #866f60; font-size: 12px; }
+.conta-header-painel ul { list-style: none; padding: 6px 0 0; margin: 0; }
+.conta-header-painel button { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; border: 0; border-radius: 10px; padding: 11px 12px; background: transparent; color: inherit; text-align: left; font: inherit; }
+.conta-header-painel button:disabled { color: #806b60; cursor: not-allowed; }
+.conta-header-painel button span { border-radius: 20px; background: #f5e8df; padding: 2px 8px; font-size: 10px; white-space: nowrap; }
+.conta-header-painel .conta-header-sair { color: #9c454d; cursor: pointer; font-weight: 600; }
+.conta-header-painel .conta-header-sair:hover:not(:disabled) { background: #fce8e7; }
+.conta-header-painel .conta-header-sair:disabled { cursor: wait; }
+.conta-header-erro { padding: 8px 12px; color: #9c454d; font-size: 12px; }
+
+@media (max-width: 820px) {
+  .conta-header-avatar, .conta-header-carregando { width: 36px; height: 36px; font-size: 13px; }
+  .conta-header-painel { right: -52px; }
+}

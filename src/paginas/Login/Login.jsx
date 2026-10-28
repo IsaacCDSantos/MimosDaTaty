@@ -1,8 +1,11 @@
 import { useId, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import imagemAtelie from '../../assets/imagens/banner-principal.png';
 import logoMimos from '../../assets/imagens/logo-mimos-da-taty.png';
 import './Login.css';
+import { supabase } from '../../servicos/supabase'
+
+const MENSAGEM_ACESSO_INVALIDO = 'Alguma das informações não confere. Verifique os dados e tente novamente.';
 
 function Icon({ name, ...props }) {
   const paths = {
@@ -50,10 +53,12 @@ export default function Login({ recovery = false, onNavigate }) {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [notice, setNotice] = useState('');
+  const [enviando, setEnviando] = useState(false);
   const profileQuery = profile === 'admin' ? '?perfil=admin' : '';
   const isAdmin = profile === 'admin';
 
   function selectProfile(nextProfile) {
+    if (enviando) return;
     if (nextProfile === profile) return;
     setProfile(nextProfile);
     setPassword('');
@@ -61,20 +66,73 @@ export default function Login({ recovery = false, onNavigate }) {
     setNotice('');
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
+    if (enviando) return;
+    setNotice('');
 
-    if (!username.trim()) {
-      setNotice('Informe seu e-mail.');
-      const input = event.currentTarget.querySelector('input[name="username"]');
-      if (input) input.focus();
+    if (recovery) {
+      setNotice('A recuperação de senha ainda não está disponível.');
       return;
     }
 
-    // A interface não autentica nem envia e-mails sem um serviço conectado.
-    setNotice(recovery
-      ? 'A recuperação de senha ainda não está disponível. Tente novamente em breve.'
-      : 'O acesso ainda não está disponível. Tente novamente em breve.');
+    if (!username.trim() || !password) {
+      setNotice('Informe seu e-mail e sua senha.');
+      return;
+    }
+
+    if (!supabase) {
+      setNotice('O login está temporariamente indisponível. Tente novamente mais tarde.');
+      return;
+    }
+
+    setEnviando(true);
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: username.trim(),
+        password: password,
+      });
+
+      if (error) {
+        if (error.status === 429) {
+          setNotice('Muitas tentativas. Aguarde alguns minutos e tente novamente.');
+        } else if (error.name === 'AuthRetryableFetchError' || error.status >= 500) {
+          setNotice('Não foi possível conectar. Tente novamente.');
+        } else {
+          setNotice(MENSAGEM_ACESSO_INVALIDO);
+        }
+        return;
+      }
+
+      const { data: dadosPerfil, error: erroPerfil } = await supabase
+        .from('perfis')
+        .select('perfil')
+        .eq('id', data.user.id)
+        .single();
+
+      if (erroPerfil || !dadosPerfil) {
+        const { error: erroSaida } = await supabase.auth.signOut({ scope: 'local' });
+        if (erroSaida) throw erroSaida;
+        setNotice(MENSAGEM_ACESSO_INVALIDO);
+        return;
+      }
+
+      if (dadosPerfil.perfil !== profile) {
+        const { error: erroSaida } = await supabase.auth.signOut({ scope: 'local' });
+        if (erroSaida) throw erroSaida;
+        setNotice(MENSAGEM_ACESSO_INVALIDO);
+        return;
+      }
+
+      navigate(
+        dadosPerfil.perfil === 'admin' ? '/admin' : '/',
+        { replace: true }
+      );
+    } catch {
+      setNotice('Não foi possível conectar. Tente novamente.');
+    } finally {
+      setEnviando(false);
+    }
   }
 
   function renderFormPane(paneProfile) {
@@ -203,7 +261,7 @@ export default function Login({ recovery = false, onNavigate }) {
               </>
             )}
 
-            <button className="auth-submit" type="submit" tabIndex={isPaneActive ? 0 : -1}>
+            <button className="auth-submit" type="submit" disabled={enviando} aria-busy={enviando} tabIndex={isPaneActive ? 0 : -1}>
               {recovery ? 'Enviar instruções' : isPaneAdmin ? 'Entrar como Admin' : 'Entrar'} <Icon name="arrow" />
             </button>
 
@@ -220,6 +278,13 @@ export default function Login({ recovery = false, onNavigate }) {
               >
                 Voltar ao login
               </a>
+            )}
+
+            {!recovery && !isPaneAdmin && (
+              <p className="auth-signup">
+                Ainda não tem uma conta?{' '}
+                <Link to="/cadastro" tabIndex={isPaneActive ? 0 : -1}>Criar conta</Link>
+              </p>
             )}
 
             {notice && isPaneActive && (

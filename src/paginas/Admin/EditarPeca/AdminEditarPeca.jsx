@@ -74,7 +74,7 @@ export const AdminEditarPeca = ({ demonstracao = false }) => {
       <nav className="admin-nav" aria-label="Navegação administrativa">
         <div className="nav-links">
           <Link className="nav-btn" to={inicio}>Home</Link>
-          <Link className="nav-btn ativo" to="/catalogo">Catálogo</Link>
+          <Link className="nav-btn" to="/catalogo">Catálogo</Link>
           <Link className="nav-btn" to={`${inicio}/pedidos`}>Pedidos</Link>
         </div>
         <div className="nav-user">
@@ -83,7 +83,7 @@ export const AdminEditarPeca = ({ demonstracao = false }) => {
       </nav>
 
       <main className="form-card">
-        <Link className="btn-voltar" to="/catalogo">← Voltar ao catálogo</Link>
+        <Link className="btn-voltar" to={inicio}>← Voltar ao painel</Link>
 
         <h1 className="titulo-editar">Editar peça</h1>
         <p className="subtitulo-editar">
@@ -183,7 +183,7 @@ export const AdminEditarPeca = ({ demonstracao = false }) => {
             Excluir peça
           </button>
           <div className="acoes-direita">
-            <Link className="btn-outline" to="/catalogo">Cancelar</Link>
+            <Link className="btn-outline" to={inicio}>Cancelar</Link>
             <button type="submit" form="editar-peca-form" className="btn-salvar">
               Validar prévia
             </button>

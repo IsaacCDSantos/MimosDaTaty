@@ -463,6 +463,20 @@
   opacity: 0.88;
 }
 
+.auth-page .auth-signup {
+  margin: 20px 0 0;
+  color: var(--auth-muted);
+  font-size: 13.5px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.auth-signup a {
+  color: var(--auth-brown);
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+
 .auth-page .auth-privacy {
   display: flex;
   align-items: center;

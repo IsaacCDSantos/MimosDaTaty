@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import './Header.css'
 import logo from '../../assets/imagens/logo-mimos-da-taty.png'
+import ContaHeader from './ContaHeader'
 
 function Header({ onAbrirLogin }) {
   const navigate = useNavigate()
@@ -161,27 +162,10 @@ function Header({ onAbrirLogin }) {
           </nav>
 
           <div className="header-acoes">
-            <a
-              href="/login"
-              onClick={(e) => {
-                e.preventDefault()
+            <ContaHeader onEntrar={() => {
                 if (onAbrirLogin) onAbrirLogin()
                 else navigate('/login')
-              }}
-              aria-label="Entrar na conta"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <circle cx="12" cy="8" r="3.25" stroke="currentColor" strokeWidth="1.8" />
-                <path
-                  d="M5.5 19c.4-3.2 2.85-5.5 6.5-5.5s6.1 2.3 6.5 5.5"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                />
-                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
-              </svg>
-              <span>Login</span>
-            </a>
+            }} />
             <a
               href="/carrinho"
               onClick={(e) => {
