@@ -110,7 +110,41 @@
 .admin-home-header-actions {
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
   gap: .8em;
+}
+
+.admin-home-signout {
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  gap: .5em;
+  min-height: 44px;
+  padding: .6em 1em;
+  border: 1px solid #d9a5a0;
+  border-radius: 1.4em;
+  background: #fff;
+  color: #9c454d;
+  font-size: max(12px, .75em);
+  font-weight: 600;
+}
+
+.admin-home-signout:hover:not(:disabled) {
+  background: #fae4e2;
+}
+
+.admin-home-signout:disabled {
+  cursor: wait;
+  opacity: .65;
+}
+
+.admin-home .admin-home-signout-error {
+  margin-bottom: 1.5em;
+  padding: 1em;
+  border: 1px solid #d9a5a0;
+  border-radius: 1em;
+  background: #fff4f0;
+  color: #9c454d;
 }
 
 .admin-home-shop-link,
@@ -1052,6 +1086,10 @@
     align-items: stretch;
     gap: .8em;
     width: 100%;
+  }
+
+  .admin-home-signout {
+    flex-basis: 100%;
   }
 
   .admin-home-shop-link,

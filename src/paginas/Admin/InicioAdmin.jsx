@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { encerrarSessao } from '../../servicos/autenticacao'
 import logoMimos from '../../assets/imagens/logo-mimos-da-taty.png'
 import imagemAtelie from '../../assets/imagens/banner-principal.png'
 import bonequinha from '../../assets/imagens/06-bonequinha.png'
@@ -15,6 +16,7 @@ function IconeAdmin({ nome, ...props }) {
     pedidos: <><path d="M8 9V7a4 4 0 0 1 8 0v2M5 9h14l1 9H4l1-9ZM12 15v7m-3-3 3 3 3-3M5 13H2v7h4m13-7h3v7h-4" /></>,
     peca: <><path d="M8 10V7a4 4 0 0 1 8 0v3l3-2 2 4-4 2v7H7v-7l-4-2 2-4 3 2Z" /><path d="M10 7h4M12 14v7" /></>,
     fechar: <path d="m6 6 12 12M18 6 6 18" />,
+    sair: <><path d="M9 4H4v16h5M9 12h12m-4-4 4 4-4 4" /></>,
   }
   return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>{desenhos[nome]}</svg>
 }
@@ -22,6 +24,10 @@ function IconeAdmin({ nome, ...props }) {
 const formatoMoeda = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
 
 export default function InicioAdmin({ dados, demonstracao = false }) {
+  const navigate = useNavigate()
+  const [saindo, setSaindo] = useState(false)
+  const [erroSaida, setErroSaida] = useState('')
+  const saidaEmAndamento = useRef(false)
   const [areaSolicitada, setAreaSolicitada] = useState(null)
   const [produtoSelecionado, setProdutoSelecionado] = useState(null)
   const dialogoProduto = useRef(null)
@@ -29,6 +35,22 @@ export default function InicioAdmin({ dados, demonstracao = false }) {
   const resumo = dados?.resumo
   const destaques = dados?.destaques || []
   const categorias = dados?.categorias || []
+
+  async function sairDaConta() {
+    if (saidaEmAndamento.current) return
+    saidaEmAndamento.current = true
+    setSaindo(true)
+    setErroSaida('')
+    try {
+      await encerrarSessao()
+      navigate('/', { replace: true })
+    } catch {
+      setErroSaida('Não foi possível sair da conta. Tente novamente.')
+    } finally {
+      saidaEmAndamento.current = false
+      setSaindo(false)
+    }
+  }
 
   useEffect(() => {
     const dialogo = dialogoProduto.current
@@ -47,8 +69,10 @@ export default function InicioAdmin({ dados, demonstracao = false }) {
           <div className="admin-home-header-actions">
             <Link className="admin-home-shop-link" to="/">Ver vitrine da loja <IconeAdmin nome="externo" /></Link>
             <span className="admin-home-account"><span className="admin-home-dot" /><IconeAdmin nome="escudo" /> Admin: {nome}</span>
+            {!demonstracao && <button className="admin-home-signout" type="button" disabled={saindo} onClick={sairDaConta}><IconeAdmin nome="sair" />{saindo ? 'Saindo…' : 'Sair da conta'}</button>}
           </div>
         </header>
+        {erroSaida && <p className="admin-home-signout-error" role="alert">{erroSaida}</p>}
 
         <main>
           <section className="admin-home-welcome" aria-labelledby="admin-home-title">
