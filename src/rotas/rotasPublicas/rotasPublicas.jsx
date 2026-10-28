@@ -10,6 +10,8 @@ import InicioAdmin from '../../paginas/Admin/InicioAdmin'
 import { DADOS_ADMIN_DEMONSTRACAO } from '../../paginas/Admin/dadosDemonstracao'
 import PedidosAdmin from '../../paginas/Admin/Pedidos/PedidosAdmin'
 import { PEDIDOS_DEMONSTRACAO } from '../../paginas/Admin/Pedidos/pedidosDemonstracao'
+import AdminEditarPeca from '../../paginas/Admin/EditarPeca/AdminEditarPeca'
+import AdminAdicionarPeca from '../../paginas/Admin/AdicionarPeca/AdminAdicionarPeca'
 
 // Rotas públicas: acessíveis por qualquer usuário diretamente no navegador
 export const rotasPublicas = (
@@ -25,6 +27,8 @@ export const rotasPublicas = (
     {/* Previa publica com dados ficticios, separada da area administrativa. */}
     <Route path="/previa/admin" element={<InicioAdmin dados={DADOS_ADMIN_DEMONSTRACAO} demonstracao />} />
     <Route path="/previa/admin/pedidos" element={<PedidosAdmin pedidosIniciais={PEDIDOS_DEMONSTRACAO} demonstracao />} />
+    <Route path="/previa/admin/editar-peca" element={<AdminEditarPeca demonstracao />} />
+    <Route path="/previa/admin/adicionar-peca" element={<AdminAdicionarPeca demonstracao />} />
 
     {/* Tela de Carrinho */}
     <Route path="/carrinho" element={<Carrinho />} />
@@ -38,5 +42,11 @@ export const rotasPublicas = (
 
     {/* Tela de checkout-pagamento */}
     <Route path="/checkout" element={<Checkout />} />
+
+    {/* Endereços anteriores preservados como prévias sem persistência. */}
+    <Route path="/editar-peca" element={<AdminEditarPeca demonstracao />} />
+
+    {/* Tela de adição de peça (Admin) */}
+    <Route path="/adicionar-peca" element={<AdminAdicionarPeca demonstracao />} />
   </>
 )

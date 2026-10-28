@@ -504,6 +504,7 @@
   display: inline-flex;
   gap: .5em;
   margin-top: .6em;
+  margin-right: 1em;
   text-decoration: underline;
   text-underline-offset: .2em;
 }
@@ -1181,6 +1182,3 @@
     transition: none !important;
   }
 }
-
-
-

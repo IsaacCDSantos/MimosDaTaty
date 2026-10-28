@@ -11,7 +11,17 @@ A interface reproduz a referência do painel da artesã com marca, acesso à vit
 
 Ver vitrine da loja abre o início existente. Ver todas abre o catálogo público existente. Selecionar uma peça abre os detalhes em diálogo nativo com suporte a Escape e retorno do foco ao botão de origem.
 
-Acessar Pedidos abre a nova tela de pedidos no mesmo modo de acesso (prévia ou área protegida). Acessar Catálogo ainda informa indisponibilidade do gerenciamento e permite abrir a vitrine pública.
+Acessar Pedidos abre a tela de pedidos no mesmo modo de acesso (prévia ou área protegida). Acessar Catálogo oferece links para a vitrine e para os formulários de adicionar e editar peça. Esses formulários ainda não salvam dados.
+
+## Formulários de peças
+
+As páginas ficam em `paginas/Admin/AdicionarPeca/` e `paginas/Admin/EditarPeca/`, com estilos limitados a cada página.
+
+- `/previa/admin/adicionar-peca` e `/previa/admin/editar-peca`: demonstrações públicas, identificadas na interface. A edição usa uma peça fictícia.
+- `/adicionar-peca` e `/editar-peca`: endereços anteriores preservados como demonstrações.
+- `/admin/adicionar-peca` e `/admin/editar-peca`: rotas protegidas pela mesma guarda das demais telas administrativas.
+
+Os formulários validam nome e preço, aceitam uma imagem para prévia local e informam que não há persistência. Excluir permanece desabilitado. Home e Pedidos respeitam o modo de acesso; Catálogo, Voltar e Cancelar abrem a vitrine pública. O cadastro, a seleção da peça real, a edição e a exclusão deverão ser conectados ao backend autorizado.
 
 ## Requisitos e próxima integração
 
