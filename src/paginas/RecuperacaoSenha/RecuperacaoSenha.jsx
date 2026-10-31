@@ -1,86 +1,82 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './RecuperacaoSenha.css';
+import { useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import RecuperacaoLayout from '../../componentes/RecuperacaoLayout/RecuperacaoLayout'
+import { supabase } from '../../servicos/supabase'
 
-function RecuperacaoSenha({ aoVoltar, aoEnviar }) {
-  const navigate = useNavigate();
-  // Estados para guardar o texto do e-mail e possíveis erros
-  const [email, setEmail] = useState('');
-  const [erro, setErro] = useState('');
+export default function RecuperacaoSenha({ aoVoltar, aoEnviar }) {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const perfilQuery = new URLSearchParams(location.search).get('perfil') === 'admin' ? '?perfil=admin' : ''
+  const [email, setEmail] = useState(location.state?.email || '')
+  const [erro, setErro] = useState('')
+  const [enviando, setEnviando] = useState(false)
 
-  // Função que verifica o campo antes de avançar
-  const lidarComEnvio = () => {
-    if (email.trim() === '') {
-      setErro('Por favor, digite o seu e-mail.');
-      return; // Bloqueia a execução e não muda de ecrã
+  async function enviar(event) {
+  event.preventDefault()
+  if (enviando) return
+
+  const endereco = email.trim()
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(endereco)) {
+    setErro('Informe um e-mail válido.')
+    return
+  }
+
+  if (!supabase) {
+    setErro('A recuperação está indisponível no momento.')
+    return
+  }
+
+  setErro('')
+  setEnviando(true)
+
+  try {
+    const { error } = await supabase.auth.resetPasswordForEmail(
+      endereco,
+      {
+        redirectTo: new URL(
+          '/redefinir-senha',
+          window.location.origin
+        ).href,
+      }
+    )
+
+    if (error) throw error
+
+    const resultado = {
+      email: endereco,
+      solicitadoEm: Date.now(),
     }
-    
-    // Se o campo estiver preenchido, limpa o erro e avança para a confirmação
-    setErro('');
+
     if (typeof aoEnviar === 'function') {
-      aoEnviar();
+      aoEnviar(resultado)
     } else {
-      navigate('/confirmacao');
+      navigate('/confirmacao' + perfilQuery, {
+        state: resultado,
+      })
     }
-  };
-
-  return (
-    <div className="recuperacao-container">
-      <div className="decoracao-circulo top-left"></div>
-      <div className="decoracao-circulo top-right"></div>
-      
-      <div className="recuperacao-card">
-        <h1 className="recuperacao-titulo">Recuperação</h1>
-        <h2 className="recuperacao-subtitulo">Esqueceu sua senha?</h2>
-        
-        <p className="recuperacao-texto">
-          Digite seu e-mail cadastrado e enviaremos as instruções para redefinir sua senha.
-        </p>
-
-        <div className="input-group">
-          <label>E-mail</label>
-          <div 
-            className="input-wrapper" 
-            style={{ border: erro ? '1px solid #DE9393' : '1px solid #E6BFA3' }}
-          >
-            <span className="input-icon">✉️</span>
-            <input 
-              type="email" 
-              placeholder="nome@exemplo.com" 
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                if (e.target.value) setErro(''); // Limpa o aviso mal o utilizador comece a escrever
-              }}
-            />
-          </div>
-          {/* Exibe a mensagem de erro se o estado 'erro' não estiver vazio */}
-          {erro && <span style={{ color: '#DE9393', fontSize: '0.8rem', marginTop: '6px', display: 'block' }}>{erro}</span>}
-        </div>
-
-        <button className="btn-enviar" onClick={lidarComEnvio}>
-          Enviar instruções ➔
-        </button>
-
-        <button
-          className="btn-voltar"
-          onClick={() => {
-            if (typeof aoVoltar === 'function') {
-              aoVoltar();
-            } else {
-              navigate('/login');
-            }
-          }}
-        >
-          Voltar ao login
-        </button>
-
-        <div className="recuperacao-rodape">
-          <span className="dot"></span> Acesso seguro e privacidade garantida
-        </div>
-      </div>
-    </div>
-  );
+  } catch {
+    setErro(
+      'Não foi possível solicitar o link. Aguarde um pouco e tente novamente.'
+    )
+  } finally {
+    setEnviando(false)
+  }
 }
 
-export default RecuperacaoSenha;
+  return (
+    <RecuperacaoLayout titulo="Vamos recomeçar?" subtitulo="Recupere seu acesso" descricao="Informe o e-mail da sua conta para receber um link e criar uma nova senha.">
+      <form className="senha-form" onSubmit={enviar}>
+        <div className="senha-campo">
+          <label htmlFor="recuperacao-email">E-mail cadastrado</label>
+          <input id="recuperacao-email" name="email" type="email" autoComplete="email" autoCapitalize="none" spellCheck={false} placeholder="nome@exemplo.com" required value={email} onChange={event => { setEmail(event.target.value); setErro('') }} aria-invalid={!!erro} aria-describedby={erro ? 'recuperacao-erro' : undefined} />
+        </div>
+        {erro && <p id="recuperacao-erro" className="senha-aviso" role="alert">{erro}</p>}
+        <button className="senha-botao" type="submit" disabled={enviando}>
+  {enviando ? 'Solicitando link…' : 'Enviar link de recuperação'}
+</button>
+      </form>
+      <Link className="senha-link" to={'/login' + perfilQuery} onClick={typeof aoVoltar === 'function' ? event => { event.preventDefault(); aoVoltar() } : undefined}>← Voltar ao login</Link>
+    </RecuperacaoLayout>
+  )
+}

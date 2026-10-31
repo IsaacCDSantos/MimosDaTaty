@@ -1,0 +1,81 @@
+.senha-page {
+  --senha-peach: #f7d7b7;
+  --senha-cream: #fdf4eb;
+  --senha-brown: #8c5846;
+  --senha-muted: #736961;
+  --senha-action: #a95965;
+  --senha-border: #e9c9b6;
+  --senha-card: #ffffff;
+  --senha-arte-fundo: #f5e5de;
+  --senha-card-altura: 744px;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: 32px 24px;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 50% 25%, #fbe5ce 0%, var(--senha-peach) 70%);
+  color: var(--senha-brown);
+  font-family: 'Inter', Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.senha-page *, .senha-page *::before, .senha-page *::after { box-sizing: border-box; }
+.senha-page p, .senha-page h1, .senha-page h2 { margin: 0; }
+.senha-page button, .senha-page input { font: inherit; }
+.senha-card { display: grid; grid-template-columns: 440px minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); width: min(1060px, 100%); height: var(--senha-card-altura); border: 1px solid var(--senha-border); border-radius: 30px; background: var(--senha-card); box-shadow: 0 24px 60px rgb(140 88 70 / 16%), 0 4px 16px rgb(140 88 70 / 8%); overflow: hidden; }
+.senha-arte { position: relative; display: grid; grid-template-rows: 80px 60px 250px 17px auto 1fr 4px; align-content: start; justify-items: center; min-height: 0; padding: 40px 0 38px; background: var(--senha-arte-fundo); text-align: center; overflow: hidden; }
+.senha-marca { grid-row: 1; width: 320px; }
+.senha-marca p { font-family: 'Great Vibes', cursive; font-size: 42px; line-height: 1.18; }
+.senha-marca span { display: block; margin-top: 6px; font-size: 10px; line-height: 1.5; }
+.senha-mensagem { grid-row: 5; width: 344px; }
+.senha-mensagem p { font-family: 'Great Vibes', cursive; font-size: 45px; line-height: 1.18; }
+.senha-mensagem span { display: block; margin-top: 15px; font-size: 12px; line-height: 1.5; }
+.senha-costura { grid-row: 7; display: block; }
+.senha-painel { display: flex; flex-direction: column; min-height: 0; padding: 32px 48px 32px 108px; overflow-y: auto; scrollbar-width: thin; background: var(--senha-card); }
+.senha-conteudo { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; gap: 16px; width: 100%; max-width: 384px; margin-block: auto; }
+.senha-simbolo { display: grid; place-items: center; width: 64px; height: 64px; flex-shrink: 0; border-radius: 22px; background: var(--senha-cream); }
+.senha-simbolo img { display: block; }
+.senha-page .senha-titulo { width: 100%; font-family: 'Great Vibes', cursive; font-size: 52px; font-weight: 400; line-height: 1.18; text-align: center; outline: none; }
+.senha-page .senha-subtitulo { font-size: 21px; font-weight: 600; line-height: 1.5; text-align: center; }
+.senha-descricao { width: 100%; color: var(--senha-muted); text-align: center; line-height: 1.4; }
+.senha-form { display: flex; flex-direction: column; gap: 24px; width: 100%; }
+.senha-campo { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.senha-campo label { font-size: 13px; }
+.senha-campo input { width: 100%; min-height: 42px; border: 1px solid var(--senha-border); border-radius: 18px; padding: 11px 16px; background: var(--senha-cream); color: var(--senha-brown); }
+.senha-campo input::placeholder { color: var(--senha-muted); opacity: 1; }
+.senha-page :is(input, button, a):focus-visible { outline: 2px solid var(--senha-brown); outline-offset: 4px; }
+.senha-campo input[aria-invalid='true'] { border-color: var(--senha-action); }
+.senha-botao, .senha-link { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 40px; border: 0; border-radius: 25px; padding: 10px 16px; text-align: center; text-decoration: none; cursor: pointer; }
+.senha-botao { background: var(--senha-action); color: #fff; font-weight: 600; transition: background-color .2s; }
+.senha-botao:hover { background: #934b57; }
+.senha-link { background: transparent; color: var(--senha-brown); font-weight: 500; }
+.senha-link:hover { text-decoration: underline; }
+.senha-page button:disabled { opacity: .65; cursor: wait; }
+.senha-page input:disabled { opacity: .7; }
+.senha-privacidade { display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--senha-muted); font-size: 11px; line-height: 1.5; }
+.senha-aviso { width: 100%; padding: 12px 16px; border: 1px solid var(--senha-border); border-radius: 12px; background: var(--senha-cream); color: var(--senha-brown); line-height: 1.5; }
+.senha-demo { width: 100%; padding: 10px 12px; border: 1px dashed var(--senha-border); border-radius: 12px; color: var(--senha-muted); font-size: 12px; line-height: 1.5; text-align: center; }
+.senha-dica { width: 100%; padding: 18px; border-radius: 16px; background: var(--senha-cream); font-size: 13px; line-height: 1.5; }
+.senha-dica p { margin-top: 8px; color: var(--senha-muted); }
+.senha-ajuda { font-size: 12px; line-height: 1.5; color: var(--senha-muted); }
+.senha-mostrar { align-self: flex-start; border: 0; padding: 0; background: none; color: var(--senha-brown); cursor: pointer; text-decoration: underline; font-size: 12px; }
+@media (max-width: 1050px) {
+  .senha-card { grid-template-columns: minmax(330px, 42%) minmax(0, 1fr); }
+  .senha-painel { padding: 32px; }
+  .senha-mensagem { max-width: calc(100% - 32px); }
+}
+@media (max-width: 760px) {
+  .senha-page { --senha-card-altura: 960px; padding: 24px 16px; }
+  .senha-card { grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr); border-radius: 24px; }
+  .senha-arte { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px; }
+  .senha-marca { width: auto; }
+  .senha-mensagem, .senha-costura { display: none; }
+  .senha-painel { padding: 24px; align-items: center; }
+  .senha-page .senha-titulo { font-size: clamp(38px, 10vw, 48px); }
+  .senha-page .senha-subtitulo { font-size: 19px; }
+  .senha-campo input { font-size: 16px; }
+  .senha-botao, .senha-link { min-height: 44px; }
+}
+@media (max-width: 360px) {
+  .senha-page { --senha-card-altura: 1040px; }
+}

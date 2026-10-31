@@ -75,10 +75,12 @@ A aplicação foi planejada para unir a sensibilidade e o acolhimento do artesan
   - Nesta fase, desative **Authentication → Sign In / Providers → Email → Confirm email** no painel do Supabase para liberar o cadastro e o acesso imediato, sem confirmação de e-mail. Essa configuração pertence ao Supabase e não é alterada pelo frontend ou por uma migração SQL. Veja [a configuração e a verificação do cadastro](supabase/README.md).
   - A tabela `perfis` e o trigger versionados criam novos perfis como `cliente`; o cadastro público não concede permissões administrativas.
 
-- 🔑 **Fluxo de Recuperação de Senha (`/recuperar-senha` e `/confirmacao`)**:
-  - Tela dedicada para solicitação de redefinição de acesso por e-mail.
-  - Tela de confirmação e orientação com ações rápidas para retornar ao login ou página inicial.
-  - Essas telas ainda são interfaces: o envio do e-mail e a redefinição da senha não estão integrados ao Supabase.
+- 🔑 **Fluxo de Recuperação de Senha (`/recuperar-senha`, `/confirmacao` e `/redefinir-senha`)**:
+  - Telas responsivas conforme o Figma, com solicitação real do link pelo Supabase Auth e alteração da senha da conta autenticada.
+  - O fluxo principal foi testado manualmente com uma conta: recebimento do link, alteração da senha e login com a nova senha. A integração ainda é parcial: tratamento completo do retorno de recuperação, reenvio e avisos visuais permanecem pendentes.
+  - O e-mail pertence à caixa de entrada externa do usuário; não existe uma página de e-mail dentro da aplicação nem uma transição interna da confirmação para o modelo da mensagem.
+  - O reenvio tem uma contagem demonstrativa de 60 segundos e ainda não envia mensagens. `?previa=expirado` exibe apenas um exemplo visual, sem validar o link recebido.
+  - O estado atual e os próximos passos estão descritos em [docs/recuperacao-senha.md](docs/recuperacao-senha.md).
 
 - 🛒 **Tela de Carrinho de Compras (`/carrinho`)**:
   - Implementação fidedigna ao protótipo do Figma com layout acolhedor em tons rosé e pêssego.
@@ -182,9 +184,9 @@ Sistema Web Mimos da Taty/
 | `/cadastro` | `Cadastro` | **Público** | Criação de conta de cliente pelo Supabase Auth. |
 | `/catalogo` | `Catalogo` | **Público** | Vitrine de produtos; não é o gerenciamento administrativo. |
 | `/carrinho` | `Carrinho` | **Público** | Visualização do carrinho, controle de itens/quantidades e resumo de compras. |
-| `/recuperar-senha` | `RecuperacaoSenha` | **Público** | Interface de recuperação; envio e redefinição ainda pendentes. |
-| `/recuperacao` | `RecuperacaoSenha` | **Público** | Endereço alternativo da interface de recuperação; integração de envio pendente. |
+| `/recuperar-senha` | `RecuperacaoSenha` | **Público** | Solicita o link de recuperação pelo Supabase Auth. |
 | `/confirmacao` | `ConfirmacaoEnvioEmail` | **Público** | Tela de confirmação e orientações após a solicitação de redefinição. |
+| `/redefinir-senha` | `RedefinirSenha` | **Rota pública; gravação exige sessão válida** | Valida campos, consulta a conta autenticada e solicita a alteração de senha ao Supabase. O tratamento completo de links inválidos/expirados ainda está pendente. |
 | `/checkout` | `Checkout` | **Público** | Revisão de pedido, resumo financeiro e seleção de método de pagamento. |
 | `/previa/admin` | `InicioAdmin` | **Público, demonstração** | Prévia do painel com dados fictícios, atalhos e detalhes de peças. |
 | `/previa/admin/pedidos` | `PedidosAdmin` | **Público, demonstração** | Busca, filtros, detalhes, rastreio e mudanças temporárias de status/observação em pedidos fictícios. |
@@ -293,7 +295,7 @@ Para manter o histórico e a qualidade de engenharia do repositório, recomenda-
 - [x] Migração SQL de perfis versionada e configuração por variáveis de ambiente;
 - [ ] Melhorar o retorno do cadastro com e-mail existente ([issue #7](https://github.com/IsaacCDSantos/MimosDaTaty/issues/7));
 - [ ] Implementar as telas Perfil e Meus pedidos do cliente;
-- [ ] Integrar envio de recuperação e redefinição de senha ao Supabase;
+- [ ] Concluir recuperação de senha: validar retorno de recuperação e links inválidos/expirados, integrar reenvio e remover avisos demonstrativos;
 - [ ] Implementar o catálogo administrativo e persistência de produtos e pedidos;
 - [ ] Integração com gateway de pagamentos real (PIX dinâmico, cartão);
 - [ ] Conectar as operações do painel privado à gestão persistente de pedidos e produtos.

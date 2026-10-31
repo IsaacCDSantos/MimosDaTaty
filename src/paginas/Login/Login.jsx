@@ -249,11 +249,11 @@ export default function Login({ recovery = false, onNavigate }) {
                 </div>
                 <a
                   className="auth-forgot"
-                  href="/recuperacao"
+                  href={`/recuperar-senha${profileQuery}`}
                   tabIndex={isPaneActive ? 0 : -1}
                   onClick={(e) => {
                     e.preventDefault();
-                    navigate('/recuperacao');
+                    navigate(`/recuperar-senha${profileQuery}`);
                   }}
                 >
                   Esqueceu a senha?

@@ -1,0 +1,16 @@
+.senha-ilustracao { grid-row: 3; position: relative; width: 330px; height: 250px; }
+.senha-ilustracao-canvas { display: block; overflow: visible; transform-origin: top left; }
+.senha-ilustracao-canvas [data-movimento] { transform-box: view-box; }
+.senha-carta { transform-origin: 182px 125px; }
+.senha-carta-sombra { transform-origin: 182px 207px; }
+.senha-carta-halo { transform-origin: 165px 120px; }
+.senha-carta-fio { transform-origin: 85px 130px; }
+.senha-carta-coracao { transform-origin: 182px 130px; }
+.senha-carta-brilho-maior { transform-origin: 259px 48px; }
+.senha-carta-brilho-menor { transform-origin: 81px 186px; }
+.senha-carta-ponto-rosa { transform-origin: 82px 49px; }
+.senha-carta-ponto-pessego { transform-origin: 285px 150px; }
+@media (max-width: 760px) {
+  .senha-ilustracao { width: 165px; height: 125px; }
+  .senha-ilustracao-canvas { transform: scale(.5); }
+}

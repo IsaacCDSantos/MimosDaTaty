@@ -6,6 +6,7 @@ import Carrinho from '../../paginas/Carrinho/Carrinho'
 import Checkout from '../../paginas/Checkout/Checkout'
 import RecuperacaoSenha from '../../paginas/RecuperacaoSenha/RecuperacaoSenha'
 import ConfirmacaoEnvioEmail from '../../paginas/ConfirmacaoEnvioEmail/ConfirmacaoEnvioEmail'
+import RedefinirSenha from '../../paginas/RedefinirSenha/RedefinirSenha'
 import Catalogo from '../../paginas/Catalogo/Catalogo'
 import InicioAdmin from '../../paginas/Admin/InicioAdmin'
 import { DADOS_ADMIN_DEMONSTRACAO } from '../../paginas/Admin/dadosDemonstracao'
@@ -37,10 +38,11 @@ export const rotasPublicas = (
 
     {/* Tela de Recuperação de Senha */}
     <Route path="/recuperar-senha" element={<RecuperacaoSenha />} />
-    <Route path="/recuperacao" element={<RecuperacaoSenha />} />
 
     {/* Tela de confirmação de envio de e-mail */}
     <Route path="/confirmacao" element={<ConfirmacaoEnvioEmail />} />
+    {/* Prévia visual. A validação do link e o salvamento serão integrados manualmente. */}
+    <Route path="/redefinir-senha" element={<RedefinirSenha />} />
 
     {/* Tela de checkout-pagamento */}
     <Route path="/checkout" element={<Checkout />} />
