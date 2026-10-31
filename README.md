@@ -72,7 +72,7 @@ A aplicação foi planejada para unir a sensibilidade e o acolhimento do artesan
   - Validação de campos obrigatórios, senha com pelo menos 8 caracteres e confirmação coincidente.
   - Envio ao Supabase Auth isolado em `src/servicos/cadastro.js`, com feedback de erro. Quando a API devolve uma sessão, o cliente entra automaticamente e segue para a página inicial da loja.
   - Utiliza `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY` em `.env.local`. O cadastro por e-mail deve estar habilitado no Supabase e a URL de retorno `/login` de cada ambiente deve estar autorizada nas configurações de autenticação.
-  - Nesta fase, desative **Authentication → Sign In / Providers → Email → Confirm email** no painel do Supabase para liberar o cadastro e o acesso imediato, sem confirmação de e-mail. Essa configuração pertence ao Supabase e não é alterada pelo frontend ou por uma migração SQL. Veja [a configuração e a verificação do cadastro](supabase/README.md).
+  - A confirmação de e-mail depende da configuração do projeto no Supabase. Quando estiver habilitada, o usuário precisa confirmar o endereço antes de entrar. A conta de teste utilizada neste ambiente foi criada com confirmação por e-mail. Veja também [a configuração do cadastro](supabase/README.md).
   - A tabela `perfis` e o trigger versionados criam novos perfis como `cliente`; o cadastro público não concede permissões administrativas.
 
 - 🔑 **Fluxo de Recuperação de Senha (`/recuperar-senha`, `/confirmacao` e `/redefinir-senha`)**:
@@ -80,6 +80,7 @@ A aplicação foi planejada para unir a sensibilidade e o acolhimento do artesan
   - O fluxo principal foi testado manualmente com uma conta: recebimento do link, alteração da senha e login com a nova senha. A integração ainda é parcial: tratamento completo do retorno de recuperação, reenvio e avisos visuais permanecem pendentes.
   - O e-mail pertence à caixa de entrada externa do usuário; não existe uma página de e-mail dentro da aplicação nem uma transição interna da confirmação para o modelo da mensagem.
   - O reenvio tem uma contagem demonstrativa de 60 segundos e ainda não envia mensagens. `?previa=expirado` exibe apenas um exemplo visual, sem validar o link recebido.
+  - O aviso visual que afirma que nenhum e-mail é enviado e nenhuma senha é alterada está desatualizado e ainda precisa ser corrigido.
   - O estado atual e os próximos passos estão descritos em [docs/recuperacao-senha.md](docs/recuperacao-senha.md).
 
 - 🛒 **Tela de Carrinho de Compras (`/carrinho`)**:
@@ -154,7 +155,8 @@ Sistema Web Mimos da Taty/
 │   │   ├── ConfirmacaoEnvioEmail/ # Interface de confirmação da recuperação
 │   │   ├── Inicio/         # Landing page da loja
 │   │   ├── Login/          # Login com seleção Cliente / Admin
-│   │   └── RecuperacaoSenha/ # Interface de solicitação de recuperação
+│   │   ├── RecuperacaoSenha/ # Solicitação do link de recuperação
+│   │   └── RedefinirSenha/  # Formulário de nova senha
 │   ├── rotas/              # Configuração e orquestração do React Router
 │   │   ├── rotasPrivadas/  # Configuração isolada para rotas restritas e protegidas
 │   │   ├── rotasPublicas/  # Configuração isolada para rotas públicas e abertas
@@ -216,6 +218,8 @@ Antes de iniciar, certifique-se de possuir em seu ambiente de desenvolvimento:
 
 Copie `.env.example` para `.env.local` e preencha `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY`. Reinicie o Vite após alterar o arquivo. Na hospedagem, configure essas variáveis **antes do build**. Sem configuração válida, a vitrine continua acessível e o login/cadastro informam indisponibilidade.
 
+Para a recuperação de senha, autorize em **Authentication → URL Configuration → Redirect URLs** o endereço da tela de redefinição de cada ambiente, por exemplo `http://localhost:5173/redefinir-senha` no desenvolvimento local. O link com `localhost` deve ser aberto no computador que executa o site. Antes de atender clientes, configure um serviço de envio de e-mails adequado; o envio padrão do Supabase possui restrições.
+
 A estrutura de perfis está em `supabase/migrations/202610280001_perfis.sql`. Execute esse SQL no SQL Editor do projeto Supabase ao preparar um ambiente. Ele mantém os perfis existentes e cria automaticamente novos perfis como `cliente`. As contas administrativas devem ser promovidas por uma pessoa autorizada no banco; o cadastro público não concede esse acesso. A migração não é executada automaticamente pelo site.
 
 Para conceder acesso administrativo a outra conta, localize seu ID em **Authentication → Users**, encontre a mesma linha em **Table Editor → perfis** e altere `perfil` de `cliente` para `admin`. A pessoa deve sair e entrar novamente pela opção Admin. Essa permissão vale para o site, não para o painel de administração do Supabase.
@@ -231,7 +235,7 @@ Habilite e-mail/senha no Supabase Auth e autorize a URL `/login` dos ambientes n
 
 2. **Acesse o diretório do projeto:**
    ```bash
-   cd "MimosDaTaty/Sistema Web Mimos da Taty"
+   cd MimosDaTaty
    ```
 
 3. **Instale as dependências:**
@@ -288,13 +292,14 @@ Para manter o histórico e a qualidade de engenharia do repositório, recomenda-
 - [x] Perfis protegidos, criação automática de clientes e acesso administrativo restrito;
 - [x] Identificação da conta no cabeçalho e saída da sessão;
 - [x] Interfaces do fluxo de recuperação de senha e confirmação de e-mail;
+- [x] Solicitação de link e alteração de senha integradas ao Supabase, com fluxo principal testado manualmente;
 - [x] Implementação de carrinho de compras (layout fidedigno ao Figma e interatividade front-end);
 - [x] Layout e componentes de checkout com resumo de compras e formas de pagamento;
 - [x] Página inicial do admin com prévia identificada e dados de exemplo;
 - [x] Interface de pedidos admin com filtros, detalhes, rastreio e alterações temporárias na prévia;
 - [x] Migração SQL de perfis versionada e configuração por variáveis de ambiente;
 - [ ] Melhorar o retorno do cadastro com e-mail existente ([issue #7](https://github.com/IsaacCDSantos/MimosDaTaty/issues/7));
-- [ ] Implementar as telas Perfil e Meus pedidos do cliente;
+- [ ] Implementar as telas Perfil e Meus pedidos do cliente ([issue #6](https://github.com/IsaacCDSantos/MimosDaTaty/issues/6)); as propostas foram prototipadas no Figma;
 - [ ] Concluir recuperação de senha: validar retorno de recuperação e links inválidos/expirados, integrar reenvio e remover avisos demonstrativos;
 - [ ] Implementar o catálogo administrativo e persistência de produtos e pedidos;
 - [ ] Integração com gateway de pagamentos real (PIX dinâmico, cartão);
@@ -306,6 +311,8 @@ Para manter o histórico e a qualidade de engenharia do repositório, recomenda-
 
 - **Autenticação:** Supabase Auth integrado, separação entre cliente e administrador, proteção das rotas e mensagens genéricas para falhas de credenciais/perfil.
 - **Sessão do cliente:** avatar com foto ou iniciais e menu com Perfil e Meus pedidos indicados como futuros e Sair funcional.
+- **Recuperação de senha:** envio do link e alteração da senha integrados ao Supabase; o fluxo principal foi testado manualmente pelo usuário. Reenvio real, validação específica do retorno e correção do aviso demonstrativo permanecem pendentes.
+- **Banco de dados e pagamentos:** a modelagem da loja segue em trabalho separado; produtos e pedidos ainda não estão ligados a uma operação persistente no site. O checkout ainda não processa pagamentos reais.
 - **Configuração:** a ausência de configuração válida do Supabase não derruba as páginas públicas; o README e `.env.example` orientam a configuração antes do build na hospedagem.
 - **Navegação administrativa:** o ajuste posterior à integração de autenticação manteve o atalho de catálogo no painel enquanto a gestão de catálogo não está disponível. As telas de peças continuam sem persistência.
 - **Pendência registrada:** [#7 — Cadastro com e-mail existente aparenta criar uma nova conta](https://github.com/IsaacCDSantos/MimosDaTaty/issues/7). O relato trata da apresentação do resultado; nos testes relatados não foi constatada duplicação do mesmo e-mail no banco.
