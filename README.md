@@ -224,7 +224,7 @@ A estrutura de perfis está em `supabase/migrations/202610280001_perfis.sql`. Ex
 
 Para conceder acesso administrativo a outra conta, localize seu ID em **Authentication → Users**, encontre a mesma linha em **Table Editor → perfis** e altere `perfil` de `cliente` para `admin`. A pessoa deve sair e entrar novamente pela opção Admin. Essa permissão vale para o site, não para o painel de administração do Supabase.
 
-O Supabase trata tentativas de cadastro repetido com o mesmo e-mail. Conforme as configurações de confirmação, uma resposta sem sessão pode ocultar a existência de uma conta já cadastrada; a tela "Confira seu e-mail" não comprova criação de outra conta nem entrega de uma mensagem. A melhoria desse feedback está acompanhada na [issue #7](https://github.com/IsaacCDSantos/MimosDaTaty/issues/7).
+O Supabase trata tentativas de cadastro repetido com o mesmo e-mail. Conforme as configurações de confirmação, uma resposta sem sessão pode ocultar a existência de uma conta já cadastrada; a tela "Confira seu e-mail" não comprova criação de outra conta nem entrega de uma mensagem. A [issue #7](https://github.com/IsaacCDSantos/MimosDaTaty/issues/7), sobre esse feedback, está encerrada como concluída no GitHub; seus critérios de aceite permanecem desmarcados na descrição.
 
 Habilite e-mail/senha no Supabase Auth e autorize a URL `/login` dos ambientes nas URLs de redirecionamento. A proteção de páginas não substitui as regras RLS das futuras tabelas de pedidos e produtos. As telas administrativas atuais ainda usam prévias e não persistem essas operações.
 
@@ -298,9 +298,10 @@ Para manter o histórico e a qualidade de engenharia do repositório, recomenda-
 - [x] Página inicial do admin com prévia identificada e dados de exemplo;
 - [x] Interface de pedidos admin com filtros, detalhes, rastreio e alterações temporárias na prévia;
 - [x] Migração SQL de perfis versionada e configuração por variáveis de ambiente;
-- [ ] Melhorar o retorno do cadastro com e-mail existente ([issue #7](https://github.com/IsaacCDSantos/MimosDaTaty/issues/7));
+- [x] Issue sobre o retorno do cadastro com e-mail existente encerrada no GitHub ([issue #7](https://github.com/IsaacCDSantos/MimosDaTaty/issues/7)); os critérios de aceite continuam desmarcados na issue;
 - [ ] Implementar as telas Perfil e Meus pedidos do cliente ([issue #6](https://github.com/IsaacCDSantos/MimosDaTaty/issues/6)); as propostas foram prototipadas no Figma;
-- [ ] Concluir recuperação de senha: validar retorno de recuperação e links inválidos/expirados, integrar reenvio e remover avisos demonstrativos;
+- [ ] Concluir pendências da recuperação de senha: validar retorno e links inválidos/expirados, integrar reenvio e remover avisos demonstrativos. A [issue #9](https://github.com/IsaacCDSantos/MimosDaTaty/issues/9) está encerrada no GitHub, apesar dessas pendências no código;
+- [ ] Revisar o botão da vitrine administrativa ([issue #5](https://github.com/IsaacCDSantos/MimosDaTaty/issues/5)), as prévias públicas administrativas ([issue #8](https://github.com/IsaacCDSantos/MimosDaTaty/issues/8)) e a responsividade em celulares ([issue #10](https://github.com/IsaacCDSantos/MimosDaTaty/issues/10));
 - [ ] Implementar o catálogo administrativo e persistência de produtos e pedidos;
 - [ ] Integração com gateway de pagamentos real (PIX dinâmico, cartão);
 - [ ] Conectar as operações do painel privado à gestão persistente de pedidos e produtos.
@@ -315,7 +316,7 @@ Para manter o histórico e a qualidade de engenharia do repositório, recomenda-
 - **Banco de dados e pagamentos:** a modelagem da loja segue em trabalho separado; produtos e pedidos ainda não estão ligados a uma operação persistente no site. O checkout ainda não processa pagamentos reais.
 - **Configuração:** a ausência de configuração válida do Supabase não derruba as páginas públicas; o README e `.env.example` orientam a configuração antes do build na hospedagem.
 - **Navegação administrativa:** o ajuste posterior à integração de autenticação manteve o atalho de catálogo no painel enquanto a gestão de catálogo não está disponível. As telas de peças continuam sem persistência.
-- **Pendência registrada:** [#7 — Cadastro com e-mail existente aparenta criar uma nova conta](https://github.com/IsaacCDSantos/MimosDaTaty/issues/7). O relato trata da apresentação do resultado; nos testes relatados não foi constatada duplicação do mesmo e-mail no banco.
+- **Issue encerrada:** [#7 — Cadastro com e-mail existente aparenta criar uma nova conta](https://github.com/IsaacCDSantos/MimosDaTaty/issues/7). O GitHub a registra como concluída, embora os critérios de aceite permaneçam desmarcados. O relato trata da apresentação do resultado; nos testes relatados não foi constatada duplicação do mesmo e-mail no banco.
 
 ---
 
