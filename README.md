@@ -293,6 +293,7 @@ Para manter o histórico e a qualidade de engenharia do repositório, recomenda-
 - [x] Identificação da conta no cabeçalho e saída da sessão;
 - [x] Interfaces do fluxo de recuperação de senha e confirmação de e-mail;
 - [x] Solicitação de link e alteração de senha integradas ao Supabase, com fluxo principal testado manualmente;
+- [x] Issue de integração da recuperação de senha encerrada no GitHub ([issue #9](https://github.com/IsaacCDSantos/MimosDaTaty/issues/9));
 - [x] Implementação de carrinho de compras (layout fidedigno ao Figma e interatividade front-end);
 - [x] Layout e componentes de checkout com resumo de compras e formas de pagamento;
 - [x] Página inicial do admin com prévia identificada e dados de exemplo;
@@ -300,7 +301,7 @@ Para manter o histórico e a qualidade de engenharia do repositório, recomenda-
 - [x] Migração SQL de perfis versionada e configuração por variáveis de ambiente;
 - [x] Issue sobre o retorno do cadastro com e-mail existente encerrada no GitHub ([issue #7](https://github.com/IsaacCDSantos/MimosDaTaty/issues/7)); os critérios de aceite continuam desmarcados na issue;
 - [ ] Implementar as telas Perfil e Meus pedidos do cliente ([issue #6](https://github.com/IsaacCDSantos/MimosDaTaty/issues/6)); as propostas foram prototipadas no Figma;
-- [ ] Concluir pendências da recuperação de senha: validar retorno e links inválidos/expirados, integrar reenvio e remover avisos demonstrativos. A [issue #9](https://github.com/IsaacCDSantos/MimosDaTaty/issues/9) está encerrada no GitHub, apesar dessas pendências no código;
+- [ ] Revisar pendências identificadas no código de recuperação de senha: validação do retorno e de links inválidos/expirados, reenvio e avisos demonstrativos;
 - [ ] Revisar o botão da vitrine administrativa ([issue #5](https://github.com/IsaacCDSantos/MimosDaTaty/issues/5)), as prévias públicas administrativas ([issue #8](https://github.com/IsaacCDSantos/MimosDaTaty/issues/8)) e a responsividade em celulares ([issue #10](https://github.com/IsaacCDSantos/MimosDaTaty/issues/10));
 - [ ] Implementar o catálogo administrativo e persistência de produtos e pedidos;
 - [ ] Integração com gateway de pagamentos real (PIX dinâmico, cartão);
