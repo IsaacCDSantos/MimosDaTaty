@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Apenas o README.md principal do projeto deve ser versionado (demais .md de apoio/IA ficam locais)
+*.md
+!/README.md

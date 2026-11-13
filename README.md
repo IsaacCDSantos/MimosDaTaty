@@ -72,16 +72,15 @@ A aplicação foi planejada para unir a sensibilidade e o acolhimento do artesan
   - Validação de campos obrigatórios, senha com pelo menos 8 caracteres e confirmação coincidente.
   - Envio ao Supabase Auth isolado em `src/servicos/cadastro.js`, com feedback de erro. Quando a API devolve uma sessão, o cliente entra automaticamente e segue para a página inicial da loja.
   - Utiliza `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY` em `.env.local`. O cadastro por e-mail deve estar habilitado no Supabase e a URL de retorno `/login` de cada ambiente deve estar autorizada nas configurações de autenticação.
-  - A confirmação de e-mail depende da configuração do projeto no Supabase. Quando estiver habilitada, o usuário precisa confirmar o endereço antes de entrar. A conta de teste utilizada neste ambiente foi criada com confirmação por e-mail. Veja também [a configuração do cadastro](supabase/README.md).
+  - A confirmação de e-mail depende da configuração do projeto no Supabase. Quando estiver habilitada, o usuário precisa confirmar o endereço antes de entrar. A conta de teste utilizada neste ambiente foi criada com confirmação por e-mail.
   - A tabela `perfis` e o trigger versionados criam novos perfis como `cliente`; o cadastro público não concede permissões administrativas.
 
 - 🔑 **Fluxo de Recuperação de Senha (`/recuperar-senha`, `/confirmacao` e `/redefinir-senha`)**:
   - Telas responsivas conforme o Figma, com solicitação real do link pelo Supabase Auth e alteração da senha da conta autenticada.
-  - O fluxo principal foi testado manualmente com uma conta: recebimento do link, alteração da senha e login com a nova senha. A integração ainda é parcial: tratamento completo do retorno de recuperação, reenvio e avisos visuais permanecem pendentes.
+  - O fluxo principal foi testado manualmente com uma conta: recebimento do link, alteração da senha e login com a nova senha. O envio e o reenvio agora usam um serviço compartilhado; o tratamento completo do retorno de recuperação e a validação atual da entrega permanecem pendentes.
   - O e-mail pertence à caixa de entrada externa do usuário; não existe uma página de e-mail dentro da aplicação nem uma transição interna da confirmação para o modelo da mensagem.
-  - O reenvio tem uma contagem demonstrativa de 60 segundos e ainda não envia mensagens. `?previa=expirado` exibe apenas um exemplo visual, sem validar o link recebido.
-  - O aviso visual que afirma que nenhum e-mail é enviado e nenhuma senha é alterada está desatualizado e ainda precisa ser corrigido.
-  - O estado atual e os próximos passos estão descritos em [docs/recuperacao-senha.md](docs/recuperacao-senha.md).
+  - O reenvio solicita uma mensagem real ao Supabase após 60 segundos, com bloqueio de pedidos simultâneos e tratamento de erros. A entrega depende do serviço de e-mail configurado. `?previa=expirado` exibe apenas um exemplo visual, sem validar o link recebido.
+  - O aviso antigo de demonstração foi removido das telas integradas de recuperação.
 
 - 🛒 **Tela de Carrinho de Compras (`/carrinho`)**:
   - Implementação fidedigna ao protótipo do Figma com layout acolhedor em tons rosé e pêssego.

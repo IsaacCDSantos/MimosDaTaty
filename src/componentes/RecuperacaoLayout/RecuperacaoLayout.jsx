@@ -24,7 +24,6 @@ export default function RecuperacaoLayout({ titulo, subtitulo, descricao, icone 
         </aside>
         <div className="senha-painel">
           <div className="senha-conteudo">
-            <p className="senha-demo" role="note">Demonstração visual: nenhum e-mail é enviado e nenhuma senha é alterada.</p>
             <span className="senha-simbolo" aria-hidden="true"><img src={icones[icone]} width="28" height="28" alt="" /></span>
             <h1 id="senha-titulo" className="senha-titulo" ref={heading} tabIndex={-1}>{titulo}</h1>
             <h2 className="senha-subtitulo">{subtitulo}</h2>
