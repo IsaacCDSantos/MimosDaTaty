@@ -1,10 +1,93 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { supabase } from '../../../servicos/supabase'
 import {
   STATUS_PEDIDO, calcularResumo, contarStatus, filtrarPedidos,
   formatarData, formatarMoeda, mudarStatus, salvarObservacao, salvarRastreio,
 } from './pedidosModelo'
 import './PedidosAdmin.css'
+
+const FORMAS_PAGAMENTO = {
+  pix: 'Pix',
+  cartao_credito: 'Cartão de crédito',
+  cartao_debito: 'Cartão de débito',
+  boleto: 'Boleto bancário',
+  dinheiro: 'Dinheiro',
+}
+
+function formatarFormaPagamento(valor) {
+  if (!valor) return 'Não informada'
+  return FORMAS_PAGAMENTO[valor] || valor
+}
+
+function mapearPedidoSupabase(row) {
+  const itens = Array.isArray(row.itens_pedido)
+    ? row.itens_pedido.map((item) => {
+        const nomeBase = item.nome_peca_snapshot || 'Peça'
+        const nome = item.personalizacao
+          ? `${nomeBase} (${item.personalizacao})`
+          : nomeBase
+
+        return {
+          id: item.id,
+          nome,
+          imagem: item.imagem_url_snapshot || null,
+          quantidade: Number(item.quantidade) || 1,
+          precoUnitario: typeof item.preco_unitario_centavos === 'number'
+            ? item.preco_unitario_centavos / 100
+            : 0,
+        }
+      })
+    : []
+
+  const resumoItens = itens.length > 0
+    ? itens.map((item) => `${item.quantidade}× ${item.nome}`).join(', ')
+    : 'Sem itens'
+
+  const dataIso = typeof row.criado_em === 'string' && row.criado_em.length >= 10
+    ? row.criado_em.slice(0, 10)
+    : new Date().toISOString().slice(0, 10)
+
+  const statusValido = STATUS_PEDIDO.some((opcao) => opcao.valor === row.status_pedido)
+    ? row.status_pedido
+    : 'novo'
+
+  const freteCentavos = typeof row.frete_centavos === 'number' ? row.frete_centavos : 0
+  const subtotalCentavos = typeof row.subtotal_centavos === 'number' ? row.subtotal_centavos : 0
+  const totalCentavos = typeof row.total_centavos === 'number' ? row.total_centavos : 0
+  const descontoCentavos = subtotalCentavos > 0 && totalCentavos > 0
+    ? Math.max(0, subtotalCentavos + freteCentavos - totalCentavos)
+    : 0
+
+  return {
+    uuid: row.id,
+    id: String(row.numero_pedido ?? row.id.slice(0, 8)),
+    data: dataIso,
+    status: statusValido,
+    cliente: {
+      nome: row.cliente_nome_snapshot || 'Cliente não informado',
+      email: row.cliente_email_snapshot || 'Não informado',
+      telefone: row.cliente_telefone_snapshot || 'Não informado',
+    },
+    endereco: {
+      logradouro: row.entrega_logradouro || '',
+      numero: row.entrega_numero || 'S/N',
+      complemento: row.entrega_complemento || '',
+      bairro: row.entrega_bairro || '',
+      cidade: row.entrega_cidade || '',
+      uf: row.entrega_uf || '',
+      cep: row.entrega_cep || '',
+    },
+    itens,
+    resumoItens,
+    frete: freteCentavos / 100,
+    desconto: descontoCentavos / 100,
+    formaPagamento: formatarFormaPagamento(row.forma_pagamento),
+    observacaoCliente: row.observacao_cliente || '',
+    observacaoInterna: row.observacao_interna || '',
+    codigoRastreio: row.codigo_rastreio || '',
+  }
+}
 
 function IconePedido({ nome, ...props }) {
   const desenhos = {
@@ -24,6 +107,7 @@ function SeloStatus({ status }) {
 function DetalhesPedido({ pedido, demonstracao, aoAlterar, aoFechar }) {
   const [codigo, setCodigo] = useState(pedido.codigoRastreio || '')
   const [observacao, setObservacao] = useState(pedido.observacaoInterna || '')
+  const [salvando, setSalvando] = useState(false)
   const [aviso, setAviso] = useState(null)
   const campoRastreio = useRef(null)
   const resumo = calcularResumo(pedido)
@@ -31,29 +115,109 @@ function DetalhesPedido({ pedido, demonstracao, aoAlterar, aoFechar }) {
   const anterior = STATUS_PEDIDO[indice - 1]
   const proximo = STATUS_PEDIDO[indice + 1]
 
-  function aplicarAlteracao(alteracao, mensagem, campo) {
-    if (!demonstracao) {
-      setAviso({ erro: true, texto: 'A atualização de pedidos ainda não está disponível.' })
-      return
-    }
+  async function aplicarAlteracao(alteracao, montarPayloadBanco, mensagem, campo) {
+    let atualizado
     try {
-      aoAlterar(alteracao())
-      setAviso({ erro: false, texto: `${mensagem} nesta prévia. As alterações são temporárias.` })
+      atualizado = alteracao()
     } catch (erro) {
       setAviso({ erro: true, texto: erro.message })
       campo?.current?.focus()
+      return
+    }
+
+    if (demonstracao) {
+      aoAlterar(atualizado)
+      setAviso({ erro: false, texto: `${mensagem} nesta prévia. As alterações são temporárias.` })
+      return
+    }
+
+    if (!supabase || !pedido.uuid) {
+      setAviso({ erro: true, texto: 'Conexão com o banco de dados indisponível.' })
+      return
+    }
+
+    setSalvando(true)
+    setAviso(null)
+
+    try {
+      const payload = montarPayloadBanco(atualizado)
+      const { error } = await supabase
+        .from('pedidos')
+        .update(payload)
+        .eq('id', pedido.uuid)
+
+      if (error) {
+        throw new Error(`Erro ao atualizar pedido: ${error.message}`)
+      }
+
+      aoAlterar(atualizado)
+      setAviso({ erro: false, texto: `${mensagem} com sucesso!` })
+    } catch (erro) {
+      console.error(erro)
+      setAviso({ erro: true, texto: erro.message || 'Não foi possível salvar a alteração.' })
+    } finally {
+      setSalvando(false)
     }
   }
 
   function salvarCodigoRastreio() {
-    aplicarAlteracao(() => salvarRastreio(pedido, codigo), 'Rastreio atualizado', campoRastreio)
+    aplicarAlteracao(
+      () => salvarRastreio(pedido, codigo),
+      (atualizado) => ({
+        codigo_rastreio: atualizado.codigoRastreio,
+        atualizado_em: new Date().toISOString(),
+      }),
+      'Rastreio atualizado',
+      campoRastreio
+    )
   }
 
   function avancarStatus(event) {
     event.preventDefault()
     if (!proximo) return
     const rastreio = proximo.valor === 'enviado' ? codigo : pedido.codigoRastreio
-    aplicarAlteracao(() => mudarStatus(pedido, proximo.valor, rastreio), 'Status atualizado', campoRastreio)
+
+    aplicarAlteracao(
+      () => mudarStatus(pedido, proximo.valor, rastreio),
+      (atualizado) => {
+        const agora = new Date().toISOString()
+        const dados = {
+          status_pedido: atualizado.status,
+          codigo_rastreio: atualizado.codigoRastreio || null,
+          atualizado_em: agora,
+        }
+        if (atualizado.status === 'enviado') dados.enviado_em = agora
+        if (atualizado.status === 'entregue') dados.entregue_em = agora
+        return dados
+      },
+      'Status atualizado',
+      campoRastreio
+    )
+  }
+
+  function voltarStatus() {
+    if (!anterior) return
+    aplicarAlteracao(
+      () => mudarStatus(pedido, anterior.valor, pedido.codigoRastreio),
+      (atualizado) => ({
+        status_pedido: atualizado.status,
+        codigo_rastreio: atualizado.codigoRastreio || null,
+        atualizado_em: new Date().toISOString(),
+      }),
+      'Status atualizado'
+    )
+  }
+
+  function handleSalvarObservacao(event) {
+    event.preventDefault()
+    aplicarAlteracao(
+      () => salvarObservacao(pedido, observacao),
+      (atualizado) => ({
+        observacao_interna: atualizado.observacaoInterna || null,
+        atualizado_em: new Date().toISOString(),
+      }),
+      'Observação interna salva'
+    )
   }
 
   return (
@@ -83,10 +247,10 @@ function DetalhesPedido({ pedido, demonstracao, aoAlterar, aoFechar }) {
             </li>)}</ul>
           </section>
           <section className="orders-admin-detail-section orders-admin-customer-note" aria-labelledby="orders-admin-customer-note-title"><h3 id="orders-admin-customer-note-title">Observações da cliente</h3><p>{pedido.observacaoCliente || 'A cliente não deixou observações neste pedido.'}</p></section>
-          <form className="orders-admin-detail-section orders-admin-note-form" onSubmit={event => { event.preventDefault(); aplicarAlteracao(() => salvarObservacao(pedido, observacao), 'Observação interna salva') }}>
+          <form className="orders-admin-detail-section orders-admin-note-form" onSubmit={handleSalvarObservacao}>
             <label htmlFor="orders-admin-internal-note">Observação interna</label><p>Uso exclusivo da administração. Não aparece para a cliente.</p>
-            <textarea id="orders-admin-internal-note" value={observacao} onChange={event => { setObservacao(event.target.value); setAviso(null) }} placeholder="Registre os cuidados e detalhes da produção..." maxLength={2000} rows={4} disabled={!demonstracao} />
-            <button className="orders-admin-primary-button" type="submit" disabled={!demonstracao}>Salvar observação</button>
+            <textarea id="orders-admin-internal-note" value={observacao} onChange={event => { setObservacao(event.target.value); setAviso(null) }} placeholder="Registre os cuidados e detalhes da produção..." maxLength={2000} rows={4} disabled={salvando} />
+            <button className="orders-admin-primary-button" type="submit" disabled={salvando}>{salvando ? 'Salvando...' : 'Salvar observação'}</button>
           </form>
         </div>
         <div className="orders-admin-detail-aside">
@@ -94,9 +258,9 @@ function DetalhesPedido({ pedido, demonstracao, aoAlterar, aoFechar }) {
           <form className="orders-admin-detail-section orders-admin-progress-form" onSubmit={avancarStatus}>
             <h3>Andamento do pedido</h3>
             <ol className="orders-admin-progress">{STATUS_PEDIDO.map((item, posicao) => <li key={item.valor} className={posicao <= indice ? 'orders-admin-progress-done' : ''} aria-current={item.valor === pedido.status ? 'step' : undefined}><span>{posicao + 1}</span>{item.rotulo}</li>)}</ol>
-            {(pedido.status === 'em_producao' || pedido.status === 'enviado') && <div className="orders-admin-tracking-field"><label htmlFor="orders-admin-tracking">Código de rastreio</label><input ref={campoRastreio} id="orders-admin-tracking" onKeyDown={event => { if (event.key === 'Enter' && pedido.status === 'enviado') { event.preventDefault(); salvarCodigoRastreio() } }} value={codigo} onChange={event => { setCodigo(event.target.value); setAviso(null) }} placeholder="Informe o código de envio" autoComplete="off" spellCheck={false} maxLength={80} required={proximo?.valor === 'enviado'} disabled={!demonstracao} /><p>{pedido.status === 'em_producao' ? 'Obrigatório para marcar como enviado.' : 'Código registrado para esta encomenda.'}</p>{pedido.status === 'enviado' && <button className="orders-admin-secondary-button" type="button" disabled={!demonstracao} onClick={salvarCodigoRastreio}>Salvar rastreio</button>}</div>}
+            {(pedido.status === 'em_producao' || pedido.status === 'enviado') && <div className="orders-admin-tracking-field"><label htmlFor="orders-admin-tracking">Código de rastreio</label><input ref={campoRastreio} id="orders-admin-tracking" onKeyDown={event => { if (event.key === 'Enter' && pedido.status === 'enviado') { event.preventDefault(); salvarCodigoRastreio() } }} value={codigo} onChange={event => { setCodigo(event.target.value); setAviso(null) }} placeholder="Informe o código de envio" autoComplete="off" spellCheck={false} maxLength={80} required={proximo?.valor === 'enviado'} disabled={salvando} /><p>{pedido.status === 'em_producao' ? 'Obrigatório para marcar como enviado.' : 'Código registrado para esta encomenda.'}</p>{pedido.status === 'enviado' && <button className="orders-admin-secondary-button" type="button" disabled={salvando} onClick={salvarCodigoRastreio}>Salvar rastreio</button>}</div>}
             {pedido.status === 'entregue' && <p className="orders-admin-delivered-tracking">Rastreio registrado: <strong>{pedido.codigoRastreio || 'Não informado'}</strong></p>}
-            <div className="orders-admin-status-actions"><button className="orders-admin-secondary-button" type="button" disabled={!demonstracao || !anterior} onClick={() => anterior && aplicarAlteracao(() => mudarStatus(pedido, anterior.valor, pedido.codigoRastreio), 'Status atualizado')}>{anterior ? `Voltar para ${anterior.rotulo}` : 'Etapa anterior'}</button><button className="orders-admin-primary-button" type="submit" disabled={!demonstracao || !proximo}>{proximo ? `Marcar como ${proximo.rotulo.toLowerCase()}` : 'Pedido entregue'}</button></div>
+            <div className="orders-admin-status-actions"><button className="orders-admin-secondary-button" type="button" disabled={salvando || !anterior} onClick={voltarStatus}>{anterior ? `Voltar para ${anterior.rotulo}` : 'Etapa anterior'}</button><button className="orders-admin-primary-button" type="submit" disabled={salvando || !proximo}>{proximo ? `Marcar como ${proximo.rotulo.toLowerCase()}` : 'Pedido entregue'}</button></div>
           </form>
           {aviso && <p className={`orders-admin-detail-feedback${aviso.erro ? ' orders-admin-detail-feedback--error' : ''}`} role={aviso.erro ? 'alert' : 'status'}>{aviso.texto}</p>}
         </div>
@@ -110,6 +274,8 @@ const POR_PAGINA = 6
 
 export default function PedidosAdmin({ pedidosIniciais = [], demonstracao = false }) {
   const [pedidos, setPedidos] = useState(() => pedidosIniciais.map(pedido => ({ ...pedido })))
+  const [carregando, setCarregando] = useState(!demonstracao)
+  const [erroCarga, setErroCarga] = useState('')
   const [busca, setBusca] = useState('')
   const [filtro, setFiltro] = useState('todos')
   const [pagina, setPagina] = useState(1)
@@ -128,6 +294,48 @@ export default function PedidosAdmin({ pedidosIniciais = [], demonstracao = fals
   const inicio = demonstracao ? '/previa/admin' : '/admin'
 
   useEffect(() => {
+    if (demonstracao) return
+
+    if (!supabase) {
+      setErroCarga('Serviço do banco de dados não configurado.')
+      setCarregando(false)
+      return
+    }
+
+    let ativo = true
+
+    async function carregarPedidos() {
+      setCarregando(true)
+      setErroCarga('')
+
+      const { data, error } = await supabase
+        .from('pedidos')
+        .select(`
+          *,
+          itens_pedido (*)
+        `)
+        .neq('status_pedido', 'cancelado')
+        .order('criado_em', { ascending: false })
+
+      if (!ativo) return
+
+      if (error) {
+        console.error('Erro ao carregar pedidos:', error)
+        setErroCarga(`Não foi possível carregar os pedidos: ${error.message}`)
+        setCarregando(false)
+        return
+      }
+
+      const mapeados = (data || []).map(mapearPedidoSupabase)
+      setPedidos(mapeados)
+      setCarregando(false)
+    }
+
+    carregarPedidos()
+    return () => { ativo = false }
+  }, [demonstracao])
+
+  useEffect(() => {
     if (pedidoSelecionadoId !== null && !dialogo.current.open) dialogo.current.showModal()
     if (pedidoSelecionadoId === null && dialogo.current.open) dialogo.current.close()
   }, [pedidoSelecionadoId])
@@ -143,7 +351,6 @@ export default function PedidosAdmin({ pedidosIniciais = [], demonstracao = fals
   }
   function atualizarPedido(atualizado) {
     setPedidos(atuais => atuais.map(pedido => pedido.id === atualizado.id ? atualizado : pedido))
-    setPagina(1)
   }
   function limparFiltros() {
     setBusca('')
@@ -155,15 +362,16 @@ export default function PedidosAdmin({ pedidosIniciais = [], demonstracao = fals
     <div className="orders-admin-page">
       <div className="orders-admin-circle orders-admin-circle--left" aria-hidden="true" /><div className="orders-admin-circle orders-admin-circle--right" aria-hidden="true" />
       <div className="orders-admin-shell">
-        <header className="orders-admin-header"><nav aria-label="Navegação administrativa"><Link to={inicio}>Home</Link><button type="button" onClick={() => setAvisoCatalogo(valor => !valor)}>Catálogo</button><Link className="orders-admin-nav-active" to={`${inicio}/pedidos`} aria-current="page">Pedidos</Link></nav><span className="orders-admin-account">Admin: Tati</span></header>
+        <header className="orders-admin-header"><nav aria-label="Navegação administrativa"><Link to={inicio}>Home</Link><button type="button" onClick={() => setAvisoCatalogo(valor => !valor)}>Catálogo</button><Link className="orders-admin-nav-active" to={`${inicio}/pedidos`} aria-current="page">Pedidos</Link></nav><span className="orders-admin-account">{demonstracao ? 'Prévia: Tati' : 'Admin: Tati'}</span></header>
         <main className="orders-admin-card" aria-labelledby="orders-admin-title">
           <div className="orders-admin-heading"><h1 id="orders-admin-title">Pedidos</h1><p>Acompanhe e atualize o andamento dos pedidos da loja.</p>{demonstracao && <span className="orders-admin-demo-label">Prévia · dados de exemplo</span>}</div>
+          {erroCarga && <p className="orders-admin-detail-feedback orders-admin-detail-feedback--error" role="alert">{erroCarga}</p>}
           {avisoCatalogo && <div className="orders-admin-catalog-notice" role="status"><p>O gerenciamento do catálogo ainda não está disponível.</p><Link to="/catalogo">Ver catálogo da loja</Link><button type="button" aria-label="Fechar aviso do catálogo" onClick={() => setAvisoCatalogo(false)}><IconePedido nome="fechar" /></button></div>}
           <div className="orders-admin-summary" aria-label="Resumo de todos os pedidos"><div><span>Novos</span><strong>{contagens.novo}</strong></div><div><span>Em produção</span><strong>{contagens.em_producao}</strong></div><div><span>Enviados</span><strong>{contagens.enviado}</strong></div></div>
           <div className="orders-admin-toolbar"><div className="orders-admin-filters" role="group" aria-label="Filtrar pedidos por status">{FILTROS.map(item => <button key={item.valor} type="button" className={filtro === item.valor ? 'orders-admin-filter-active' : ''} aria-pressed={filtro === item.valor} onClick={() => { setFiltro(item.valor); setPagina(1) }}>{item.rotulo}</button>)}</div><div className="orders-admin-search"><label className="orders-admin-sr-only" htmlFor="orders-admin-search">Buscar cliente ou número do pedido</label><input ref={campoBusca} id="orders-admin-search" type="search" placeholder="Buscar cliente ou nº do pedido" value={busca} onChange={event => { setBusca(event.target.value); setPagina(1) }} autoComplete="off" /></div></div>
           <div className="orders-admin-table-wrap"><table className="orders-admin-table"><caption className="orders-admin-sr-only">Pedidos da loja, com cliente, data, itens, total e status</caption><colgroup><col className="orders-admin-col-number" /><col className="orders-admin-col-customer" /><col className="orders-admin-col-items" /><col className="orders-admin-col-total" /><col className="orders-admin-col-status" /><col className="orders-admin-col-actions" /></colgroup><thead><tr><th scope="col">Pedido</th><th scope="col">Cliente</th><th scope="col">Itens</th><th scope="col">Total</th><th scope="col">Status</th><th scope="col"><span className="orders-admin-sr-only">Ações</span></th></tr></thead><tbody>{visiveis.map(pedido => <tr key={pedido.id}>
             <td className="orders-admin-number" data-label="Pedido">#{pedido.id}</td><td className="orders-admin-customer" data-label="Cliente"><span>{pedido.cliente.nome}</span><time dateTime={pedido.data}>{formatarData(pedido.data)}</time></td><td className="orders-admin-items" data-label="Itens">{pedido.resumoItens}</td><td className="orders-admin-total" data-label="Total">{formatarMoeda(calcularResumo(pedido).total)}</td><td className="orders-admin-status-cell" data-label="Status"><SeloStatus status={pedido.status} /></td><td className="orders-admin-actions"><button type="button" aria-label={`Ver detalhes do pedido #${pedido.id} de ${pedido.cliente.nome}`} onClick={event => abrirDetalhes(pedido.id, event.currentTarget)}>Detalhes</button></td>
-          </tr>)}{!visiveis.length && <tr className="orders-admin-empty"><td colSpan={6}><p>{pedidos.length ? 'Nenhum pedido encontrado para essa busca.' : 'Nenhum pedido disponível.'}</p>{pedidos.length > 0 && <button type="button" onClick={limparFiltros}>Limpar filtros</button>}</td></tr>}</tbody></table></div>
+          </tr>)}{!visiveis.length && <tr className="orders-admin-empty"><td colSpan={6}><p>{carregando ? 'Carregando pedidos...' : pedidos.length ? 'Nenhum pedido encontrado para essa busca.' : 'Nenhum pedido disponível.'}</p>{!carregando && pedidos.length > 0 && <button type="button" onClick={limparFiltros}>Limpar filtros</button>}</td></tr>}</tbody></table></div>
           <nav className="orders-admin-pagination" aria-label="Paginação dos pedidos"><output aria-live="polite">{filtrados.length ? `Mostrando ${primeiroIndice + 1}–${Math.min(primeiroIndice + POR_PAGINA, filtrados.length)} de ${filtrados.length} ${filtrados.length === 1 ? 'pedido' : 'pedidos'}` : '0 pedidos encontrados'}</output><div><button type="button" aria-label="Página anterior" disabled={paginaAtual <= 1} onClick={() => setPagina(paginaAtual - 1)}><IconePedido nome="esquerda" /> Anterior</button><span>Página {paginaAtual} de {totalPaginas}</span><button type="button" aria-label="Próxima página" disabled={paginaAtual >= totalPaginas} onClick={() => setPagina(paginaAtual + 1)}>Próxima <IconePedido nome="direita" /></button></div></nav>
         </main>
       </div>
