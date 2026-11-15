@@ -1,25 +1,28 @@
 import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../../servicos/supabase';
+import { carregarCategoriasPecas, registrarImagemPeca, salvarPeca, validarDadosPeca, validarFoto } from '../../../servicos/pecasAdmin.js';
 import './AdminAdicionarPeca.css';
 
-const TIPOS_IMAGEM_PERMITIDOS = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
-const TAMANHO_MAXIMO_BYTES = 5 * 1024 * 1024; // 5 MB (limite configurado no bucket)
 
 export const AdminAdicionarPeca = ({ demonstracao = false }) => {
   const fileInputRef = useRef(null);
+  const envioEmAndamento = useRef(false);
+  const [pendenciaImagem, setPendenciaImagem] = useState(null);
+  const [salvamentoIncerto, setSalvamentoIncerto] = useState(null);
+  const [carregandoCategorias, setCarregandoCategorias] = useState(!demonstracao && !!supabase);
   const [fotoPreview, setFotoPreview] = useState(null);
   const [fotoArquivo, setFotoArquivo] = useState(null);
   const [categorias, setCategorias] = useState([]);
   const [salvando, setSalvando] = useState(false);
-  const [aviso, setAviso] = useState('');
+  const [aviso, setAviso] = useState(!demonstracao && !supabase ? 'Serviço do banco de dados não configurado.' : '');
   const inicio = demonstracao ? '/previa/admin' : '/admin';
 
   const [peca, setPeca] = useState({
     nome: '',
     descricao: '',
     preco: '',
-    categoria_id: '',
+    categoria_id: demonstracao ? 'Maternidade' : '',
     prazo: '7 dias úteis',
     estoque: '3 unidades',
     visivel: true,
@@ -35,31 +38,16 @@ export const AdminAdicionarPeca = ({ demonstracao = false }) => {
     if (demonstracao || !supabase) return;
 
     let ativo = true;
-    async function carregarCategorias() {
-      const { data, error } = await supabase
-        .from('categorias')
-        .select('id, nome')
-        .eq('ativa', true)
-        .order('ordem', { ascending: true });
-
+    carregarCategoriasPecas(supabase).then((data) => {
       if (!ativo) return;
-
-      if (error) {
-        console.error('Erro ao carregar categorias:', error);
-        setAviso('Não foi possível carregar as categorias do banco.');
-        return;
-      }
-
-      if (data && data.length > 0) {
-        setCategorias(data);
-        setPeca((prev) => ({
-          ...prev,
-          categoria_id: prev.categoria_id || data[0].id,
-        }));
-      }
-    }
-
-    carregarCategorias();
+      setCategorias(data);
+      setPeca((prev) => ({ ...prev, categoria_id: data[0]?.id || '' }));
+      if (!data.length) setAviso('Nenhuma categoria ativa disponível. Cadastre ou ative uma categoria antes de salvar.');
+    }).catch((erro) => {
+      if (ativo) setAviso(erro.message);
+    }).finally(() => {
+      if (ativo) setCarregandoCategorias(false);
+    });
     return () => { ativo = false; };
   }, [demonstracao]);
 
@@ -80,14 +68,8 @@ export const AdminAdicionarPeca = ({ demonstracao = false }) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    if (!TIPOS_IMAGEM_PERMITIDOS.includes(file.type)) {
-      setAviso('Formato inválido. Use JPEG, PNG, WebP ou AVIF.');
-      e.target.value = '';
-      return;
-    }
-
-    if (file.size > TAMANHO_MAXIMO_BYTES) {
-      setAviso('A imagem excede o limite de 5 MB.');
+    try { validarFoto(file); } catch (erro) {
+      setAviso(erro.message);
       e.target.value = '';
       return;
     }
@@ -115,119 +97,45 @@ export const AdminAdicionarPeca = ({ demonstracao = false }) => {
 
   const handleSalvar = async (e) => {
     e.preventDefault();
-
-    if (!peca.nome.trim()) {
-      setAviso('Informe o nome da peça.');
-      e.currentTarget.elements.nome.focus();
-      return;
-    }
-
-    const valorReais = Number(peca.preco.replace(',', '.'));
-    if (!(valorReais > 0)) {
-      setAviso('Informe um preço maior que zero.');
-      e.currentTarget.elements.preco.focus();
-      return;
-    }
-
-    if (demonstracao) {
-      setAviso('Prévia validada. Os dados não foram salvos no modo demonstração.');
-      return;
-    }
-
-    if (!supabase) {
-      setAviso('Serviço do banco de dados não configurado.');
-      return;
-    }
-
-    if (!peca.categoria_id) {
-      setAviso('Selecione uma categoria válida.');
-      return;
-    }
-
-    setSalvando(true);
-    setAviso('Salvando peça...');
-
+    if (envioEmAndamento.current || pendenciaImagem || salvamentoIncerto) return;
     try {
-      let imagemCapaUrl = null;
-
-      // 1. Faz upload da foto para o bucket 'pecas' (se houver foto selecionada)
-      if (fotoArquivo) {
-        const extensao = fotoArquivo.name.split('.').pop();
-        const nomeLimpo = fotoArquivo.name
-          .replace(/\.[^/.]+$/, '')
-          .replace(/[^a-zA-Z0-9_-]/g, '_');
-        const caminhoArquivo = `${Date.now()}-${nomeLimpo}.${extensao}`;
-
-        const { error: uploadError } = await supabase.storage
-          .from('pecas')
-          .upload(caminhoArquivo, fotoArquivo, {
-            contentType: fotoArquivo.type,
-            upsert: false,
-          });
-
-        if (uploadError) {
-          throw new Error(`Erro ao enviar imagem: ${uploadError.message}`);
-        }
-
-        const { data: urlData } = supabase.storage
-          .from('pecas')
-          .getPublicUrl(caminhoArquivo);
-
-        imagemCapaUrl = urlData.publicUrl;
+      const dados = validarDadosPeca(peca, categorias, demonstracao);
+      if (demonstracao) {
+        setAviso('Prévia validada. Os dados não foram salvos no modo demonstração.');
+        return;
       }
-
-      // 2. Prepara os valores numéricos conforme as colunas do PostgreSQL
-      const precoCentavos = Math.round(valorReais * 100);
-      const estoqueAtual = parseInt(peca.estoque.replace(/\D/g, ''), 10) || 0;
-      const prazoProducaoDias = parseInt(peca.prazo.replace(/\D/g, ''), 10) || 0;
-      const tipoDisponibilidade = estoqueAtual > 0 ? 'pronta_entrega' : 'sob_encomenda';
-
-      // 3. Insere o registro principal na tabela 'pecas'
-      const { data: novaPeca, error: pecaError } = await supabase
-        .from('pecas')
-        .insert({
-          nome: peca.nome.trim(),
-          descricao: peca.descricao.trim() || null,
-          preco_centavos: precoCentavos,
-          categoria_id: peca.categoria_id,
-          imagem_capa_url: imagemCapaUrl,
-          tipo_disponibilidade: tipoDisponibilidade,
-          estoque_atual: estoqueAtual,
-          prazo_producao_dias: prazoProducaoDias,
-          visivel: peca.visivel,
-          arquivada: false,
-        })
-        .select('id')
-        .single();
-
-      if (pecaError) {
-        throw new Error(`Erro ao salvar peça: ${pecaError.message}`);
-      }
-
-      // 4. Registra a imagem na tabela 'peca_imagens' para manter o histórico da galeria
-      if (imagemCapaUrl && novaPeca?.id) {
-        const { error: imagemError } = await supabase
-          .from('peca_imagens')
-          .insert({
-            peca_id: novaPeca.id,
-            imagem_url: imagemCapaUrl,
-            ordem: 1,
-          });
-
-        if (imagemError) {
-          console.error('Peça salva, mas houve erro ao registrar em peca_imagens:', imagemError);
-        }
-      }
-
+      validarFoto(fotoArquivo);
+      envioEmAndamento.current = true;
+      setSalvando(true);
+      setAviso('Salvando peça...');
+      const resultado = await salvarPeca(supabase, { dados, foto: fotoArquivo });
       limparFormulario();
-      setAviso('Peça cadastrada com sucesso no catálogo!');
-    } catch (err) {
-      console.error(err);
-      setAviso(err.message || 'Ocorreu um erro inesperado ao cadastrar a peça.');
+      setPendenciaImagem(resultado.pendenciaImagem);
+      setAviso(resultado.pendenciaImagem
+        ? 'Peça cadastrada. Não foi possível concluir o registro da foto; tente novamente abaixo, sem cadastrar outra peça.'
+        : 'Peça cadastrada com sucesso!');
+    } catch (erro) {
+      if (erro.resultadoIncerto) setSalvamentoIncerto(erro.idPeca);
+      setAviso(erro.message || 'Não foi possível cadastrar a peça.');
     } finally {
+      envioEmAndamento.current = false;
       setSalvando(false);
     }
   };
+
+  const tentarRegistrarFoto = async () => {
+    if (envioEmAndamento.current || !pendenciaImagem) return;
+    envioEmAndamento.current = true;
+    setSalvando(true);
+    try {
+      await registrarImagemPeca(supabase, pendenciaImagem);
+      setPendenciaImagem(null);
+      setAviso('Foto registrada. A peça está salva com sucesso!');
+    } catch (erro) { setAviso(erro.message); }
+    finally { envioEmAndamento.current = false; setSalvando(false); }
+  };
+
+  const podeSalvar = demonstracao || (!!supabase && !carregandoCategorias && categorias.length > 0);
 
   return (
     <div className="admin-page-bg admin-adicionar-peca">
@@ -341,7 +249,7 @@ export const AdminAdicionarPeca = ({ demonstracao = false }) => {
                   name="categoria_id"
                   value={peca.categoria_id}
                   onChange={handleChange}
-                  disabled={salvando}
+                  disabled={salvando || (!demonstracao && (carregandoCategorias || !categorias.length))}
                 >
                   {categorias.length > 0 ? (
                     categorias.map((cat) => (
@@ -349,14 +257,14 @@ export const AdminAdicionarPeca = ({ demonstracao = false }) => {
                         {cat.nome}
                       </option>
                     ))
-                  ) : (
+                  ) : demonstracao ? (
                     <>
                       <option value="Maternidade">Maternidade</option>
                       <option value="Enxovais">Enxovais</option>
                       <option value="Crochê & Bordado">Crochê & Bordado</option>
                       <option value="Presentes">Presentes</option>
                     </>
-                  )}
+                  ) : <option value="">{carregandoCategorias ? 'Carregando categorias...' : 'Nenhuma categoria disponível'}</option>}
                 </select>
               </div>
             </div>
@@ -406,6 +314,8 @@ export const AdminAdicionarPeca = ({ demonstracao = false }) => {
         </form>
 
         {aviso && <p className="aviso-formulario" role="status">{aviso}</p>}
+        {pendenciaImagem && <button type="button" className="btn-outline" disabled={salvando} onClick={tentarRegistrarFoto}>Tentar registrar foto novamente</button>}
+        {salvamentoIncerto && <Link className="btn-outline" to={`${inicio}/editar-peca?id=${salvamentoIncerto}`}>Conferir peça</Link>}
 
         <div className="acoes-rodape">
           <button type="button" className="btn-outline btn-excluir" disabled>
@@ -417,7 +327,7 @@ export const AdminAdicionarPeca = ({ demonstracao = false }) => {
               type="submit"
               form="adicionar-peca-form"
               className="btn-salvar"
-              disabled={salvando}
+              disabled={salvando || !podeSalvar || !!pendenciaImagem || !!salvamentoIncerto}
             >
               {salvando ? 'Salvando...' : demonstracao ? 'Validar prévia' : 'Salvar peça'}
             </button>
