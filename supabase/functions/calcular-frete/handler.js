@@ -1,6 +1,25 @@
 import { ErroFrete, validarPedido, prepararCotacao, normalizarOpcoes } from './modelo.js'
 const cors = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-retry-count, traceparent, tracestate, baggage', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Cache-Control': 'no-store', 'Content-Type': 'application/json; charset=utf-8' }
 const json = (dados, status = 200) => new Response(JSON.stringify(dados), { status, headers: cors })
+async function lerCorpoLimitado(req) {
+ const leitor = req.body?.getReader()
+ if (!leitor) return ''
+ const decoder = new TextDecoder()
+ let tamanho = 0
+ let texto = ''
+ try {
+  while (true) {
+   const { value, done } = await leitor.read()
+   if (done) return texto + decoder.decode()
+   tamanho += value.byteLength
+   if (tamanho > 12000) {
+    await leitor.cancel()
+    throw new ErroFrete(413, 'PEDIDO_GRANDE', 'O carrinho ultrapassa o tamanho permitido.')
+   }
+   texto += decoder.decode(value, { stream: true })
+  }
+ } finally { leitor.releaseLock() }
+}
 export function criarHandlerFrete({ autenticar, carregarPecas, consultarFrete, config, agora = () => Date.now() }) {
  const limites = new Map()
  return async req => {
@@ -11,8 +30,7 @@ export function criarHandlerFrete({ autenticar, carregarPecas, consultarFrete, c
    if (!usuario?.id) throw new ErroFrete(401, 'LOGIN_NECESSARIO', 'Entre na sua conta para calcular o frete.')
    if (!req.headers.get('content-type')?.includes('application/json')) throw new ErroFrete(400, 'FORMATO_INVALIDO', 'Envie os dados do cálculo no formato correto.')
    if (Number(req.headers.get('content-length')) > 12000) throw new ErroFrete(413, 'PEDIDO_GRANDE', 'O carrinho ultrapassa o tamanho permitido.')
-   const texto = await req.text()
-   if (texto.length > 12000) throw new ErroFrete(413, 'PEDIDO_GRANDE', 'O carrinho ultrapassa o tamanho permitido.')
+   const texto = await lerCorpoLimitado(req)
    let corpo
    try { corpo = JSON.parse(texto) } catch { throw new ErroFrete(400, 'JSON_INVALIDO', 'Não foi possível ler os dados do cálculo.') }
    const pedido = validarPedido(corpo)

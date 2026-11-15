@@ -14,3 +14,23 @@ test('credencial ausente produz erro de configuração sem inventar uma cotaçã
 test('resposta deriva subtotal do banco e preserva pacote fixo e validade de dez minutos',async()=>{let payload;const r=await criar({consultarFrete:async p=>{payload=p;return[{id:1,name:'PAC',company:{name:'Correios'},price:18.9,delivery_time:5,has_error:false}]}})(requisicao());assert.equal(r.status,200);const b=await r.json();assert.equal(b.subtotalCentavos,5980);assert.equal(b.opcoes[0].precoCentavos,1890);assert.equal(b.expiraEm,'2026-11-15T23:10:00.000Z');assert.equal(b.embalagemFixaTeste,true);assert.deepEqual(payload.package,config.embalagem);assert.deepEqual(payload.from,{postal_code:'61940005'})})
 test('serviço indisponível não vira envio grátis e erro interno não expõe credenciais',async()=>{assert.equal((await criar({consultarFrete:async()=>[{id:1,has_error:true}]})(requisicao())).status,422);const r=await criar({consultarFrete:async()=>{throw new Error('credencial-privada-de-teste')}})(requisicao());assert.equal(r.status,502);assert.doesNotMatch(await r.text(),/credencial-privada/)} )
 test('limite de consultas por usuário barra excesso antes da transportadora',async()=>{const h=criar();for(let i=0;i<15;i++)assert.equal((await h(requisicao())).status,200);assert.equal((await h(requisicao())).status,429)})
+
+test('corpo sem content-length é limitado em bytes durante a leitura e cancela o fluxo', async () => {
+ let lidos = 0
+ let cancelado = false
+ const corpo = new ReadableStream({
+  pull(controller) {
+   if (++lidos > 20) controller.close()
+   else controller.enqueue(new TextEncoder().encode('á'.repeat(4000)))
+  },
+  cancel() { cancelado = true },
+ })
+ const req = new Request('https://exemplo.test/calcular-frete', {
+  method: 'POST', headers: { 'Content-Type': 'application/json' }, body: corpo, duplex: 'half',
+ })
+ const resposta = await criar({ carregarPecas: async () => assert.fail('Não consultar o banco') })(req)
+ assert.equal(resposta.status, 413)
+ assert.equal((await resposta.json()).codigo, 'PEDIDO_GRANDE')
+ assert.equal(cancelado, true)
+ assert.ok(lidos < 20)
+})
