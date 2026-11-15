@@ -86,13 +86,13 @@ A aplicação foi planejada para unir a sensibilidade e o acolhimento do artesan
   - Implementação fidedigna ao protótipo do Figma com layout acolhedor em tons rosé e pêssego.
   - Listagem dos itens selecionados com fotografias em alta resolução, descrições detalhadas e prazos de entrega.
   - Ajuste interativo de quantidades (+ / -) e remoção de itens em tempo real diretamente no front-end.
-  - Painel de resumo lateral com cálculo dinâmico de subtotal, frete estimado e valor total.
+  - Painel de resumo lateral com subtotal real do carrinho; o frete é calculado pelo CEP no checkout.
   - Navegação integrada com atalhos de retorno ao catálogo e botão direto para o fluxo de checkout (`/checkout`).
-  - Tratamento de estado vazio (*empty state*) com opções para voltar à vitrine ou restaurar itens de demonstração.
+  - Carrinho compartilhado com a vitrine e o checkout, persistido localmente apenas com dados dos produtos; estado vazio com retorno ao catálogo.
 
 - 🛍️ **Fluxo de Checkout (`/checkout`)**:
-  - Resumo de valores em tempo real: Subtotal, frete estimado, cupons de desconto e total final.
-  - Seleção visual de formas de pagamento (Cartão de Crédito, PIX e Boleto Bancário), ainda sem processamento ou confirmação real de pagamentos.
+  - Resumo em centavos com subtotal dos itens e frete selecionado pela SuperFrete. Não há aplicação de cupons nesta versão.
+  - Formas de pagamento mantidas como prévia desabilitada; cálculo de frete não cria pedidos nem processa pagamentos.
   - Atalho para edição do carrinho e navegação de retorno.
 
 - 🧭 **Roteamento SPA Modularizado**:
@@ -369,6 +369,43 @@ O contrato segue a estrutura existente da branch BancoDadosMimosDaTaty: categori
 
 Salvar aguarda a resposta do banco; erros preservam os campos e a foto para nova tentativa. O catálogo atualiza os registros somente depois da confirmação. A exclusão arquiva a peça e a oculta da vitrine, preservando itens e fotos dos pedidos anteriores. Fotos novas só são enviadas ao salvar. Upload sem gravação é removido apenas quando há falha SQL confirmada; em resultado de rede desconhecido a imagem é preservada para não quebrar um registro possivelmente gravado. A troca de foto mantém a imagem anterior porque pedidos podem usá-la.
 
-A vitrine /catalogo usa a mesma fonte quando configurada e consulta somente peças visíveis e não arquivadas. Banco vazio ou erro de conexão não são substituídos por exemplos. Sem configuração, a vitrine preserva a demonstração identificada. Carrinho/checkout e indicadores do início do admin continuam com os comportamentos próprios existentes e não reservam estoque ou confirmam pedidos reais.
+A vitrine /catalogo usa a mesma fonte quando configurada e consulta somente peças visíveis e não arquivadas. Banco vazio ou erro de conexão não são substituídos por exemplos. Sem configuração, a vitrine preserva a demonstração identificada. O carrinho agora compartilha os itens da vitrine com o checkout e consulta o frete no servidor. Checkout não reserva estoque nem confirma pedidos; os indicadores do início do admin preservam o comportamento anterior.
 
 Verificação local de leitura: node --env-file=.env.local scripts/verificar-conexao-supabase.mjs. Verificação transacional de CRUD/RLS: scripts/verificar-permissoes-catalogo.sql, para execução autorizada no SQL Editor do projeto; termina com ROLLBACK e não deixa registros de teste. npm test cobre validação, erros, upload, filtros e normalização; npm run lint e npm run build verificam o projeto.
+
+
+## Cálculo de frete — SuperFrete
+
+A vitrine, o carrinho e o checkout compartilham os itens selecionados. O carrinho fica no localStorage somente com IDs, quantidades e dados visuais dos produtos; endereço e cartão não são persistidos. O frete fixo de R$ 25 foi substituído pela cotação em /checkout. O cliente informa o CEP, calcula e escolhe um serviço; a seleção atualiza frete e total. Alterar CEP/itens ou atingir a validade de dez minutos invalida a cotação, inclusive durante consultas em andamento.
+
+A Edge Function calcular-frete exige login Supabase. O navegador envia apenas CEP de destino, IDs e quantidades. O servidor consulta preços, disponibilidade e prazo de produção no banco antes de chamar a API; nunca usa o preço informado pelo navegador. O prazo de produção é exibido separado do transporte. A função só consulta valores: não emite etiquetas, cria pedidos ou realiza pagamentos.
+
+### Configuração de teste solicitada
+
+- Origem: Maranguape–CE, CEP 61940-005.
+- Embalagem única e fixa para o carrinho inteiro: comprimento 30 cm, largura 20 cm, altura 10 cm, peso 1 kg.
+- Serviços solicitados: PAC, SEDEX e Mini Envios (1,2,17). A API retorna apenas opções atendidas e pode incluir serviços habilitados na conta.
+- Ambiente padrão: sandbox. A caixa e o CEP são exemplos de teste; conferir a embalagem e origem reais antes de usar preços para envios comerciais. O pacote fixo não aumenta com a quantidade.
+
+### Ativar a conta SuperFrete
+
+Crie uma conta no [sandbox SuperFrete](https://sandbox.superfrete.com/#/integrations), abra Integrações → Desenvolvedores e gere o token de teste. No projeto Supabase, Edge Functions → Secrets, configure:
+
+| Nome | Valor |
+| --- | --- |
+| SUPERFRETE_TOKEN | Token privado gerado na SuperFrete para o ambiente escolhido |
+| SUPERFRETE_CONTATO | E-mail real para contato técnico, usado no User-Agent exigido pela API |
+| SUPERFRETE_AMBIENTE | sandbox para testes; production somente com token de produção |
+| SUPERFRETE_CEP_ORIGEM | 61940005 neste teste; depois, CEP real da loja |
+
+Nenhum token da SuperFrete deve ser colocado no React, em variáveis VITE_ ou no Git. O exemplo de configuração fica em supabase/functions/.env.example. A função usa JWT verificado e também confirma o usuário via getUser; a consulta do catálogo respeita RLS. Há limite básico de 15 consultas por usuário/minuto por instância; não é um limite global distribuído.
+
+Sem conta/token e contato configurados, a função responde FRETE_NAO_CONFIGURADO (503). Essa resposta não é substituída por preços fictícios. Credenciais, CEPs pessoais e respostas brutas do fornecedor não são registrados nos logs da implementação.
+
+### Verificação e limites
+
+Execute npm test, npm run lint e npm run build. Após publicar a função, node --env-file=.env.local scripts/verificar-frete-supabase.mjs confirma CORS e bloqueio de chamadas sem login. Para teste completo: cadastre uma peça visível, adicione na vitrine, abra /checkout autenticado, informe o CEP de destino e clique Calcular frete; depois altere CEP/quantidade e confira a invalidação.
+
+Validação manual em 15/11/2026 no ambiente real: origem 61940-005, destino 20020-050 e pacote fixo de 1 kg, 30 × 20 × 10 cm. A API retornou PAC por R$ 28,22 (7 dias úteis) e SEDEX por R$ 50,34 (3 dias úteis). No checkout, uma peça de R$ 500,00 com PAC selecionado totalizou R$ 528,22. Trocar o CEP retirou imediatamente a cotação anterior. Esses valores registram o teste; o site sempre consulta a API para novas cotações. O checkout mantém pagamento desabilitado. A RPC antiga criar_pedido aceita frete do chamador; esta integração não a utiliza. Antes de integrar cobrança/pedido definitivo, o servidor deverá recalcular ou validar uma cotação armazenada para evitar confiar no valor do navegador.
+
+Referências oficiais: [autenticação SuperFrete](https://superfrete.readme.io/reference/primeiros-passos), [cotação de frete](https://superfrete.readme.io/reference/cotacao-de-frete), [autorização de funções Supabase](https://supabase.com/docs/guides/functions/auth-headers).

@@ -1,10 +1,20 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useCarrinho } from '../../carrinho/useCarrinho';
+import { useCotacaoFrete } from '../../carrinho/useCotacaoFrete';
+import { cepValido } from '../../servicos/freteModelo';
 import './Checkout.css';
 
 function Checkout({ aoNavegar }) {
   const navigate = useNavigate();
   const [formaPagamento, setFormaPagamento] = useState('cartao');
+  const { itens, subtotalCentavos } = useCarrinho();
+  const [cep, setCep] = useState('');
+  const frete = useCotacaoFrete(itens, cep);
+  const subtotal = frete.situacao === 'pronto' ? frete.cotacao.subtotalCentavos : subtotalCentavos;
+  const total = subtotal + (frete.selecionada?.precoCentavos || 0);
+  const moeda = centavos => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(centavos / 100);
+  const prazo = opcao => opcao.prazoMinDias === opcao.prazoMaxDias ? opcao.prazoMaxDias + ' dia(s) úteis' : opcao.prazoMinDias + ' a ' + opcao.prazoMaxDias + ' dias úteis';
 
   const navegar = (destino) => {
     if (typeof aoNavegar === 'function') {
@@ -19,7 +29,7 @@ function Checkout({ aoNavegar }) {
       {/* Menu Superior */}
       <nav className="checkout-nav">
         <button className="nav-btn" onClick={() => navegar('/')}>Home</button>
-        <button className="nav-btn" onClick={() => navegar('/#catalogo')}>Catálogo</button>
+        <button className="nav-btn" onClick={() => navegar('/catalogo')}>Catálogo</button>
         <button className="nav-btn" onClick={() => navegar('/#sobre')}>Sobre Nós</button>
         <button className="nav-btn" onClick={() => navegar('/#contato')}>Contato</button>
       </nav>
@@ -35,11 +45,11 @@ function Checkout({ aoNavegar }) {
           <div className="resumo-linhas">
             <div className="resumo-linha">
               <span>Subtotal</span>
-              <strong>R$ 407,00</strong>
+              <strong>{moeda(subtotal)}</strong>
             </div>
             <div className="resumo-linha">
               <span>Frete</span>
-              <strong>R$ 25,00</strong>
+              <strong>{frete.selecionada ? moeda(frete.selecionada.precoCentavos) : 'A calcular'}</strong>
             </div>
             <div className="resumo-linha">
               <span>Desconto</span>
@@ -48,10 +58,10 @@ function Checkout({ aoNavegar }) {
           </div>
 
           <div className="resumo-total">
-            <span>Total</span>
-            <span className="valor-total">R$ 432,00</span>
+            <span>{frete.selecionada ? 'Total estimado' : 'Total parcial'}</span>
+            <span className="valor-total">{moeda(total)}</span>
           </div>
-          <p className="total-obs">Valor estimado para o envio padrão.</p>
+          <p className="total-obs">{frete.selecionada ? 'Inclui o frete selecionado.' : 'Selecione o frete para incluir o envio no total.'}</p>
 
           <button className="btn-editar-carrinho" onClick={() => navegar('/carrinho')}>
             Editar carrinho
@@ -65,6 +75,8 @@ function Checkout({ aoNavegar }) {
             Confira as informações antes de avançar para a finalização.
           </p>
 
+          {itens.length === 0 && <p className="frete-aviso" role="status">Seu carrinho está vazio. <Link to="/catalogo">Escolher peças no catálogo</Link></p>}
+          <fieldset disabled className="checkout-pagamento-previa"><legend>Pagamento ainda indisponível</legend>
           {/* Forma de Pagamento */}
           <div className="secao-checkout">
             <h3 className="secao-titulo">Forma de pagamento</h3>
@@ -133,6 +145,7 @@ function Checkout({ aoNavegar }) {
             </div>
           )}
 
+          </fieldset>
           {/* Endereço */}
           <div className="secao-checkout">
             <h3 className="secao-titulo">Endereço de cobrança e entrega</h3>
@@ -156,19 +169,36 @@ function Checkout({ aoNavegar }) {
                 <input type="text" placeholder="UF" />
               </div>
               <div className="form-group flex-1">
-                <label>CEP</label>
-                <input type="text" placeholder="00000-000" />
+                <label htmlFor="checkout-cep">CEP</label>
+                <input id="checkout-cep" type="text" inputMode="numeric" autoComplete="postal-code" maxLength={9} placeholder="00000-000" value={cep} onChange={e => { const numeros = e.target.value.replace(/\D/g, '').slice(0, 8); setCep(numeros.length > 5 ? numeros.slice(0, 5) + '-' + numeros.slice(5) : numeros); }} />
               </div>
             </div>
           </div>
 
+          <section className="secao-checkout frete-secao" aria-labelledby="frete-titulo" aria-busy={frete.situacao === 'carregando'}>
+            <h3 id="frete-titulo" className="secao-titulo">Entrega — SuperFrete</h3>
+            <p className="frete-detalhe">Origem de teste: Maranguape–CE, CEP 61940-005. Embalagem fixa de teste: 30 × 20 × 10 cm e 1 kg para o carrinho inteiro.</p>
+            <p className="frete-detalhe">O valor depende do CEP de destino. A embalagem real precisa ser conferida antes do envio.</p>
+            <button type="button" className="btn-calcular-frete" disabled={!itens.length || !cepValido(cep) || frete.situacao === 'carregando'} onClick={frete.calcular}>{frete.situacao === 'carregando' ? 'Calculando frete...' : 'Calcular frete'}</button>
+            {!cepValido(cep) && <p className="frete-detalhe">Preencha o CEP de entrega acima para calcular.</p>}
+            {frete.situacao === 'erro' && <div className="frete-aviso" role="alert">{frete.mensagem} {frete.codigo === 'LOGIN_NECESSARIO' && <Link to="/login" state={{ origem: '/checkout' }}>Entrar na conta</Link>}</div>}
+            {frete.situacao === 'expirado' && <p className="frete-aviso" role="status">A cotação expirou. Calcule novamente para atualizar os valores.</p>}
+            {frete.situacao === 'pronto' && <>
+              {frete.cotacao.ambiente === 'sandbox' && <p className="frete-aviso" role="status">Cotação no ambiente de teste da SuperFrete.</p>}
+              <fieldset className="frete-opcoes"><legend>Escolha a forma de envio</legend>{frete.cotacao.opcoes.map(opcao => <label className="frete-opcao" key={opcao.id}>
+                <input type="radio" name="servico-frete" value={opcao.id} checked={frete.selecionada?.id === opcao.id} onChange={() => frete.selecionar(opcao.id)} />
+                <span><strong>{opcao.nome} · {opcao.transportadora}</strong><small>Transporte: {prazo(opcao)}</small></span><strong>{moeda(opcao.precoCentavos)}</strong>
+              </label>)}</fieldset>
+              <p className="frete-detalhe">Produção das peças: até {frete.cotacao.prazoProducaoDias} dia(s) úteis, além do prazo de transporte. Cotação válida por 10 minutos.</p>
+            </>}
+          </section>
           {/* Selo de Segurança e Botão */}
           <div className="banner-seguranca">
-            <span className="checkmark">✔</span> Compra segura com criptografia e validação de pagamento.
+            <span className="checkmark">✔</span> Confira o frete antes de finalizar sua encomenda.
           </div>
 
-          <button className="btn-pagar">Pagar</button>
-          <p className="rodape-obs">A próxima etapa será a confirmação do endereço e do pagamento.</p>
+          <button className="btn-pagar" disabled>Pagamento ainda indisponível</button>
+          <p className="rodape-obs">O cálculo de frete não conclui pedidos nem realiza pagamentos.</p>
           
           {/* O botão de teste de navegação foi removido daqui! */}
         </div>

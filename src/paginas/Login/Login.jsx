@@ -1,5 +1,6 @@
 import { useId, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { destinoAposLogin } from '../../servicos/destinoLogin.js';
 import imagemAtelie from '../../assets/imagens/banner-principal.png';
 import logoMimos from '../../assets/imagens/logo-mimos-da-taty.png';
 import './Login.css';
@@ -48,6 +49,7 @@ function DecorativeHeart({ className }) {
 
 export default function Login({ recovery = false, onNavigate }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const [profile, setProfile] = useState(() => new URLSearchParams(window.location.search).get('perfil') === 'admin' ? 'admin' : 'cliente');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -125,7 +127,7 @@ export default function Login({ recovery = false, onNavigate }) {
       }
 
       navigate(
-        dadosPerfil.perfil === 'admin' ? '/admin' : '/',
+          destinoAposLogin(dadosPerfil.perfil, location.state?.origem),
         { replace: true }
       );
     } catch {

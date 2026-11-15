@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { servicoPecas, supabaseConfigurado } from '../../servicos/catalogo';
 import './Catalogo.css';
+import { useCarrinho } from '../../carrinho/useCarrinho';
 
 const PRODUTOS_INICIAIS = [
     {
@@ -71,7 +72,9 @@ export default function Catalogo() {
     const [produtos, setProdutos] = useState(() => supabaseConfigurado ? [] : PRODUTOS_INICIAIS);
     const [situacao, setSituacao] = useState(supabaseConfigurado ? 'carregando' : 'pronto');
     const [tentativa, setTentativa] = useState(0);
-    const [totalCarrinho, setTotalCarrinho] = useState(0);
+    const carrinho = useCarrinho();
+    const totalCarrinho = carrinho.subtotalCentavos / 100;
+    const [avisoCarrinho, setAvisoCarrinho] = useState('');
 
     useEffect(() => {
         if (!supabaseConfigurado) return;
@@ -118,8 +121,7 @@ export default function Catalogo() {
 
     const adicionarAoCarrinho = (produto) => {
         if (produto.quantidade > limiteDaPeca(produto)) return;
-        const valorAdicionado = produto.preco * produto.quantidade;
-        setTotalCarrinho(totalAnterior => totalAnterior + valorAdicionado);
+        try { carrinho.adicionar(produto); setAvisoCarrinho('Peça adicionada ao carrinho.'); } catch (erro) { setAvisoCarrinho(erro.message); }
     };
 
     return (
@@ -156,6 +158,7 @@ export default function Catalogo() {
 
             {/* Conteúdo Principal */}
             <main className={'cardPrincipal'}>
+                {avisoCarrinho && <p className={'catalogoEstado'} role='status'>{avisoCarrinho}</p>}
                 {!supabaseConfigurado && <p className={'catalogoAvisoDemonstracao'}>Catálogo de demonstração. Produtos e valores ilustrativos.</p>}
                 {/* Filtros de Categorias */}
                 <section className={'barraCategorias'}>
