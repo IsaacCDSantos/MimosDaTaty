@@ -71,7 +71,7 @@ export default function Catalogo() {
             {/* Header com Navegação usando React Router DOM */}
             <header className={'catalogoHeader'}>
                 <nav className={'catalogoNav'}>
-                    <Link to="/" className={'navBtn'}>Home</Link>
+                    <Link to="/" className={'navBtn'}>Início</Link>
                     <Link to="/catalogo" className={'navBtn'}>Catálogo</Link>
                     <Link to="/#sobre" className={'navBtn'}>Sobre Nós</Link>
                     <Link to="/#contato" className={'navBtn'}>Contato</Link>
@@ -97,20 +97,6 @@ export default function Catalogo() {
                     <span>R${totalCarrinho.toFixed(2).replace('.', ',')}</span>
                 </Link>
             </header>
-
-            {/* Banner da Página */}
-            <div className={'catalogoBanner'}>
-                <h1 className={'bannerTexto'}>
-                    "Nosso Catálogo" - Encontre o mimo perfeito feito à mão com carinho
-                </h1>
-                <div className={'bannerImagemContainer'}>
-                    <img
-                        src="https://via.placeholder.com/474x211"
-                        alt="Produtos Artesanais"
-                        className={'bannerImagem'}
-                    />
-                </div>
-            </div>
 
             {/* Conteúdo Principal */}
             <main className={'cardPrincipal'}>

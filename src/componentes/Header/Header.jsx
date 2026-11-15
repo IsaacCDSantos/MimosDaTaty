@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import './Header.css'
 import logo from '../../assets/imagens/logo-mimos-da-taty.png'
@@ -8,8 +8,15 @@ function Header({ onAbrirLogin }) {
   const navigate = useNavigate()
   const location = useLocation()
   const [isScrolled, setIsScrolled] = useState(false)
+  const isScrolledRef = useRef(false)
+  const animacaoScrollRef = useRef(null)
 
-
+  const cancelarAnimacaoScroll = useCallback(() => {
+    if (animacaoScrollRef.current !== null) {
+      window.cancelAnimationFrame(animacaoScrollRef.current)
+      animacaoScrollRef.current = null
+    }
+  }, [])
 
   useEffect(() => {
     let ticking = false
@@ -19,9 +26,9 @@ function Header({ onAbrirLogin }) {
         window.requestAnimationFrame(() => {
           const y = window.scrollY
           setIsScrolled((prev) => {
-            if (!prev && y > 50) return true
-            if (prev && y < 15) return false
-            return prev
+            const proximo = !prev && y > 50 ? true : prev && y < 15 ? false : prev
+            isScrolledRef.current = proximo
+            return proximo
           })
           ticking = false
         })
@@ -29,14 +36,24 @@ function Header({ onAbrirLogin }) {
       }
     }
 
+    handleScroll()
+
     window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+    window.addEventListener('wheel', cancelarAnimacaoScroll, { passive: true })
+    window.addEventListener('touchstart', cancelarAnimacaoScroll, { passive: true })
 
-
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('wheel', cancelarAnimacaoScroll)
+      window.removeEventListener('touchstart', cancelarAnimacaoScroll)
+      cancelarAnimacaoScroll()
+    }
+  }, [cancelarAnimacaoScroll])
 
   // Função de rolagem com início rápido e desaceleração suave progressiva e lenta (ease-out)
-  const rolarSuavemente = (posicaoFinal, duracao = 1600) => {
+  const rolarSuavemente = useCallback((posicaoFinal, duracao = 1600) => {
+    cancelarAnimacaoScroll()
+
     const posicaoInicial = window.scrollY
     const distancia = posicaoFinal - posicaoInicial
     if (Math.abs(distancia) < 4) return
@@ -53,15 +70,20 @@ function Header({ onAbrirLogin }) {
       const decorrido = tempoAtual - inicioTempo
       const progresso = Math.min(decorrido / duracao, 1)
 
-      window.scrollTo(0, posicaoInicial + distancia * curvaSuave(progresso))
+      window.scrollTo({
+        top: posicaoInicial + distancia * curvaSuave(progresso),
+        behavior: 'instant',
+      })
 
       if (decorrido < duracao) {
-        window.requestAnimationFrame(animarPasso)
+        animacaoScrollRef.current = window.requestAnimationFrame(animarPasso)
+      } else {
+        animacaoScrollRef.current = null
       }
     }
 
-    window.requestAnimationFrame(animarPasso)
-  }
+    animacaoScrollRef.current = window.requestAnimationFrame(animarPasso)
+  }, [cancelarAnimacaoScroll])
 
   const rolarPara = useCallback((id) => {
     const executarRolagem = () => {
@@ -73,7 +95,7 @@ function Header({ onAbrirLogin }) {
       const elemento = document.getElementById(id)
       if (elemento) {
         // Compensa a altura do header fixo para dar respiro visual ao título
-        const compensacaoHeader = isScrolled ? 88 : 96
+        const compensacaoHeader = isScrolledRef.current ? 88 : 96
         const posicaoDestino = Math.max(0, elemento.getBoundingClientRect().top + window.scrollY - compensacaoHeader)
         const distancia = Math.abs(posicaoDestino - window.scrollY)
         // Duração ampliada para 1400ms - 2000ms para um movimento bem calmo e perceptível
@@ -90,16 +112,20 @@ function Header({ onAbrirLogin }) {
     }
 
     executarRolagem()
-  }, [location.pathname, navigate, isScrolled])
+  }, [location.pathname, navigate, rolarSuavemente])
 
   // Executa rolagem suave caso o usuário chegue na página inicial com hash (#sobre ou #contato)
   useEffect(() => {
     if (location.pathname === '/' && location.hash) {
       const id = location.hash.replace('#', '')
-      const timer = setTimeout(() => rolarPara(id), 200)
+      const timer = setTimeout(() => {
+        rolarPara(id)
+        // Consome o hash após iniciar a rolagem para não re-disparar ao voltar ao topo
+        navigate(location.pathname, { replace: true })
+      }, 200)
       return () => clearTimeout(timer)
     }
-  }, [location.pathname, location.hash, rolarPara])
+  }, [location.pathname, location.hash, navigate, rolarPara])
 
 
 
