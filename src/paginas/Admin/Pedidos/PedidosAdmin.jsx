@@ -1,93 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../../../servicos/supabase'
+import { atualizarPedidoAdmin, carregarPedidosAdmin } from '../../../servicos/pedidosAdmin.js'
 import {
   STATUS_PEDIDO, calcularResumo, contarStatus, filtrarPedidos,
   formatarData, formatarMoeda, mudarStatus, salvarObservacao, salvarRastreio,
 } from './pedidosModelo'
 import './PedidosAdmin.css'
-
-const FORMAS_PAGAMENTO = {
-  pix: 'Pix',
-  cartao_credito: 'Cartão de crédito',
-  cartao_debito: 'Cartão de débito',
-  boleto: 'Boleto bancário',
-  dinheiro: 'Dinheiro',
-}
-
-function formatarFormaPagamento(valor) {
-  if (!valor) return 'Não informada'
-  return FORMAS_PAGAMENTO[valor] || valor
-}
-
-function mapearPedidoSupabase(row) {
-  const itens = Array.isArray(row.itens_pedido)
-    ? row.itens_pedido.map((item) => {
-        const nomeBase = item.nome_peca_snapshot || 'Peça'
-        const nome = item.personalizacao
-          ? `${nomeBase} (${item.personalizacao})`
-          : nomeBase
-
-        return {
-          id: item.id,
-          nome,
-          imagem: item.imagem_url_snapshot || null,
-          quantidade: Number(item.quantidade) || 1,
-          precoUnitario: typeof item.preco_unitario_centavos === 'number'
-            ? item.preco_unitario_centavos / 100
-            : 0,
-        }
-      })
-    : []
-
-  const resumoItens = itens.length > 0
-    ? itens.map((item) => `${item.quantidade}× ${item.nome}`).join(', ')
-    : 'Sem itens'
-
-  const dataIso = typeof row.criado_em === 'string' && row.criado_em.length >= 10
-    ? row.criado_em.slice(0, 10)
-    : new Date().toISOString().slice(0, 10)
-
-  const statusValido = STATUS_PEDIDO.some((opcao) => opcao.valor === row.status_pedido)
-    ? row.status_pedido
-    : 'novo'
-
-  const freteCentavos = typeof row.frete_centavos === 'number' ? row.frete_centavos : 0
-  const subtotalCentavos = typeof row.subtotal_centavos === 'number' ? row.subtotal_centavos : 0
-  const totalCentavos = typeof row.total_centavos === 'number' ? row.total_centavos : 0
-  const descontoCentavos = subtotalCentavos > 0 && totalCentavos > 0
-    ? Math.max(0, subtotalCentavos + freteCentavos - totalCentavos)
-    : 0
-
-  return {
-    uuid: row.id,
-    id: String(row.numero_pedido ?? row.id.slice(0, 8)),
-    data: dataIso,
-    status: statusValido,
-    cliente: {
-      nome: row.cliente_nome_snapshot || 'Cliente não informado',
-      email: row.cliente_email_snapshot || 'Não informado',
-      telefone: row.cliente_telefone_snapshot || 'Não informado',
-    },
-    endereco: {
-      logradouro: row.entrega_logradouro || '',
-      numero: row.entrega_numero || 'S/N',
-      complemento: row.entrega_complemento || '',
-      bairro: row.entrega_bairro || '',
-      cidade: row.entrega_cidade || '',
-      uf: row.entrega_uf || '',
-      cep: row.entrega_cep || '',
-    },
-    itens,
-    resumoItens,
-    frete: freteCentavos / 100,
-    desconto: descontoCentavos / 100,
-    formaPagamento: formatarFormaPagamento(row.forma_pagamento),
-    observacaoCliente: row.observacao_cliente || '',
-    observacaoInterna: row.observacao_interna || '',
-    codigoRastreio: row.codigo_rastreio || '',
-  }
-}
 
 function IconePedido({ nome, ...props }) {
   const desenhos = {
@@ -110,12 +29,14 @@ function DetalhesPedido({ pedido, demonstracao, aoAlterar, aoFechar }) {
   const [salvando, setSalvando] = useState(false)
   const [aviso, setAviso] = useState(null)
   const campoRastreio = useRef(null)
+  const envioEmAndamento = useRef(false)
   const resumo = calcularResumo(pedido)
   const indice = STATUS_PEDIDO.findIndex(item => item.valor === pedido.status)
   const anterior = STATUS_PEDIDO[indice - 1]
   const proximo = STATUS_PEDIDO[indice + 1]
 
   async function aplicarAlteracao(alteracao, montarPayloadBanco, mensagem, campo) {
+    if (envioEmAndamento.current) return
     let atualizado
     try {
       atualizado = alteracao()
@@ -136,26 +57,19 @@ function DetalhesPedido({ pedido, demonstracao, aoAlterar, aoFechar }) {
       return
     }
 
+    envioEmAndamento.current = true
     setSalvando(true)
     setAviso(null)
 
     try {
-      const payload = montarPayloadBanco(atualizado)
-      const { error } = await supabase
-        .from('pedidos')
-        .update(payload)
-        .eq('id', pedido.uuid)
-
-      if (error) {
-        throw new Error(`Erro ao atualizar pedido: ${error.message}`)
-      }
-
-      aoAlterar(atualizado)
+      const confirmado = await atualizarPedidoAdmin(supabase, pedido, montarPayloadBanco(atualizado))
+      aoAlterar(confirmado)
       setAviso({ erro: false, texto: `${mensagem} com sucesso!` })
     } catch (erro) {
       console.error(erro)
       setAviso({ erro: true, texto: erro.message || 'Não foi possível salvar a alteração.' })
     } finally {
+      envioEmAndamento.current = false
       setSalvando(false)
     }
   }
@@ -165,7 +79,6 @@ function DetalhesPedido({ pedido, demonstracao, aoAlterar, aoFechar }) {
       () => salvarRastreio(pedido, codigo),
       (atualizado) => ({
         codigo_rastreio: atualizado.codigoRastreio,
-        atualizado_em: new Date().toISOString(),
       }),
       'Rastreio atualizado',
       campoRastreio
@@ -179,17 +92,10 @@ function DetalhesPedido({ pedido, demonstracao, aoAlterar, aoFechar }) {
 
     aplicarAlteracao(
       () => mudarStatus(pedido, proximo.valor, rastreio),
-      (atualizado) => {
-        const agora = new Date().toISOString()
-        const dados = {
-          status_pedido: atualizado.status,
-          codigo_rastreio: atualizado.codigoRastreio || null,
-          atualizado_em: agora,
-        }
-        if (atualizado.status === 'enviado') dados.enviado_em = agora
-        if (atualizado.status === 'entregue') dados.entregue_em = agora
-        return dados
-      },
+      (atualizado) => ({
+        status_pedido: atualizado.status,
+        codigo_rastreio: atualizado.codigoRastreio || null,
+      }),
       'Status atualizado',
       campoRastreio
     )
@@ -202,7 +108,6 @@ function DetalhesPedido({ pedido, demonstracao, aoAlterar, aoFechar }) {
       (atualizado) => ({
         status_pedido: atualizado.status,
         codigo_rastreio: atualizado.codigoRastreio || null,
-        atualizado_em: new Date().toISOString(),
       }),
       'Status atualizado'
     )
@@ -214,7 +119,6 @@ function DetalhesPedido({ pedido, demonstracao, aoAlterar, aoFechar }) {
       () => salvarObservacao(pedido, observacao),
       (atualizado) => ({
         observacao_interna: atualizado.observacaoInterna || null,
-        atualizado_em: new Date().toISOString(),
       }),
       'Observação interna salva'
     )
@@ -236,6 +140,8 @@ function DetalhesPedido({ pedido, demonstracao, aoAlterar, aoFechar }) {
               <div><dt>Cliente</dt><dd>{pedido.cliente.nome}</dd></div>
               <div><dt>E-mail</dt><dd>{pedido.cliente.email}</dd></div>
               <div><dt>Telefone</dt><dd>{pedido.cliente.telefone}</dd></div>
+              {pedido.endereco.destinatario && <div><dt>Destinatário</dt><dd>{pedido.endereco.destinatario}</dd></div>}
+              {pedido.endereco.referencia && <div><dt>Ponto de referência</dt><dd>{pedido.endereco.referencia}</dd></div>}
               <div className="orders-admin-address"><dt>Endereço</dt><dd>{pedido.endereco.logradouro}, {pedido.endereco.numero}{pedido.endereco.complemento && ` · ${pedido.endereco.complemento}`}<br />{pedido.endereco.bairro} · {pedido.endereco.cidade}/{pedido.endereco.uf}<br />CEP {pedido.endereco.cep}</dd></div>
             </dl>
           </section>
@@ -274,8 +180,9 @@ const POR_PAGINA = 6
 
 export default function PedidosAdmin({ pedidosIniciais = [], demonstracao = false }) {
   const [pedidos, setPedidos] = useState(() => pedidosIniciais.map(pedido => ({ ...pedido })))
-  const [carregando, setCarregando] = useState(!demonstracao)
-  const [erroCarga, setErroCarga] = useState('')
+  const [carregando, setCarregando] = useState(!demonstracao && !!supabase)
+  const [erroCarga, setErroCarga] = useState(!demonstracao && !supabase ? 'Serviço do banco de dados não configurado.' : '')
+  const [revisao, setRevisao] = useState(0)
   const [busca, setBusca] = useState('')
   const [filtro, setFiltro] = useState('todos')
   const [pagina, setPagina] = useState(1)
@@ -294,46 +201,25 @@ export default function PedidosAdmin({ pedidosIniciais = [], demonstracao = fals
   const inicio = demonstracao ? '/previa/admin' : '/admin'
 
   useEffect(() => {
-    if (demonstracao) return
-
-    if (!supabase) {
-      setErroCarga('Serviço do banco de dados não configurado.')
-      setCarregando(false)
-      return
-    }
-
+    if (demonstracao || !supabase) return
     let ativo = true
+    const controlador = new AbortController()
+    carregarPedidosAdmin(supabase, controlador.signal).then((lista) => {
+      if (ativo) setPedidos(lista)
+    }).catch((erro) => {
+      if (ativo) setErroCarga(erro.message || 'Não foi possível carregar os pedidos.')
+    }).finally(() => {
+      if (ativo) setCarregando(false)
+    })
+    return () => { ativo = false; controlador.abort() }
+  }, [demonstracao, revisao])
 
-    async function carregarPedidos() {
-      setCarregando(true)
-      setErroCarga('')
-
-      const { data, error } = await supabase
-        .from('pedidos')
-        .select(`
-          *,
-          itens_pedido (*)
-        `)
-        .neq('status_pedido', 'cancelado')
-        .order('criado_em', { ascending: false })
-
-      if (!ativo) return
-
-      if (error) {
-        console.error('Erro ao carregar pedidos:', error)
-        setErroCarga(`Não foi possível carregar os pedidos: ${error.message}`)
-        setCarregando(false)
-        return
-      }
-
-      const mapeados = (data || []).map(mapearPedidoSupabase)
-      setPedidos(mapeados)
-      setCarregando(false)
-    }
-
-    carregarPedidos()
-    return () => { ativo = false }
-  }, [demonstracao])
+  function recarregarPedidos() {
+    setCarregando(true)
+    setErroCarga('')
+    setPedidoSelecionadoId(null)
+    setRevisao(valor => valor + 1)
+  }
 
   useEffect(() => {
     if (pedidoSelecionadoId !== null && !dialogo.current.open) dialogo.current.showModal()
@@ -364,13 +250,13 @@ export default function PedidosAdmin({ pedidosIniciais = [], demonstracao = fals
       <div className="orders-admin-shell">
         <header className="orders-admin-header"><nav aria-label="Navegação administrativa"><Link to={inicio}>Home</Link><button type="button" onClick={() => setAvisoCatalogo(valor => !valor)}>Catálogo</button><Link className="orders-admin-nav-active" to={`${inicio}/pedidos`} aria-current="page">Pedidos</Link></nav><span className="orders-admin-account">{demonstracao ? 'Prévia: Tati' : 'Admin: Tati'}</span></header>
         <main className="orders-admin-card" aria-labelledby="orders-admin-title">
-          <div className="orders-admin-heading"><h1 id="orders-admin-title">Pedidos</h1><p>Acompanhe e atualize o andamento dos pedidos da loja.</p>{demonstracao && <span className="orders-admin-demo-label">Prévia · dados de exemplo</span>}</div>
+          <div className="orders-admin-heading">{!demonstracao && <button type="button" className="orders-admin-secondary-button" disabled={carregando || !supabase} onClick={recarregarPedidos}>{carregando ? 'Carregando...' : 'Atualizar pedidos'}</button>}<h1 id="orders-admin-title">Pedidos</h1><p>Acompanhe e atualize o andamento dos pedidos da loja.</p>{demonstracao && <span className="orders-admin-demo-label">Prévia · dados de exemplo</span>}</div>
           {erroCarga && <p className="orders-admin-detail-feedback orders-admin-detail-feedback--error" role="alert">{erroCarga}</p>}
           {avisoCatalogo && <div className="orders-admin-catalog-notice" role="status"><p>O gerenciamento do catálogo ainda não está disponível.</p><Link to="/catalogo">Ver catálogo da loja</Link><button type="button" aria-label="Fechar aviso do catálogo" onClick={() => setAvisoCatalogo(false)}><IconePedido nome="fechar" /></button></div>}
           <div className="orders-admin-summary" aria-label="Resumo de todos os pedidos"><div><span>Novos</span><strong>{contagens.novo}</strong></div><div><span>Em produção</span><strong>{contagens.em_producao}</strong></div><div><span>Enviados</span><strong>{contagens.enviado}</strong></div></div>
           <div className="orders-admin-toolbar"><div className="orders-admin-filters" role="group" aria-label="Filtrar pedidos por status">{FILTROS.map(item => <button key={item.valor} type="button" className={filtro === item.valor ? 'orders-admin-filter-active' : ''} aria-pressed={filtro === item.valor} onClick={() => { setFiltro(item.valor); setPagina(1) }}>{item.rotulo}</button>)}</div><div className="orders-admin-search"><label className="orders-admin-sr-only" htmlFor="orders-admin-search">Buscar cliente ou número do pedido</label><input ref={campoBusca} id="orders-admin-search" type="search" placeholder="Buscar cliente ou nº do pedido" value={busca} onChange={event => { setBusca(event.target.value); setPagina(1) }} autoComplete="off" /></div></div>
           <div className="orders-admin-table-wrap"><table className="orders-admin-table"><caption className="orders-admin-sr-only">Pedidos da loja, com cliente, data, itens, total e status</caption><colgroup><col className="orders-admin-col-number" /><col className="orders-admin-col-customer" /><col className="orders-admin-col-items" /><col className="orders-admin-col-total" /><col className="orders-admin-col-status" /><col className="orders-admin-col-actions" /></colgroup><thead><tr><th scope="col">Pedido</th><th scope="col">Cliente</th><th scope="col">Itens</th><th scope="col">Total</th><th scope="col">Status</th><th scope="col"><span className="orders-admin-sr-only">Ações</span></th></tr></thead><tbody>{visiveis.map(pedido => <tr key={pedido.id}>
-            <td className="orders-admin-number" data-label="Pedido">#{pedido.id}</td><td className="orders-admin-customer" data-label="Cliente"><span>{pedido.cliente.nome}</span><time dateTime={pedido.data}>{formatarData(pedido.data)}</time></td><td className="orders-admin-items" data-label="Itens">{pedido.resumoItens}</td><td className="orders-admin-total" data-label="Total">{formatarMoeda(calcularResumo(pedido).total)}</td><td className="orders-admin-status-cell" data-label="Status"><SeloStatus status={pedido.status} /></td><td className="orders-admin-actions"><button type="button" aria-label={`Ver detalhes do pedido #${pedido.id} de ${pedido.cliente.nome}`} onClick={event => abrirDetalhes(pedido.id, event.currentTarget)}>Detalhes</button></td>
+            <td className="orders-admin-number" data-label="Pedido">#{pedido.id}</td><td className="orders-admin-customer" data-label="Cliente"><span>{pedido.cliente.nome}</span><time dateTime={pedido.data}>{formatarData(pedido.data)}</time></td><td className="orders-admin-items" data-label="Itens">{pedido.resumoItens}</td><td className="orders-admin-total" data-label="Total">{formatarMoeda(calcularResumo(pedido).total)}</td><td className="orders-admin-status-cell" data-label="Status"><SeloStatus status={pedido.status} /></td><td className="orders-admin-actions"><button type="button" aria-label={`Ver detalhes do pedido #${pedido.id} de ${pedido.cliente.nome}`} disabled={carregando || !!erroCarga} onClick={event => abrirDetalhes(pedido.id, event.currentTarget)}>Detalhes</button></td>
           </tr>)}{!visiveis.length && <tr className="orders-admin-empty"><td colSpan={6}><p>{carregando ? 'Carregando pedidos...' : pedidos.length ? 'Nenhum pedido encontrado para essa busca.' : 'Nenhum pedido disponível.'}</p>{!carregando && pedidos.length > 0 && <button type="button" onClick={limparFiltros}>Limpar filtros</button>}</td></tr>}</tbody></table></div>
           <nav className="orders-admin-pagination" aria-label="Paginação dos pedidos"><output aria-live="polite">{filtrados.length ? `Mostrando ${primeiroIndice + 1}–${Math.min(primeiroIndice + POR_PAGINA, filtrados.length)} de ${filtrados.length} ${filtrados.length === 1 ? 'pedido' : 'pedidos'}` : '0 pedidos encontrados'}</output><div><button type="button" aria-label="Página anterior" disabled={paginaAtual <= 1} onClick={() => setPagina(paginaAtual - 1)}><IconePedido nome="esquerda" /> Anterior</button><span>Página {paginaAtual} de {totalPaginas}</span><button type="button" aria-label="Próxima página" disabled={paginaAtual >= totalPaginas} onClick={() => setPagina(paginaAtual + 1)}>Próxima <IconePedido nome="direita" /></button></div></nav>
         </main>
