@@ -20,14 +20,12 @@ async function lerCorpoLimitado(req) {
   }
  } finally { leitor.releaseLock() }
 }
-export function criarHandlerFrete({ autenticar, carregarPecas, consultarFrete, config, agora = () => Date.now() }) {
+export function criarHandlerFrete({ carregarPecas, consultarFrete, config, agora = () => Date.now() }) {
  const limites = new Map()
  return async req => {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors })
   if (req.method !== 'POST') return json({ codigo: 'METODO_INVALIDO', mensagem: 'Use o cálculo de frete pelo checkout.' }, 405)
   try {
-   const usuario = await autenticar(req.headers.get('Authorization'))
-   if (!usuario?.id) throw new ErroFrete(401, 'LOGIN_NECESSARIO', 'Entre na sua conta para calcular o frete.')
    if (!req.headers.get('content-type')?.includes('application/json')) throw new ErroFrete(400, 'FORMATO_INVALIDO', 'Envie os dados do cálculo no formato correto.')
    if (Number(req.headers.get('content-length')) > 12000) throw new ErroFrete(413, 'PEDIDO_GRANDE', 'O carrinho ultrapassa o tamanho permitido.')
    const texto = await lerCorpoLimitado(req)
@@ -37,11 +35,13 @@ export function criarHandlerFrete({ autenticar, carregarPecas, consultarFrete, c
    if (!config.configurado) throw new ErroFrete(503, 'FRETE_NAO_CONFIGURADO', 'O cálculo de frete ainda não foi ativado pela loja. Tente novamente mais tarde.')
    const momento = agora()
    if (limites.size > 1000) for (const [id, limite] of limites) if (momento - limite.inicio > 60000) limites.delete(id)
-   const anterior = limites.get(usuario.id)
+   // Limite básico por IP encaminhado pelo proxy; sem IP, usa um grupo compartilhado.
+   const origem = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || 'sem-ip'
+   const anterior = limites.get(origem)
    const limite = anterior && momento - anterior.inicio < 60000 ? anterior : { inicio: momento, chamadas: 0 }
    if (++limite.chamadas > 15) throw new ErroFrete(429, 'MUITAS_CONSULTAS', 'Aguarde um minuto antes de calcular novamente.')
-   limites.set(usuario.id, limite)
-   const pecas = await carregarPecas(pedido.itens.map(i => i.pecaId), usuario)
+   limites.set(origem, limite)
+   const pecas = await carregarPecas(pedido.itens.map(i => i.pecaId))
    const preparacao = prepararCotacao(pedido, pecas, config)
    const resposta = await consultarFrete(preparacao.payload)
    const opcoes = normalizarOpcoes(resposta)

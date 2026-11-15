@@ -273,7 +273,25 @@
 .checkout-container .checkout-pagamento-previa { border:0; padding:0; margin:0; min-width:0; opacity:.65; }
 .checkout-container .checkout-pagamento-previa > legend { font-size:.85rem; color:#8c5a4f; margin-bottom:12px; }
 .checkout-container .frete-detalhe { font-size:.82rem; line-height:1.6; color:#6e625d; }
-.checkout-container .btn-calcular-frete { background:#ba6a7a; color:#fff; border:0; padding:12px 20px; border-radius:20px; cursor:pointer; font:inherit; }
+.checkout-container .btn-calcular-frete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: auto;
+  max-width: 100%;
+  min-height: 44px;
+  padding: 10px 20px;
+  border: 0;
+  border-radius: 20px;
+  background: #ba6a7a;
+  color: #fff;
+  font-family: inherit;
+  font-size: .9rem;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+}
 .checkout-container .btn-calcular-frete:disabled, .checkout-container .btn-pagar:disabled { opacity:.55; cursor:not-allowed; }
 .checkout-container .frete-aviso { background:#fff3e7; color:#7d4d42; padding:12px; border-radius:12px; font-size:.85rem; line-height:1.6; }
 .checkout-container .frete-opcoes { min-width:0; padding:0; margin:20px 0 0; border:0; }

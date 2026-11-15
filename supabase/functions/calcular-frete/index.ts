@@ -7,17 +7,12 @@ const ambiente = Deno.env.get('SUPERFRETE_AMBIENTE') || 'sandbox'
 const cepOrigem = (Deno.env.get('SUPERFRETE_CEP_ORIGEM') || '61940005').replace('-', '').trim()
 const urlSupabase = Deno.env.get('SUPABASE_URL')!
 const chavePublica = Deno.env.get('SUPABASE_ANON_KEY')!
+const cliente = createClient(urlSupabase, chavePublica, { auth: { persistSession: false, autoRefreshToken: false } })
 const config = { cepOrigem, ambiente, services: '1,2,17', embalagem: { height: 10, width: 20, length: 30, weight: 1 }, configurado: Boolean(token && contato && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contato) && ['sandbox', 'production'].includes(ambiente) && /^\d{8}$/.test(cepOrigem)) }
 Deno.serve(criarHandlerFrete({
  config,
- async autenticar(authorization: string | null) {
-  if (!authorization?.startsWith('Bearer ')) return null
-  const cliente = createClient(urlSupabase, chavePublica, { global: { headers: { Authorization: authorization } }, auth: { persistSession: false, autoRefreshToken: false } })
-  const { data, error } = await cliente.auth.getUser()
-  return error || !data.user ? null : { id: data.user.id, cliente }
- },
- async carregarPecas(ids: string[], usuario: { cliente: ReturnType<typeof createClient> }) {
-  const { data, error } = await usuario.cliente.from('pecas').select('id,nome,preco_centavos,visivel,arquivada,tipo_disponibilidade,estoque_atual,prazo_producao_dias').in('id', ids).eq('visivel', true).eq('arquivada', false)
+ async carregarPecas(ids: string[]) {
+  const { data, error } = await cliente.from('pecas').select('id,nome,preco_centavos,visivel,arquivada,tipo_disponibilidade,estoque_atual,prazo_producao_dias').in('id', ids).eq('visivel', true).eq('arquivada', false)
   if (error) throw new ErroFrete(503, 'CATALOGO_INDISPONIVEL', 'Não foi possível conferir as peças do carrinho. Tente novamente.')
   return data
  },

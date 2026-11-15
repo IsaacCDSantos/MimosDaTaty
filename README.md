@@ -378,7 +378,7 @@ Verificação local de leitura: node --env-file=.env.local scripts/verificar-con
 
 A vitrine, o carrinho e o checkout compartilham os itens selecionados. O carrinho fica no localStorage somente com IDs, quantidades e dados visuais dos produtos; endereço e cartão não são persistidos. O frete fixo de R$ 25 foi substituído pela cotação em /checkout. O cliente informa o CEP, calcula e escolhe um serviço; a seleção atualiza frete e total. Alterar CEP/itens ou atingir a validade de dez minutos invalida a cotação, inclusive durante consultas em andamento.
 
-A Edge Function calcular-frete exige login Supabase. O navegador envia apenas CEP de destino, IDs e quantidades. O servidor consulta preços, disponibilidade e prazo de produção no banco antes de chamar a API; nunca usa o preço informado pelo navegador. O prazo de produção é exibido separado do transporte. A função só consulta valores: não emite etiquetas, cria pedidos ou realiza pagamentos.
+A Edge Function calcular-frete permite consultar sem conta ou login. O navegador envia apenas CEP de destino, IDs e quantidades. O servidor consulta preços, disponibilidade e prazo de produção no banco antes de chamar a API; nunca usa o preço informado pelo navegador. O prazo de produção é exibido separado do transporte. A função só consulta valores: não emite etiquetas, cria pedidos ou realiza pagamentos.
 
 ### Configuração de teste solicitada
 
@@ -398,13 +398,13 @@ Crie uma conta no [sandbox SuperFrete](https://sandbox.superfrete.com/#/integrat
 | SUPERFRETE_AMBIENTE | sandbox para testes; production somente com token de produção |
 | SUPERFRETE_CEP_ORIGEM | 61940005 neste teste; depois, CEP real da loja |
 
-Nenhum token da SuperFrete deve ser colocado no React, em variáveis VITE_ ou no Git. O exemplo de configuração fica em supabase/functions/.env.example. A função usa JWT verificado e também confirma o usuário via getUser; a consulta do catálogo respeita RLS. Há limite básico de 15 consultas por usuário/minuto por instância; não é um limite global distribuído.
+Nenhum token da SuperFrete deve ser colocado no React, em variáveis VITE_ ou no Git. O exemplo de configuração fica em supabase/functions/.env.example. A função usa verify_jwt = false e consulta o catálogo como visitante, respeitando RLS e os filtros de peças visíveis e não arquivadas. Há limite básico de 15 consultas por IP/minuto por instância, usando x-forwarded-for do proxy e um grupo compartilhado quando ausente; não é um limite global distribuído.
 
 Sem conta/token e contato configurados, a função responde FRETE_NAO_CONFIGURADO (503). Essa resposta não é substituída por preços fictícios. Credenciais, CEPs pessoais e respostas brutas do fornecedor não são registrados nos logs da implementação.
 
 ### Verificação e limites
 
-Execute npm test, npm run lint e npm run build. Após publicar a função, node --env-file=.env.local scripts/verificar-frete-supabase.mjs confirma CORS e bloqueio de chamadas sem login. Para teste completo: cadastre uma peça visível, adicione na vitrine, abra /checkout autenticado, informe o CEP de destino e clique Calcular frete; depois altere CEP/quantidade e confira a invalidação.
+Execute npm test, npm run lint e npm run build. Após publicar a função, node --env-file=.env.local scripts/verificar-frete-supabase.mjs confirma CORS e acesso sem login, com rejeição de uma peça inexistente. Para teste completo: cadastre uma peça visível, adicione na vitrine, abra /checkout sem conta, informe o CEP de destino e clique Calcular frete; depois altere CEP/quantidade e confira a invalidação.
 
 Validação manual em 15/11/2026 no ambiente real: origem 61940-005, destino 20020-050 e pacote fixo de 1 kg, 30 × 20 × 10 cm. A API retornou PAC por R$ 28,22 (7 dias úteis) e SEDEX por R$ 50,34 (3 dias úteis). No checkout, uma peça de R$ 500,00 com PAC selecionado totalizou R$ 528,22. Trocar o CEP retirou imediatamente a cotação anterior. Esses valores registram o teste; o site sempre consulta a API para novas cotações. O checkout mantém pagamento desabilitado. A RPC antiga criar_pedido aceita frete do chamador; esta integração não a utiliza. Antes de integrar cobrança/pedido definitivo, o servidor deverá recalcular ou validar uma cotação armazenada para evitar confiar no valor do navegador.
 

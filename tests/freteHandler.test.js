@@ -6,14 +6,34 @@ const config={configurado:true,ambiente:'sandbox',cepOrigem:'61940005',services:
 const peca={id,nome:'Manta',preco_centavos:2990,visivel:true,arquivada:false,tipo_disponibilidade:'pronta_entrega',estoque_atual:4,prazo_producao_dias:7}
 const pedido={cepDestino:'01001000',itens:[{pecaId:id,quantidade:2}],preco:1,frete:0}
 function requisicao(corpo=pedido,headers={}){return new Request('https://exemplo.test/calcular-frete',{method:'POST',headers:{'Content-Type':'application/json',...headers},body:typeof corpo==='string'?corpo:JSON.stringify(corpo)})}
-function criar(extra={}){return criarHandlerFrete({config,autenticar:async()=>({id:'usuario-teste'}),carregarPecas:async()=>[peca],consultarFrete:async()=>[{id:1,name:'PAC',company:{name:'Correios'},price:'18.90',delivery_range:{min:5,max:6},has_error:false}],agora:()=>Date.parse('2026-11-15T23:00:00Z'),...extra})}
+function criar(extra={}){return criarHandlerFrete({config,carregarPecas:async()=>[peca],consultarFrete:async()=>[{id:1,name:'PAC',company:{name:'Correios'},price:'18.90',delivery_range:{min:5,max:6},has_error:false}],agora:()=>Date.parse('2026-11-15T23:00:00Z'),...extra})}
 test('preflight não exige login e métodos de escrita não previstos são rejeitados',async()=>{const h=criar();assert.equal((await h(new Request('https://x.test',{method:'OPTIONS'}))).status,204);assert.equal((await h(new Request('https://x.test'))).status,405)})
-test('consulta não autenticada não lê catálogo nem consulta transportadora',async()=>{let chamadas=0;const h=criar({autenticar:async()=>null,carregarPecas:async()=>{chamadas++}});const r=await h(requisicao());assert.equal(r.status,401);assert.equal((await r.json()).codigo,'LOGIN_NECESSARIO');assert.equal(chamadas,0)})
+test('consulta sem login lê catálogo e retorna cotação', async () => {
+ let chamadas = 0
+ const h = criar({ carregarPecas: async ids => { chamadas++; assert.deepEqual(ids, [id]); return [peca] } })
+ const r = await h(requisicao())
+ assert.equal(r.status, 200)
+ assert.equal((await r.json()).opcoes[0].precoCentavos, 1890)
+ assert.equal(chamadas, 1)
+})
 test('JSON/CEP inválidos são recusados antes de consultar catálogo',async()=>{const h=criar({carregarPecas:async()=>assert.fail('não consultar')});assert.equal((await h(requisicao('{'))).status,400);assert.equal((await h(requisicao({...pedido,cepDestino:'x'}))).status,400)})
 test('credencial ausente produz erro de configuração sem inventar uma cotação',async()=>{const r=await criar({config:{...config,configurado:false},consultarFrete:async()=>assert.fail('sem credencial')})(requisicao());assert.equal(r.status,503);const b=await r.json();assert.equal(b.codigo,'FRETE_NAO_CONFIGURADO');assert.equal(b.opcoes,undefined)})
 test('resposta deriva subtotal do banco e preserva pacote fixo e validade de dez minutos',async()=>{let payload;const r=await criar({consultarFrete:async p=>{payload=p;return[{id:1,name:'PAC',company:{name:'Correios'},price:18.9,delivery_time:5,has_error:false}]}})(requisicao());assert.equal(r.status,200);const b=await r.json();assert.equal(b.subtotalCentavos,5980);assert.equal(b.opcoes[0].precoCentavos,1890);assert.equal(b.expiraEm,'2026-11-15T23:10:00.000Z');assert.equal(b.embalagemFixaTeste,true);assert.deepEqual(payload.package,config.embalagem);assert.deepEqual(payload.from,{postal_code:'61940005'})})
 test('serviço indisponível não vira envio grátis e erro interno não expõe credenciais',async()=>{assert.equal((await criar({consultarFrete:async()=>[{id:1,has_error:true}]})(requisicao())).status,422);const r=await criar({consultarFrete:async()=>{throw new Error('credencial-privada-de-teste')}})(requisicao());assert.equal(r.status,502);assert.doesNotMatch(await r.text(),/credencial-privada/)} )
-test('limite de consultas por usuário barra excesso antes da transportadora',async()=>{const h=criar();for(let i=0;i<15;i++)assert.equal((await h(requisicao())).status,200);assert.equal((await h(requisicao())).status,429)})
+test('limite de consultas sem login barra excesso antes da transportadora',async()=>{const h=criar();for(let i=0;i<15;i++)assert.equal((await h(requisicao())).status,200);assert.equal((await h(requisicao())).status,429)})
+
+test('limite separa IPs e permite novas consultas após um minuto', async () => {
+ let momento = 0
+ let consultas = 0
+ const h = criar({ agora: () => momento, consultarFrete: async () => { consultas++; return [{ id: 1, price: 10, delivery_time: 3 }] } })
+ const headers = { 'x-forwarded-for': '192.0.2.1' }
+ for (let i = 0; i < 15; i++) assert.equal((await h(requisicao(pedido, headers))).status, 200)
+ assert.equal((await h(requisicao(pedido, headers))).status, 429)
+ assert.equal(consultas, 15)
+ assert.equal((await h(requisicao(pedido, { 'x-forwarded-for': '192.0.2.2' }))).status, 200)
+ momento = 60000
+ assert.equal((await h(requisicao(pedido, headers))).status, 200)
+})
 
 test('corpo sem content-length é limitado em bytes durante a leitura e cancela o fluxo', async () => {
  let lidos = 0

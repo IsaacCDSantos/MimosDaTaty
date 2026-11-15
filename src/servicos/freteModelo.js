@@ -20,8 +20,6 @@ export function criarServicoFrete(cliente) {
   if (!cepValido(cepDestino)) throw new Error('Informe um CEP com oito números.')
   if (!itens.length) throw new Error('Adicione uma peça ao carrinho antes de calcular o frete.')
   if (!cliente) throw new Error('O cálculo de frete está indisponível no momento.')
-  const { data: sessao, error: erroSessao } = await cliente.auth.getSession()
-  if (erroSessao || !sessao.session) { const erro = new Error('Entre na sua conta para calcular o frete.'); erro.codigo = 'LOGIN_NECESSARIO'; throw erro }
   let temporizador
   try {
    const resposta = await Promise.race([cliente.functions.invoke('calcular-frete', { body: { cepDestino: cepDestino.trim().replace('-', ''), itens: itens.map(i => ({ pecaId: i.id, quantidade: i.quantidade })) } }), new Promise((_, rejeitar) => { temporizador = setTimeout(() => rejeitar(new Error('O cálculo demorou mais que o esperado. Tente novamente.')), 20000) })])
