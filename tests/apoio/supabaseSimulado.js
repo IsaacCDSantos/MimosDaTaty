@@ -8,6 +8,8 @@ export function supabaseSimulado(responder) {
       update(dados) { chamada.operacao = 'update'; chamada.dados = dados; return api },
       eq(campo, valor) { chamada.filtros.push([campo, valor]); return api },
       neq(campo, valor) { chamada.filtros.push([campo, valor, 'neq']); return api },
+      gt(campo, valor) { chamada.filtros.push([campo, valor, 'gt']); return api },
+      in(campo, valores) { chamada.filtros.push([campo, valores, 'in']); return api },
       order(campo, opcoes) { chamada.ordenacao.push([campo, opcoes]); return api },
       limit(valor) { chamada.limite = valor; return api },
       range(inicio, fim) { chamada.intervalo = [inicio, fim]; return api },
