@@ -37,6 +37,7 @@ export default function CatalogoPersistenteProvider() {
   }
 
   async function executar(acao) {
+    if (estado.carregando || estado.erro) throw new Error('Aguarde o carregamento completo do catálogo antes de alterar uma peça.')
     if (operacaoPendente.current) throw new Error('Aguarde a operação em andamento.')
     if (reconciliacaoPendente.current) throw new Error('Recarregue o catálogo para conferir a última gravação antes de alterar outra peça.')
     operacaoPendente.current = true
@@ -68,7 +69,7 @@ export default function CatalogoPersistenteProvider() {
     return executar(async () => {
       const atual = estado.pecas.find(item => item.id === id)
       if (!atual) throw new Error('A peça não foi encontrada.')
-      const peca = await servicoPecas.alterarVisibilidade(id, !atual.visivel)
+      const peca = await servicoPecas.alterarVisibilidade(id, !atual.visivel, atual.atualizadoEm)
       setEstado(dados => ({ ...dados, pecas: dados.pecas.map(item => item.id === id ? peca : item) }))
       setAviso(peca.visivel ? 'Peça visível na loja.' : 'Peça ocultada da loja.')
     })
@@ -76,7 +77,9 @@ export default function CatalogoPersistenteProvider() {
 
   async function excluir(id) {
     return executar(async () => {
-      await servicoPecas.excluirPeca(id)
+      const atual = estado.pecas.find(item => item.id === id)
+      if (!atual) throw new Error('A peça não foi encontrada.')
+      await servicoPecas.excluirPeca(id, atual.atualizadoEm)
       setEstado(atual => ({ ...atual, pecas: atual.pecas.filter(item => item.id !== id) }))
       setAviso('Peça removida do catálogo. Os pedidos anteriores foram preservados.')
     })

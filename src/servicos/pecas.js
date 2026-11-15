@@ -1,6 +1,6 @@
 import { normalizarPeca } from '../paginas/Admin/CatalogoAdmin/catalogoModelo.js'
 
-const COLUNAS_PECAS = 'id,categoria_id,nome,descricao,preco_centavos,imagem_capa_url,tipo_disponibilidade,estoque_atual,prazo_producao_dias,visivel,arquivada,categoria:categorias(id,nome,ativa)'
+const COLUNAS_PECAS = 'atualizado_em,id,categoria_id,nome,descricao,preco_centavos,imagem_capa_url,tipo_disponibilidade,estoque_atual,prazo_producao_dias,visivel,arquivada,categoria:categorias(id,nome,ativa)'
 const MAXIMO_INTEIRO_POSTGRES = 2147483647
 const MAXIMO_FOTO = 5 * 1024 * 1024
 const EXTENSAO_POR_MIME = {
@@ -52,6 +52,7 @@ function validarFoto(arquivo) {
 }
 
 function sqlStateConfirmado(erro) {
+  if (erro?.conflitoCatalogo) return true
   const codigo = erro?.code
   // Falhas de conexão, cancelamento/timeout e conclusão desconhecida não
   // comprovam rollback: uma foto já referenciada não pode ser apagada.
@@ -60,6 +61,7 @@ function sqlStateConfirmado(erro) {
 }
 
 function mensagemServidor(erro, acao) {
+  if (erro?.conflitoCatalogo) return 'A peça foi alterada em outra sessão ou não está mais disponível. Recarregue o catálogo antes de tentar novamente.'
   if (erro?.code === '42501' || erro?.status === 401 || erro?.status === 403) {
     return 'Você não tem permissão para esta operação do catálogo. Entre com uma conta administradora.'
   }
@@ -104,6 +106,7 @@ function mapearPeca(registro) {
   }
   return {
     id: registro.id,
+    atualizadoEm: registro.atualizado_em,
     nome: registro.nome,
     descricao: registro.descricao ?? '',
     preco: precoCentavos / 100,
@@ -145,32 +148,53 @@ export function criarServicoPecas({ cliente, urlSupabase, gerarId } = {}) {
     return imagem.href
   }
 
+  async function lerTodos(criarConsulta) {
+    const registros = []
+    let cursor
+    while (true) {
+      let consulta = criarConsulta().order('id', { ascending: true }).limit(200)
+      if (cursor) consulta = consulta.gt('id', cursor)
+      const resposta = await consulta
+      if (resposta.error) throw resposta.error
+      if (!Array.isArray(resposta.data)) throw new Error('O servidor não retornou uma lista válida.')
+      if (!resposta.data.length) return registros
+      const proximo = resposta.data.at(-1).id
+      if (!proximo || (cursor && proximo <= cursor)) throw new Error('Não foi possível continuar o carregamento do catálogo.')
+      registros.push(...resposta.data)
+      cursor = proximo
+    }
+  }
+
   async function listarCategorias() {
     exigirConexao()
-    let resposta
     try {
-      resposta = await cliente.from('categorias').select('id,nome,ativa,ordem').order('ordem', { ascending: true }).order('nome', { ascending: true })
-    } catch {
-      throw new Error('Não foi possível carregar as categorias. Verifique sua conexão e tente novamente.')
-    }
-    if (resposta.error) throw new Error(mensagemServidor(resposta.error, 'carregar as categorias'))
-    if (!Array.isArray(resposta.data)) throw new Error('O servidor não retornou uma lista de categorias válida.')
-    return resposta.data.map(categoria => ({ id: categoria.id, nome: categoria.nome, ativa: categoria.ativa === true, ordem: categoria.ordem ?? 0 }))
+      const categorias = await lerTodos(() => cliente.from('categorias').select('id,nome,ativa,ordem'))
+      return categorias.map(categoria => ({ id: categoria.id, nome: categoria.nome, ativa: categoria.ativa === true, ordem: categoria.ordem ?? 0 }))
+        .sort((a, b) => a.ordem - b.ordem || a.nome.localeCompare(b.nome, 'pt-BR'))
+    } catch (erro) { throw new Error(mensagemServidor(erro, 'carregar as categorias'), { cause: erro }) }
   }
 
   async function listarPecas({ somenteVisiveis = false } = {}) {
     exigirConexao()
-    let resposta
     try {
-      let consulta = cliente.from('pecas').select(COLUNAS_PECAS).eq('arquivada', false)
-      if (somenteVisiveis) consulta = consulta.eq('visivel', true)
-      resposta = await consulta.order('nome', { ascending: true })
-    } catch {
-      throw new Error('Não foi possível carregar as peças. Verifique sua conexão e tente novamente.')
-    }
-    if (resposta.error) throw new Error(mensagemServidor(resposta.error, 'carregar as peças'))
-    if (!Array.isArray(resposta.data)) throw new Error('O servidor não retornou uma lista de peças válida.')
-    return resposta.data.filter(peca => peca.arquivada !== true && (!somenteVisiveis || peca.visivel === true)).map(mapearPeca)
+      const registros = await lerTodos(() => {
+        let consulta = cliente.from('pecas').select(COLUNAS_PECAS).eq('arquivada', false)
+        if (somenteVisiveis) consulta = consulta.eq('visivel', true)
+        return consulta
+      })
+      return registros.filter(peca => peca.arquivada !== true && (!somenteVisiveis || peca.visivel === true)).map(mapearPeca)
+        .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR') || a.id.localeCompare(b.id))
+    } catch (erro) { throw new Error(mensagemServidor(erro, 'carregar as peças'), { cause: erro }) }
+  }
+
+  function exigirVersao(valor) {
+    if (typeof valor !== 'string' || !valor) throw new Error('Recarregue o catálogo antes de alterar a peça.')
+    return valor
+  }
+
+  function conferirErroAtualizacao(error) {
+    if (error?.code === 'PGRST116') throw { ...error, conflitoCatalogo: true }
+    if (error) throw error
   }
 
   async function salvarPeca(dados, { id = null, idNovaPeca } = {}) {
@@ -183,6 +207,7 @@ export function criarServicoPecas({ cliente, urlSupabase, gerarId } = {}) {
       throw new Error('Informe se a peça é sob encomenda ou para pronta entrega.')
     }
     const categoriaId = uuidValido(dados.categoriaId, 'a categoria')
+    if (id != null) exigirVersao(dados.atualizadoEm)
     const temArquivo = dados.fotoArquivo != null
     let bucket = null
     let caminhoNovo = null
@@ -198,14 +223,14 @@ export function criarServicoPecas({ cliente, urlSupabase, gerarId } = {}) {
     } else {
       imagem = validarUrlStorage(imagem)
     }
-    const normalizada = normalizarPeca({ ...dados, prazo: formatarPrazo(dias), imagem }, { urlSupabase: base })
+    const categorias = await listarCategorias()
+    const normalizada = normalizarPeca({ ...dados, prazo: formatarPrazo(dias), imagem }, { urlSupabase: base, categoriasPermitidas: categorias.map(item => item.nome) })
     if (Array.from(normalizada.nome).length < 2) throw new Error('O nome da peça deve ter pelo menos dois caracteres.')
     const precoCentavos = Math.round(normalizada.preco * 100)
     if (!Number.isSafeInteger(precoCentavos) || precoCentavos <= 0 || precoCentavos > MAXIMO_INTEIRO_POSTGRES) {
       throw new Error('O preço ultrapassa o limite permitido pelo catálogo.')
     }
     if (normalizada.estoque > MAXIMO_INTEIRO_POSTGRES) throw new Error('O estoque ultrapassa o limite permitido pelo catálogo.')
-    const categorias = await listarCategorias()
     const categoria = categorias.find(item => String(item.id).toLowerCase() === categoriaId)
     if (!categoria || categoria.nome !== normalizada.categoria) {
       throw new Error('A categoria selecionada não está disponível ou não corresponde à peça.')
@@ -234,9 +259,10 @@ export function criarServicoPecas({ cliente, urlSupabase, gerarId } = {}) {
     try {
       let consulta
       if (id == null) consulta = cliente.from('pecas').insert({ id: identificador, ...valores, arquivada: false })
-      else consulta = cliente.from('pecas').update(valores).eq('id', identificador).eq('arquivada', false)
+      else consulta = cliente.from('pecas').update(valores).eq('id', identificador).eq('arquivada', false).eq('atualizado_em', dados.atualizadoEm)
       const { data, error } = await consulta.select(COLUNAS_PECAS).single()
-      if (error) throw error
+      if (id != null) conferirErroAtualizacao(error)
+      else if (error) throw error
       return mapearPeca(confirmarRegistro(data, identificador))
     } catch (erro) {
       const resposta = erroDeEscrita(erro, 'salvar a peça', id == null ? identificador : null)
@@ -248,17 +274,19 @@ export function criarServicoPecas({ cliente, urlSupabase, gerarId } = {}) {
           resposta.fotoPendente = true
         }
       }
+      if (resposta.fotoPendente) resposta.message += ' Não foi possível remover a foto recém-enviada do armazenamento; será necessário conferir esse arquivo.'
       throw resposta
     }
   }
 
-  async function alterarVisibilidade(id, visivel) {
+  async function alterarVisibilidade(id, visivel, atualizadoEm) {
+    exigirVersao(atualizadoEm)
     exigirConexao()
     const identificador = uuidValido(id)
     if (typeof visivel !== 'boolean') throw new Error('Informe a visibilidade desejada para a peça.')
     try {
-      const { data, error } = await cliente.from('pecas').update({ visivel }).eq('id', identificador).eq('arquivada', false).select(COLUNAS_PECAS).single()
-      if (error) throw error
+      const { data, error } = await cliente.from('pecas').update({ visivel }).eq('id', identificador).eq('arquivada', false).eq('atualizado_em', atualizadoEm).select(COLUNAS_PECAS).single()
+      conferirErroAtualizacao(error)
       const registro = confirmarRegistro(data, identificador)
       if (registro.visivel !== visivel) throw new Error('O servidor não confirmou a visibilidade desejada.')
       return mapearPeca(registro)
@@ -267,12 +295,13 @@ export function criarServicoPecas({ cliente, urlSupabase, gerarId } = {}) {
     }
   }
 
-  async function excluirPeca(id) {
+  async function excluirPeca(id, atualizadoEm) {
+    exigirVersao(atualizadoEm)
     exigirConexao()
     const identificador = uuidValido(id)
     try {
-      const { data, error } = await cliente.from('pecas').update({ arquivada: true, visivel: false }).eq('id', identificador).select(COLUNAS_PECAS).single()
-      if (error) throw error
+      const { data, error } = await cliente.from('pecas').update({ arquivada: true, visivel: false }).eq('id', identificador).eq('atualizado_em', atualizadoEm).select(COLUNAS_PECAS).single()
+      conferirErroAtualizacao(error)
       const registro = confirmarRegistro(data, identificador)
       if (registro.arquivada !== true || registro.visivel !== false) throw new Error('O servidor não confirmou o arquivamento da peça.')
       return mapearPeca(registro)
