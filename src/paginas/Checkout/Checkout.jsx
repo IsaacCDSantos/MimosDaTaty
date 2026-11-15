@@ -177,7 +177,7 @@ function Checkout({ aoNavegar }) {
 
           <section className="secao-checkout frete-secao" aria-labelledby="frete-titulo" aria-busy={frete.situacao === 'carregando'}>
             <h3 id="frete-titulo" className="secao-titulo">Entrega — SuperFrete</h3>
-            <p className="frete-detalhe">Origem de teste: Maranguape–CE, CEP 61940-000. Embalagem fixa de teste: 30 × 20 × 10 cm e 1 kg para o carrinho inteiro.</p>
+            <p className="frete-detalhe">Origem de teste: Maranguape–CE, CEP 61940-005. Embalagem fixa de teste: 30 × 20 × 10 cm e 1 kg para o carrinho inteiro.</p>
             <p className="frete-detalhe">O valor depende do CEP de destino. A embalagem real precisa ser conferida antes do envio.</p>
             <button type="button" className="btn-calcular-frete" disabled={!itens.length || !cepValido(cep) || frete.situacao === 'carregando'} onClick={frete.calcular}>{frete.situacao === 'carregando' ? 'Calculando frete...' : 'Calcular frete'}</button>
             {!cepValido(cep) && <p className="frete-detalhe">Preencha o CEP de entrega acima para calcular.</p>}

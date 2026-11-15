@@ -5,7 +5,7 @@ import { ErroFrete, validarPedido, prepararCotacao, normalizarOpcoes } from '../
 const ID_A = '10000000-0000-4000-8000-000000000001'
 const ID_B = '10000000-0000-4000-8000-000000000002'
 const config = {
-  cepOrigem: '61940-000',
+  cepOrigem: '61940-005',
   embalagem: { height: 10, width: 20, length: 30, weight: 1 },
   services: '1,2,17',
 }
@@ -54,7 +54,7 @@ test('pedido normaliza CEP/UUID, agrega duplicados e ignora preços ou campos fo
     itens: [{ pecaId: ID_A, quantidade: 5 }, { pecaId: ID_B, quantidade: 1 }],
   })
   assert.equal(entrada.itens.length, 3)
-  assert.equal(validarPedido({ cepDestino: '61940000', itens: [{ pecaId: ID_A, quantidade: 50 }] }).itens[0].quantidade, 50)
+  assert.equal(validarPedido({ cepDestino: '61940005', itens: [{ pecaId: ID_A, quantidade: 50 }] }).itens[0].quantidade, 50)
 })
 
 test('CEP rejeita letras, números JSON, formatos incompletos e hífen em posição incorreta', () => {
@@ -84,7 +84,7 @@ test('cotação usa valores do banco, prazo máximo e o pacote fixo autorizado',
   assert.equal(resultado.subtotalCentavos, 50700)
   assert.equal(resultado.prazoProducaoDias, 10)
   assert.deepEqual(resultado.payload, {
-    from: { postal_code: '61940000' }, to: { postal_code: '01001000' }, services: '1,2,17',
+    from: { postal_code: '61940005' }, to: { postal_code: '01001000' }, services: '1,2,17',
     options: { own_hand: false, receipt: false, insurance_value: 0, use_insurance_value: false },
     package: { height: 10, width: 20, length: 30, weight: 1 },
   })

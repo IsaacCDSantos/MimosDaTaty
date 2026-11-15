@@ -4,7 +4,7 @@ import { ErroFrete } from './modelo.js'
 const token = Deno.env.get('SUPERFRETE_TOKEN')?.trim()
 const contato = Deno.env.get('SUPERFRETE_CONTATO')?.trim()
 const ambiente = Deno.env.get('SUPERFRETE_AMBIENTE') || 'sandbox'
-const cepOrigem = (Deno.env.get('SUPERFRETE_CEP_ORIGEM') || '61940000').replace('-', '').trim()
+const cepOrigem = (Deno.env.get('SUPERFRETE_CEP_ORIGEM') || '61940005').replace('-', '').trim()
 const urlSupabase = Deno.env.get('SUPABASE_URL')!
 const chavePublica = Deno.env.get('SUPABASE_ANON_KEY')!
 const config = { cepOrigem, ambiente, services: '1,2,17', embalagem: { height: 10, width: 20, length: 30, weight: 1 }, configurado: Boolean(token && contato && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contato) && ['sandbox', 'production'].includes(ambiente) && /^\d{8}$/.test(cepOrigem)) }

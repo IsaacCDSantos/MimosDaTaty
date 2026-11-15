@@ -286,3 +286,6 @@
 .checkout-container button:focus-visible, .checkout-container input:focus-visible, .checkout-container a:focus-visible { outline:2px solid #8c5a4f; outline-offset:3px; }
 @media(max-width:800px) { .checkout-container .checkout-content { flex-direction:column; } .checkout-container .card-resumo, .checkout-container .card-checkout { width:100%; } .checkout-container .checkout-nav { flex-wrap:wrap; gap:8px; } .checkout-container .form-row { flex-wrap:wrap; } .checkout-container .form-group { min-width:110px; } }
 @media(max-width:420px) { .checkout-container { padding:16px 10px; } .checkout-container .card-checkout, .checkout-container .card-resumo { padding:22px 16px; } .checkout-container .frete-opcao { gap:8px; font-size:.85rem; } }
+
+.checkout-container .resumo-total { gap:8px; flex-wrap:wrap; }
+.checkout-container .valor-total { white-space:nowrap; }

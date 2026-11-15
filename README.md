@@ -382,7 +382,7 @@ A Edge Function calcular-frete exige login Supabase. O navegador envia apenas CE
 
 ### Configuração de teste solicitada
 
-- Origem: Maranguape–CE, CEP 61940-000.
+- Origem: Maranguape–CE, CEP 61940-005.
 - Embalagem única e fixa para o carrinho inteiro: comprimento 30 cm, largura 20 cm, altura 10 cm, peso 1 kg.
 - Serviços solicitados: PAC, SEDEX e Mini Envios (1,2,17). A API retorna apenas opções atendidas e pode incluir serviços habilitados na conta.
 - Ambiente padrão: sandbox. A caixa e o CEP são exemplos de teste; conferir a embalagem e origem reais antes de usar preços para envios comerciais. O pacote fixo não aumenta com a quantidade.
@@ -396,7 +396,7 @@ Crie uma conta no [sandbox SuperFrete](https://sandbox.superfrete.com/#/integrat
 | SUPERFRETE_TOKEN | Token privado gerado na SuperFrete para o ambiente escolhido |
 | SUPERFRETE_CONTATO | E-mail real para contato técnico, usado no User-Agent exigido pela API |
 | SUPERFRETE_AMBIENTE | sandbox para testes; production somente com token de produção |
-| SUPERFRETE_CEP_ORIGEM | 61940000 neste teste; depois, CEP real da loja |
+| SUPERFRETE_CEP_ORIGEM | 61940005 neste teste; depois, CEP real da loja |
 
 Nenhum token da SuperFrete deve ser colocado no React, em variáveis VITE_ ou no Git. O exemplo de configuração fica em supabase/functions/.env.example. A função usa JWT verificado e também confirma o usuário via getUser; a consulta do catálogo respeita RLS. Há limite básico de 15 consultas por usuário/minuto por instância; não é um limite global distribuído.
 
@@ -406,6 +406,6 @@ Sem conta/token e contato configurados, a função responde FRETE_NAO_CONFIGURAD
 
 Execute npm test, npm run lint e npm run build. Após publicar a função, node --env-file=.env.local scripts/verificar-frete-supabase.mjs confirma CORS e bloqueio de chamadas sem login. Para teste completo: cadastre uma peça visível, adicione na vitrine, abra /checkout autenticado, informe o CEP de destino e clique Calcular frete; depois altere CEP/quantidade e confira a invalidação.
 
-A cotação com credencial real só pode ser validada após ativar a conta e os Secrets. O checkout mantém pagamento desabilitado. A RPC antiga criar_pedido aceita frete do chamador; esta integração não a utiliza. Antes de integrar cobrança/pedido definitivo, o servidor deverá recalcular ou validar uma cotação armazenada para evitar confiar no valor do navegador.
+Validação manual em 15/11/2026 no ambiente real: origem 61940-005, destino 20020-050 e pacote fixo de 1 kg, 30 × 20 × 10 cm. A API retornou PAC por R$ 28,22 (7 dias úteis) e SEDEX por R$ 50,34 (3 dias úteis). No checkout, uma peça de R$ 500,00 com PAC selecionado totalizou R$ 528,22. Trocar o CEP retirou imediatamente a cotação anterior. Esses valores registram o teste; o site sempre consulta a API para novas cotações. O checkout mantém pagamento desabilitado. A RPC antiga criar_pedido aceita frete do chamador; esta integração não a utiliza. Antes de integrar cobrança/pedido definitivo, o servidor deverá recalcular ou validar uma cotação armazenada para evitar confiar no valor do navegador.
 
 Referências oficiais: [autenticação SuperFrete](https://superfrete.readme.io/reference/primeiros-passos), [cotação de frete](https://superfrete.readme.io/reference/cotacao-de-frete), [autorização de funções Supabase](https://supabase.com/docs/guides/functions/auth-headers).
