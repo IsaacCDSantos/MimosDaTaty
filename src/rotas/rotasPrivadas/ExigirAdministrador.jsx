@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { supabase } from '../../servicos/supabase'
 import { obterUsuarioAtual } from '../../servicos/autenticacao'
+import { aguardarVerificacaoAdmin } from './verificacaoAdmin'
 
 export default function ExigirAdministrador({ children }) {
   const location = useLocation()
@@ -45,10 +46,7 @@ export default function ExigirAdministrador({ children }) {
     }
   }, [sessao])
 
-  if (
-    sessao === undefined ||
-    (sessao && verificacao?.sessao !== sessao)
-  ) {
+  if (aguardarVerificacaoAdmin(sessao, verificacao)) {
     return <p role="status">Verificando acesso...</p>
   }
 

@@ -1,0 +1,19 @@
+.admin-editar-peca .catalog-admin-delete-dialog {
+  background: #fffaf6; border: 0; border-radius: 20px; color: #795241;
+  max-width: calc(100vw - 32px); padding: 28px; width: 520px;
+}
+.admin-editar-peca .catalog-admin-delete-dialog::backdrop { background: #523d3480; }
+.admin-editar-peca .catalog-admin-delete-dialog h2 { font-family: 'Alice', Georgia, serif; font-size: 24px; margin: 0 0 12px; }
+.admin-editar-peca .catalog-admin-delete-dialog p { line-height: 1.6; margin: 0 0 24px; overflow-wrap: anywhere; }
+.admin-editar-peca .catalog-admin-delete-dialog > div { display: flex; flex-wrap: wrap; gap: 12px; }
+.admin-editar-peca .catalog-admin-delete-dialog button { min-height: 44px; }
+
+@media (max-width: 760px) {
+  .catalog-admin-page .catalog-admin-secondary-button { min-height: 44px; }
+  .admin-adicionar-peca :is(.nav-btn, .btn-voltar, .btn-outline, .btn-salvar),
+  .admin-editar-peca :is(.nav-btn, .btn-voltar, .btn-outline, .btn-salvar) { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; }
+  .admin-adicionar-peca .toggle-label, .admin-editar-peca .toggle-label { min-height: 44px; }
+}
+.admin-editar-peca .catalog-admin-delete-dialog { margin: auto; box-sizing: border-box; max-height: calc(100dvh - 32px); overflow: auto; }
+
+.admin-adicionar-peca a[aria-disabled="true"], .admin-editar-peca a[aria-disabled="true"] { opacity: .5; cursor: not-allowed; }

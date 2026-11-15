@@ -9,6 +9,9 @@ import ConfirmacaoEnvioEmail from '../../paginas/ConfirmacaoEnvioEmail/Confirmac
 import RedefinirSenha from '../../paginas/RedefinirSenha/RedefinirSenha'
 import Catalogo from '../../paginas/Catalogo/Catalogo'
 import InicioAdmin from '../../paginas/Admin/InicioAdmin'
+import CatalogoAdmin from '../../paginas/Admin/CatalogoAdmin/CatalogoAdmin'
+import CatalogoAdminProvider from '../../paginas/Admin/CatalogoAdmin/CatalogoAdminProvider'
+import FormularioCatalogoAdmin from '../../paginas/Admin/CatalogoAdmin/FormularioCatalogoAdmin'
 import { DADOS_ADMIN_DEMONSTRACAO } from '../../paginas/Admin/dadosDemonstracao'
 import PedidosAdmin from '../../paginas/Admin/Pedidos/PedidosAdmin'
 import { PEDIDOS_DEMONSTRACAO } from '../../paginas/Admin/Pedidos/pedidosDemonstracao'
@@ -27,11 +30,14 @@ export const rotasPublicas = (
 
     <Route path="/catalogo" element={<Catalogo />} />
 
-    {/* Previa publica com dados ficticios, separada da area administrativa. */}
-    <Route path="/previa/admin" element={<InicioAdmin dados={DADOS_ADMIN_DEMONSTRACAO} demonstracao />} />
-    <Route path="/previa/admin/pedidos" element={<PedidosAdmin pedidosIniciais={PEDIDOS_DEMONSTRACAO} demonstracao />} />
-    <Route path="/previa/admin/editar-peca" element={<AdminEditarPeca demonstracao />} />
-    <Route path="/previa/admin/adicionar-peca" element={<AdminAdicionarPeca demonstracao />} />
+    {/* A prévia compartilha somente produtos fictícios, mantidos em memória. */}
+    <Route element={<CatalogoAdminProvider />}>
+      <Route path="/previa/admin" element={<InicioAdmin dados={DADOS_ADMIN_DEMONSTRACAO} demonstracao />} />
+      <Route path="/previa/admin/pedidos" element={<PedidosAdmin pedidosIniciais={PEDIDOS_DEMONSTRACAO} demonstracao />} />
+      <Route path="/previa/admin/catalogo" element={<CatalogoAdmin demonstracao />} />
+      <Route path="/previa/admin/editar-peca" element={<FormularioCatalogoAdmin editar demonstracao />} />
+      <Route path="/previa/admin/adicionar-peca" element={<FormularioCatalogoAdmin demonstracao />} />
+    </Route>
 
     {/* Tela de Carrinho */}
     <Route path="/carrinho" element={<Carrinho />} />
