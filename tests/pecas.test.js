@@ -11,17 +11,17 @@ const OUTRA_FOTO_ID = '30000000-0000-4000-8000-000000000002'
 const FOTO_ANTIGA = URL_PROJETO + '/storage/v1/object/public/pecas/' + PECA_ID + '/foto-antiga.png'
 const categoria = { id: CATEGORIA_ID, nome: 'Maternidade', ativa: true, ordem: 1 }
 const registro = {
-  id: PECA_ID, categoria_id: CATEGORIA_ID, nome: 'Kit de berço', descricao: 'Kit artesanal.',
+  atualizado_em: 'versao-1', id: PECA_ID, categoria_id: CATEGORIA_ID, nome: 'Kit de berço', descricao: 'Kit artesanal.',
   preco_centavos: 18900, imagem_capa_url: FOTO_ANTIGA, tipo_disponibilidade: 'pronta_entrega',
   estoque_atual: 3, prazo_producao_dias: 7, visivel: true, arquivada: false,
 }
 const formulario = {
-  nome: 'Kit de berço', descricao: 'Kit artesanal.', preco: '189,00', categoria: 'Maternidade',
+  atualizadoEm: 'versao-1', nome: 'Kit de berço', descricao: 'Kit artesanal.', preco: '189,00', categoria: 'Maternidade',
   categoriaId: CATEGORIA_ID, prazo: '7 dias úteis', estoque: '3 unidades',
   tipoDisponibilidade: 'sob_encomenda', imagem: FOTO_ANTIGA, visivel: true,
 }
 
-function clienteFalso({ pecas = [registro], categorias = [categoria], falhas = {}, erroUpload = null, erroLimpeza = null } = {}) {
+function clienteFalso({ pecas = [registro], categorias = [categoria], falhas = {}, erroUpload = null, erroLimpeza = null, limiteApi = Infinity } = {}) {
   const estado = {
     pecas: structuredClone(pecas), categorias: structuredClone(categorias),
     consultas: [], uploads: [], remocoes: [], falhas,
@@ -32,13 +32,15 @@ function clienteFalso({ pecas = [registro], categorias = [categoria], falhas = {
   })
   const cliente = {
     from(tabela) {
-      const consulta = { tabela, acao: 'select', filtros: [], ordens: [], colunas: null, unica: false, valores: null }
+      const consulta = { tabela, acao: 'select', filtros: [], cursor: null, limite: null, ordens: [], colunas: null, unica: false, valores: null }
       let promessa
       const builder = {
         select(colunas) { consulta.colunas = colunas; return builder },
         insert(valores) { consulta.acao = 'insert'; consulta.valores = structuredClone(valores); return builder },
         update(valores) { consulta.acao = 'update'; consulta.valores = structuredClone(valores); return builder },
         eq(campo, valor) { consulta.filtros.push([campo, valor]); return builder },
+        gt(campo, valor) { consulta.cursor = [campo, valor]; return builder },
+        limit(valor) { consulta.limite = valor; return builder },
         order(campo, opcoes) { consulta.ordens.push([campo, opcoes]); return builder },
         single() { consulta.unica = true; return builder },
         then(resolve, reject) {
@@ -62,6 +64,8 @@ function clienteFalso({ pecas = [registro], categorias = [categoria], falhas = {
             for (const [campo, opcoes] of [...consulta.ordens].reverse()) {
               linhas.sort((a, b) => String(a[campo]).localeCompare(String(b[campo]), 'pt-BR', { numeric: true }) * (opcoes?.ascending === false ? -1 : 1))
             }
+            if (consulta.cursor) linhas = linhas.filter(linha => linha[consulta.cursor[0]] > consulta.cursor[1])
+            if (consulta.limite) linhas = linhas.slice(0, Math.min(consulta.limite, limiteApi))
             const dados = tabela === 'pecas' ? linhas.map(comCategoria) : linhas.map(item => ({ ...item }))
             if (falha?.rejeitar) throw falha.rejeitar
             if (falha) return { data: falha.semDados ? null : (consulta.unica ? dados[0] ?? null : dados), error: falha.error ?? null }
@@ -114,7 +118,7 @@ test('categorias retornam contrato UI e a consulta respeita a ordenação', asyn
   const { servico, estado } = preparar()
   assert.deepEqual(await servico.listarCategorias(), [categoria])
   assert.equal(estado.consultas[0].tabela, 'categorias')
-  assert.deepEqual(estado.consultas[0].ordens.map(([campo]) => campo), ['ordem', 'nome'])
+  assert.deepEqual(estado.consultas[0].ordens.map(([campo]) => campo), ['id'])
 })
 
 test('listagem admin inclui ocultas, exclui arquivadas e converte centavos, prazo e categoria', async () => {
@@ -175,7 +179,7 @@ test('edição preserva ID, tipo pronta entrega e foto existente sem remover arq
   assert.equal(atualizada.tipoDisponibilidade, 'pronta_entrega')
   assert.equal(atualizada.imagem, FOTO_ANTIGA)
   const escrita = estado.consultas.find(item => item.acao === 'update')
-  assert.deepEqual(escrita.filtros, [['id', PECA_ID], ['arquivada', false]])
+  assert.deepEqual(escrita.filtros, [['id', PECA_ID], ['arquivada', false], ['atualizado_em', 'versao-1']])
   assert.equal(Object.hasOwn(escrita.valores, 'id'), false)
   assert.equal(Object.hasOwn(escrita.valores, 'arquivada'), false)
   assert.equal(escrita.unica, true)
@@ -185,16 +189,16 @@ test('edição preserva ID, tipo pronta entrega e foto existente sem remover arq
 
 test('visibilidade aplica alvo explícito e requer uma linha confirmada', async () => {
   const { servico, estado } = preparar()
-  assert.equal((await servico.alterarVisibilidade(PECA_ID, false)).visivel, false)
-  assert.equal((await servico.alterarVisibilidade(PECA_ID, true)).visivel, true)
-  await assert.rejects(servico.alterarVisibilidade(PECA_ID, 'false'), /visibilidade/)
+  assert.equal((await servico.alterarVisibilidade(PECA_ID, false, 'versao-1')).visivel, false)
+  assert.equal((await servico.alterarVisibilidade(PECA_ID, true, 'versao-1')).visivel, true)
+  await assert.rejects(servico.alterarVisibilidade(PECA_ID, 'false', 'versao-1'), /visibilidade/)
   assert.equal(estado.pecas[0].visivel, true)
-  await assert.rejects(servico.alterarVisibilidade(NOVA_ID, false), erro => erro.resultadoIncerto === true)
+  await assert.rejects(servico.alterarVisibilidade(NOVA_ID, false, 'versao-1'), erro => erro.resultadoIncerto === false)
 })
 
 test('excluir arquiva e oculta, preservando registro, preço e foto para o histórico', async () => {
   const { servico, estado } = preparar()
-  await servico.excluirPeca(PECA_ID)
+  await servico.excluirPeca(PECA_ID, 'versao-1')
   assert.equal(estado.pecas.length, 1)
   assert.equal(estado.pecas[0].arquivada, true)
   assert.equal(estado.pecas[0].visivel, false)
@@ -308,4 +312,53 @@ test('serviço sem configuração falha de forma útil quando chamado e edição
   await assert.rejects(ausente.listarPecas(), /não está configurado/)
   const { servico } = preparar()
   await assert.rejects(servico.salvarPeca({ ...formulario, tipoDisponibilidade: undefined }, { id: PECA_ID }), /encomenda|pronta entrega/)
+})
+
+test('paginação inclui todas as peças e categorias mesmo com limite da API menor que o lote', async () => {
+  const pecas = Array.from({ length: 1005 }, (_, i) => ({ ...registro, id: '20000000-0000-4000-8000-' + String(i + 1).padStart(12, '0') }))
+  const categorias = Array.from({ length: 17 }, (_, i) => ({ ...categoria, id: '10000000-0000-4000-8000-' + String(i + 1).padStart(12, '0'), ordem: 17 - i }))
+  const { servico } = preparar({ pecas, categorias, limiteApi: 7 })
+  assert.equal((await servico.listarPecas()).length, 1005)
+  assert.equal((await servico.listarPecas({ somenteVisiveis: true })).length, 1005)
+  const lista = await servico.listarCategorias()
+  assert.equal(lista.length, 17)
+  assert.equal(lista[0].ordem, 1)
+})
+
+test('erro em lote posterior rejeita a listagem inteira', async () => {
+  const { servico } = preparar({ falhas: { 'pecas:select': [{ confirmar: true }, { error: { code: '42501' } }] } })
+  await assert.rejects(servico.listarPecas(), /permissão/)
+})
+
+test('nova categoria real pode ser usada sem alterar a lista de demonstração', async () => {
+  const { servico } = preparar({ categorias: [{ ...categoria, nome: 'Decoração' }] })
+  const criada = await servico.salvarPeca({ ...formulario, categoria: 'Decoração' }, { idNovaPeca: NOVA_ID })
+  assert.equal(criada.categoria, 'Decoração')
+})
+
+test('peça alterada em outra sessão rejeita edição sem sobrescrever e remove só upload novo', async () => {
+  const { servico, estado } = preparar({ pecas: [{ ...registro, atualizado_em: 'versao-2', nome: 'Nome de outra sessão' }] })
+  await assert.rejects(servico.salvarPeca({ ...formulario, fotoArquivo: foto() }, { id: PECA_ID }), erro => !erro.resultadoIncerto && /outra sessão/.test(erro.message))
+  assert.equal(estado.pecas[0].nome, 'Nome de outra sessão')
+  assert.equal(estado.pecas[0].imagem_capa_url, FOTO_ANTIGA)
+  assert.deepEqual(estado.remocoes, [[PECA_ID + '/' + FOTO_ID + '.png']])
+})
+
+test('visibilidade e exclusão também respeitam a versão carregada', async () => {
+  const { servico, estado } = preparar({ pecas: [{ ...registro, atualizado_em: 'versao-2' }] })
+  await assert.rejects(servico.alterarVisibilidade(PECA_ID, false, 'versao-1'), /outra sessão/)
+  await assert.rejects(servico.excluirPeca(PECA_ID, 'versao-1'), /outra sessão/)
+  assert.equal(estado.pecas[0].visivel, true)
+  assert.equal(estado.pecas[0].arquivada, false)
+})
+
+test('edição sem versão é rejeitada antes do upload', async () => {
+  const { servico, estado } = preparar()
+  await assert.rejects(servico.salvarPeca({ ...formulario, atualizadoEm: undefined, fotoArquivo: foto() }, { id: PECA_ID }), /Recarregue/)
+  assert.equal(estado.uploads.length, 0)
+})
+
+test('falha de limpeza é comunicada na mensagem apresentada ao usuário', async () => {
+  const { servico } = preparar({ erroLimpeza: { message: 'Erro' }, falhas: { 'pecas:insert': [{ error: { code: '23514' } }] } })
+  await assert.rejects(servico.salvarPeca({ ...formulario, fotoArquivo: foto() }, { idNovaPeca: NOVA_ID }), /remover a foto recém-enviada/)
 })

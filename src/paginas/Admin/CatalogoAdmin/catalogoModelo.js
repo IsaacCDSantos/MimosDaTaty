@@ -126,7 +126,7 @@ function normalizarImagem(valor, urlSupabase) {
   return imagem
 }
 
-export function normalizarPeca(dados, { urlSupabase } = {}) {
+export function normalizarPeca(dados, { urlSupabase, categoriasPermitidas = CATEGORIAS_CATALOGO } = {}) {
   if (!dados || typeof dados !== 'object' || Array.isArray(dados)) {
     throw new Error('Os dados da peça são inválidos.')
   }
@@ -134,7 +134,7 @@ export function normalizarPeca(dados, { urlSupabase } = {}) {
   const descricao = exigirTexto(dados.descricao, 'a descrição da peça')
   const preco = normalizarPreco(dados.preco)
   const categoria = exigirTexto(dados.categoria, 'a categoria da peça')
-  if (!CATEGORIAS_CATALOGO.includes(categoria)) throw new Error('Selecione uma categoria válida.')
+  if (!categoriasPermitidas.includes(categoria)) throw new Error('Selecione uma categoria válida.')
   const prazo = exigirTexto(dados.prazo, 'o prazo de entrega')
   const estoque = normalizarEstoque(dados.estoque)
   const imagem = normalizarImagem(dados.imagem, urlSupabase)
@@ -143,9 +143,9 @@ export function normalizarPeca(dados, { urlSupabase } = {}) {
   return { nome, descricao, preco, categoria, prazo, estoque, imagem, visivel: dados.visivel, ...(dados.tipoDisponibilidade ? { tipoDisponibilidade: dados.tipoDisponibilidade } : {}) }
 }
 
-export function filtrarPorCategorias(lista, categorias = []) {
+export function filtrarPorCategorias(lista, categorias = [], categoriasPermitidas = CATEGORIAS_CATALOGO) {
   exigirLista(lista)
-  if (!Array.isArray(categorias) || categorias.some(categoria => !CATEGORIAS_CATALOGO.includes(categoria))) {
+  if (!Array.isArray(categorias) || categorias.some(categoria => !categoriasPermitidas.includes(categoria))) {
     throw new Error('Selecione categorias válidas para filtrar o catálogo.')
   }
   const selecionadas = new Set(categorias)

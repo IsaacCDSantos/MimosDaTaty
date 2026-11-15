@@ -12,7 +12,8 @@ export default function CatalogoAdmin({ demonstracao = false }) {
   const [erroAcao, setErroAcao] = useState('')
   const bloqueado = !catalogo || Boolean(catalogo.carregando || catalogo.erro || catalogo.ocupado || catalogo.confirmacaoPendente)
   const inicio = demonstracao ? '/previa/admin' : '/admin'
-  const pecas = filtrarPorCategorias(catalogo?.pecas ?? [], categorias)
+  const categoriasDisponiveis = demonstracao ? CATEGORIAS_CATALOGO : [...new Set([...(catalogo?.categorias || []).map(item => item.nome), ...(catalogo?.pecas || []).map(item => item.categoria)])]
+  const pecas = filtrarPorCategorias(catalogo?.pecas ?? [], categorias.filter(nome => categoriasDisponiveis.includes(nome)), categoriasDisponiveis)
 
   function selecionarCategoria(categoria) {
     setCategorias(atuais => atuais.includes(categoria) ? atuais.filter(item => item !== categoria) : [...atuais, categoria])
@@ -49,7 +50,7 @@ export default function CatalogoAdmin({ demonstracao = false }) {
           <section className="catalog-admin-panel" aria-label="Gerenciar peças do catálogo">
             <div className="catalog-admin-filters" role="group" aria-labelledby="catalog-admin-categories">
               <span className="catalog-admin-filter-title" id="catalog-admin-categories">Categorias:</span>
-              {CATEGORIAS_CATALOGO.map(categoria => <label className="catalog-admin-filter" key={categoria}><input type="checkbox" checked={categorias.includes(categoria)} onChange={() => selecionarCategoria(categoria)} />{categoria}</label>)}
+              {categoriasDisponiveis.map(categoria => <label className="catalog-admin-filter" key={categoria}><input type="checkbox" checked={categorias.includes(categoria)} onChange={() => selecionarCategoria(categoria)} />{categoria}</label>)}
             </div>
             {catalogo?.carregando && <p className="catalog-admin-feedback" role="status">Carregando catálogo...</p>}
             {catalogo?.erro && <div className="catalog-admin-feedback" role="alert"><p>{catalogo.erro}</p><button type="button" className="catalog-admin-secondary-button" onClick={catalogo.recarregar}>Tentar novamente</button></div>}
