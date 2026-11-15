@@ -1,86 +1,14 @@
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useCarrinho } from '../../carrinho/useCarrinho'
 import './Carrinho.css'
-import kitBercoImg from '../../assets/imagens/kit_berco_florido_figma.png'
-import mantaCrocheImg from '../../assets/imagens/manta_croche_bebe_figma.png'
-import trocadorCrocheImg from '../../assets/imagens/trocador_croche_figma.png'
-
-const ITENS_INICIAIS = [
-  {
-    id: 'kit-berco-florido',
-    nome: 'Kit de berço florido',
-    preco: 189.0,
-    descricao: 'Conjunto com manta, toalha e trocador em crochê com acabamento delicado.',
-    prazo: 'Entrega em até 7 dias úteis',
-    imagem: kitBercoImg,
-    quantidade: 1,
-  },
-  {
-    id: 'manta-croche-bebe',
-    nome: 'Manta de crochê bebê',
-    preco: 129.0,
-    descricao: 'Peça macia e leve para complementar o enxoval com um toque especial.',
-    prazo: 'Entrega em até 7 dias úteis',
-    imagem: mantaCrocheImg,
-    quantidade: 1,
-  },
-  {
-    id: 'trocador-croche',
-    nome: 'Trocador de crochê',
-    preco: 89.0,
-    descricao: 'Peça prática e decorativa para o banho e o cuidado diário do bebê.',
-    prazo: 'Entrega em até 7 dias úteis',
-    imagem: trocadorCrocheImg,
-    quantidade: 1,
-  },
-]
-
 function Carrinho({ aoNavegar }) {
-  const navigate = useNavigate()
-  const [itens, setItens] = useState(ITENS_INICIAIS)
-
-  const subtotal = itens.reduce((acc, item) => acc + item.preco * item.quantidade, 0)
-  const frete = itens.length > 0 ? 25.0 : 0.0
-  const desconto = 0.0
-  const total = itens.length > 0 ? subtotal + frete - desconto : 0.0
-
-  const alterarQuantidade = (id, delta) => {
-    setItens((prev) =>
-      prev
-        .map((item) => {
-          if (item.id === id) {
-            const novaQtd = item.quantidade + delta
-            return novaQtd > 0 ? { ...item, quantidade: novaQtd } : null
-          }
-          return item
-        })
-        .filter(Boolean)
-    )
-  }
-
-  const removerItem = (id) => {
-    setItens((prev) => prev.filter((item) => item.id !== id))
-  }
-
-  const restaurarItensPadrao = () => {
-    setItens(ITENS_INICIAIS)
-  }
-
-  const navegar = (destino) => {
-    if (typeof aoNavegar === 'function') {
-      aoNavegar(destino)
-    } else {
-      navigate(destino)
-    }
-  }
-
-  const formatarMoeda = (valor) => {
-    return valor.toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    })
-  }
-
+ const navigate = useNavigate()
+ const { itens, subtotalCentavos, alterarQuantidade, remover: removerItem } = useCarrinho()
+ const subtotal = subtotalCentavos / 100
+ const desconto = 0
+ const total = subtotal
+ const navegar = destino => typeof aoNavegar === 'function' ? aoNavegar(destino) : navigate(destino)
+ const formatarMoeda = valor => valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
   return (
     <div className="carrinho-container">
       {/* Menu Superior no padrão das telas internas */}
@@ -88,7 +16,7 @@ function Carrinho({ aoNavegar }) {
         <button type="button" className="nav-btn" onClick={() => navegar('/')}>
           Home
         </button>
-        <button type="button" className="nav-btn" onClick={() => navegar('/#catalogo')}>
+        <button type="button" className="nav-btn" onClick={() => navegar('/catalogo')}>
           Catálogo
         </button>
         <button type="button" className="nav-btn" onClick={() => navegar('/#sobre')}>
@@ -124,16 +52,9 @@ function Carrinho({ aoNavegar }) {
                 <button
                   type="button"
                   className="btn-voltar-catalogo"
-                  onClick={() => navegar('/#catalogo')}
+                  onClick={() => navegar('/catalogo')}
                 >
                   Explorar Catálogo
-                </button>
-                <button
-                  type="button"
-                  className="btn-restaurar-itens"
-                  onClick={restaurarItensPadrao}
-                >
-                  Restaurar Itens do Protótipo
                 </button>
               </div>
             </div>
@@ -178,6 +99,7 @@ function Carrinho({ aoNavegar }) {
                           className="btn-qtd-acao"
                           aria-label={`Aumentar quantidade de ${item.nome}`}
                           onClick={() => alterarQuantidade(item.id, 1)}
+                          disabled={item.quantidade >= item.limite}
                         >
                           +
                         </button>
@@ -218,7 +140,7 @@ function Carrinho({ aoNavegar }) {
               </div>
               <div className="resumo-linha-carrinho">
                 <span>Frete</span>
-                <strong>{formatarMoeda(frete)}</strong>
+                <strong>A calcular no checkout</strong>
               </div>
               <div className="resumo-linha-carrinho">
                 <span>Desconto</span>
@@ -230,11 +152,11 @@ function Carrinho({ aoNavegar }) {
 
             <div className="resumo-total-bloco">
               <div className="resumo-total-linha">
-                <span className="total-label">Total</span>
+                <span className="total-label">Total parcial</span>
                 <span className="total-valor">{formatarMoeda(total)}</span>
               </div>
               <p className="total-estimado-obs">
-                Valor estimado para o envio padrão.
+                Subtotal dos produtos. O frete será calculado pelo CEP no checkout.
               </p>
             </div>
           </div>

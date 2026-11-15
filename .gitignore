@@ -26,3 +26,8 @@ dist-ssr
 # Apenas o README.md principal do projeto deve ser versionado (demais .md de apoio/IA ficam locais)
 *.md
 !/README.md
+
+# Credenciais locais das funções de servidor
+.env
+.env.*
+!.env.example

@@ -269,3 +269,20 @@
   width: 100%;
   font-size: 0.85rem;
 }
+/* Cotação de envio */
+.checkout-container .checkout-pagamento-previa { border:0; padding:0; margin:0; min-width:0; opacity:.65; }
+.checkout-container .checkout-pagamento-previa > legend { font-size:.85rem; color:#8c5a4f; margin-bottom:12px; }
+.checkout-container .frete-detalhe { font-size:.82rem; line-height:1.6; color:#6e625d; }
+.checkout-container .btn-calcular-frete { background:#ba6a7a; color:#fff; border:0; padding:12px 20px; border-radius:20px; cursor:pointer; font:inherit; }
+.checkout-container .btn-calcular-frete:disabled, .checkout-container .btn-pagar:disabled { opacity:.55; cursor:not-allowed; }
+.checkout-container .frete-aviso { background:#fff3e7; color:#7d4d42; padding:12px; border-radius:12px; font-size:.85rem; line-height:1.6; }
+.checkout-container .frete-opcoes { min-width:0; padding:0; margin:20px 0 0; border:0; }
+.checkout-container .frete-opcoes legend { margin-bottom:10px; color:#8c5a4f; }
+.checkout-container .frete-opcao { display:flex; align-items:center; gap:12px; padding:15px 10px; border-bottom:1px solid #eadad2; cursor:pointer; }
+.checkout-container .frete-opcao input { width:auto; flex-shrink:0; accent-color:#ba6a7a; }
+.checkout-container .frete-opcao span { flex:1; min-width:0; }
+.checkout-container .frete-opcao small { display:block; margin-top:6px; color:#756b67; }
+.checkout-container .card-resumo, .checkout-container .card-checkout { box-sizing:border-box; min-width:0; }
+.checkout-container button:focus-visible, .checkout-container input:focus-visible, .checkout-container a:focus-visible { outline:2px solid #8c5a4f; outline-offset:3px; }
+@media(max-width:800px) { .checkout-container .checkout-content { flex-direction:column; } .checkout-container .card-resumo, .checkout-container .card-checkout { width:100%; } .checkout-container .checkout-nav { flex-wrap:wrap; gap:8px; } .checkout-container .form-row { flex-wrap:wrap; } .checkout-container .form-group { min-width:110px; } }
+@media(max-width:420px) { .checkout-container { padding:16px 10px; } .checkout-container .card-checkout, .checkout-container .card-resumo { padding:22px 16px; } .checkout-container .frete-opcao { gap:8px; font-size:.85rem; } }
