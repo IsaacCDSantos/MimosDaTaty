@@ -28,7 +28,6 @@ export default function InicioAdmin({ dados, demonstracao = false }) {
   const [saindo, setSaindo] = useState(false)
   const [erroSaida, setErroSaida] = useState('')
   const saidaEmAndamento = useRef(false)
-  const [areaSolicitada, setAreaSolicitada] = useState(null)
   const [produtoSelecionado, setProdutoSelecionado] = useState(null)
   const dialogoProduto = useRef(null)
   const nome = dados?.administradora || 'Tati'
@@ -101,7 +100,7 @@ export default function InicioAdmin({ dados, demonstracao = false }) {
               <div className="admin-home-section-heading"><div><h2 id="admin-home-shortcuts-title">Atalhos do Ateliê</h2><p>Acesso direto às áreas principais de gerenciamento da sua loja</p></div><span className="admin-home-navigation-label">Navegação Rápida</span></div>
               <div className="admin-home-shortcut-grid">
                 <article className="admin-home-shortcut admin-home-shortcut--catalog">
-                  <div className="admin-home-shortcut-top"><span className="admin-home-shortcut-icon"><IconeAdmin nome="catalogo" /></span><button type="button" onClick={() => setAreaSolicitada('catálogo')}>Acessar Catálogo <IconeAdmin nome="seta" /></button></div>
+                  <div className="admin-home-shortcut-top"><span className="admin-home-shortcut-icon"><IconeAdmin nome="catalogo" /></span><Link to={demonstracao ? '/previa/admin/catalogo' : '/admin/catalogo'}>Acessar Catálogo <IconeAdmin nome="seta" /></Link></div>
                   <h3>Catálogo da Loja</h3><p>Adicione novas peças, edite valores, descrições e controle o que fica visível na vitrine.</p>
                 </article>
                 <article className="admin-home-shortcut admin-home-shortcut--orders">
@@ -109,7 +108,6 @@ export default function InicioAdmin({ dados, demonstracao = false }) {
                   <h3>Painel de Pedidos</h3><p>Veja os pedidos novos, acompanhe a produção das encomendas e atualize o status de envio.</p>
                 </article>
               </div>
-              {areaSolicitada && <div className="admin-home-feedback" role="status"><p>{demonstracao ? 'Você está na prévia do painel. ' : ''}As telas de peças permitem conferir os formulários. O salvamento ainda não está disponível e nenhuma informação da loja será alterada.</p>{areaSolicitada === 'catálogo' && <><Link to="">Ver catálogo da loja <IconeAdmin nome="seta" /></Link><Link to={`${demonstracao ? '/previa/admin' : '/admin'}/adicionar-peca`}>Adicionar peça <IconeAdmin nome="seta" /></Link><Link to={`${demonstracao ? '/previa/admin' : '/admin'}/editar-peca`}>{demonstracao ? 'Editar peça de exemplo' : 'Editar peça'} <IconeAdmin nome="seta" /></Link></>}<button type="button" aria-label="Fechar aviso" onClick={() => setAreaSolicitada(null)}><IconeAdmin nome="fechar" /></button></div>}
               <aside className="admin-home-story" aria-labelledby="admin-home-story-title">
                 <div className="admin-home-story-copy"><p className="admin-home-story-eyebrow"><span className="admin-home-dot" /> ESSÊNCIA ARTESANAL · DESDE 2006</p><h2 id="admin-home-story-title">Onde cada ponto se transforma em afeto</h2><p className="admin-home-story-description">O cantinho criativo da Tati para transformar fios de algodão, fitas e bordados delicados em memórias inesquecíveis para cada enxoval de bebê.</p><div className="admin-home-story-tags"><span>Crochê Artesanal</span><span>Bordado Personalizado</span><span>Enxoval Bebê</span></div></div>
                 <img src={bonequinha} alt="" width="1536" height="2304" decoding="async" />

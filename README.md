@@ -102,9 +102,9 @@ A aplicação foi planejada para unir a sensibilidade e o acolhimento do artesan
 
 - 🧵 **Área Administrativa**:
   - Painel inicial, tela de pedidos e formulários de adicionar/editar peças com rotas administrativas protegidas.
-  - Formulários retornam ao painel correspondente ao modo atual: `/admin` ou `/previa/admin`.
-  - O atalho **Ver catálogo da loja** no aviso de gestão foi alterado para permanecer no painel; o catálogo administrativo ainda não foi implementado. A vitrine pública continua em `/catalogo`.
-  - Persistência de peças e pedidos ainda pendente; a autenticação funcional não significa que as operações de gestão já estejam conectadas ao banco.
+  - Formulários retornam ao catálogo correspondente ao modo atual: `/admin/catalogo` ou `/previa/admin/catalogo`.
+  - Catálogo administrativo com filtros por categoria, situação visível/oculta e prévia com produtos fictícios. Adicionar e editar compartilham as peças enquanto a prévia está aberta; a vitrine pública continua em `/catalogo`.
+  - Catálogo real conectado às tabelas categorias/pecas e ao Storage do Supabase. Cadastro, edição, visibilidade e arquivamento são persistentes; a integração de pedidos e checkout continua separada.
 
 ---
 
@@ -116,7 +116,7 @@ A aplicação foi planejada para unir a sensibilidade e o acolhimento do artesan
 | **[React](https://react.dev/)** | `^19.2.8` | Biblioteca principal para criação de interfaces declarativas em componentes reutilizáveis. |
 | **[Vite](https://vite.dev/)** | `^8.3.0` | Ferramenta de build e bundling de última geração com inicialização instantânea e *Hot Module Replacement (HMR)*. |
 | **[React Router DOM](https://reactrouter.com/)** | `^7.18.4` | Gerenciamento de rotas e navegação client-side com URLs amigáveis. |
-| **[Supabase JS](https://supabase.com/docs/reference/javascript/introduction)** | `^2.118.0` | Cadastro, login, acompanhamento de sessão e consulta dos perfis de acesso. |
+| **[Supabase JS](https://supabase.com/docs/reference/javascript/introduction)** | `^2.118.0` | Autenticação, perfis, catálogo persistente e armazenamento das fotos. |
 | **CSS3 Puro & Modular** | — | Estilização temática sob medida com variáveis de cores pastéis/terrosas, animações e responsividade. |
 | **SVG Icons Inline** | — | Ícones vetoriais otimizados integrados aos componentes sem sobrecarga de bibliotecas externas pesadas. |
 
@@ -191,11 +191,13 @@ Sistema Web Mimos da Taty/
 | `/checkout` | `Checkout` | **Público** | Revisão de pedido, resumo financeiro e seleção de método de pagamento. |
 | `/previa/admin` | `InicioAdmin` | **Público, demonstração** | Prévia do painel com dados fictícios, atalhos e detalhes de peças. |
 | `/previa/admin/pedidos` | `PedidosAdmin` | **Público, demonstração** | Busca, filtros, detalhes, rastreio e mudanças temporárias de status/observação em pedidos fictícios. |
-| `/previa/admin/adicionar-peca` | `AdminAdicionarPeca` | **Público, demonstração** | Prévia de formulário sem salvar peças. |
-| `/previa/admin/editar-peca` | `AdminEditarPeca` | **Público, demonstração** | Prévia de edição sem persistência. |
+| `/previa/admin/adicionar-peca` | `AdminAdicionarPeca` | **Público, demonstração** | Adição temporária de peça fictícia ao catálogo da prévia. |
+| `/previa/admin/editar-peca?id=1` | `AdminEditarPeca` | **Público, demonstração** | Edição por ID e exclusão confirmada, apenas na prévia. |
 | `/adicionar-peca`, `/editar-peca` | Formulários administrativos em demonstração | **Público, demonstração** | Endereços anteriores preservados sem operações reais. |
-| `/admin/adicionar-peca` | `ExigirAdministrador` + `AdminAdicionarPeca` | **Restrito** | Formulário protegido; persistência de peças pendente. |
-| `/admin/editar-peca` | `ExigirAdministrador` + `AdminEditarPeca` | **Restrito** | Formulário protegido; persistência de alterações pendente. |
+| `/admin/adicionar-peca` | `ExigirAdministrador` + `AdminAdicionarPeca` | **Restrito** | Cadastro persistente e upload de foto com conta administradora. |
+| `/admin/editar-peca` | `ExigirAdministrador` + `AdminEditarPeca` | **Restrito** | Edição por ID e arquivamento persistentes com conta administradora. |
+| `/previa/admin/catalogo` | `CatalogoAdmin` | **Público, demonstração** | Listagem, filtros, visibilidade e navegação com produtos fictícios. |
+| `/admin/catalogo` | `ExigirAdministrador` + `CatalogoAdmin` | **Restrito** | Listagem de peças reais, filtros e visibilidade persistente no Supabase. |
 | `/admin/pedidos` | `ExigirAdministrador` + `PedidosAdmin` | **Restrito** | Autenticação implementada; persistência de pedidos pendente. |
 | `/admin/*` | `ExigirAdministrador` + `InicioAdmin` | **Restrito** | Painel liberado após verificar a sessão e o perfil admin no Supabase. |
 | `*` | Redirecionamento | — | Redireciona qualquer rota inválida ou inexistente para `/`. |
@@ -225,7 +227,7 @@ Para conceder acesso administrativo a outra conta, localize seu ID em **Authenti
 
 O Supabase trata tentativas de cadastro repetido com o mesmo e-mail. Conforme as configurações de confirmação, uma resposta sem sessão pode ocultar a existência de uma conta já cadastrada; a tela "Confira seu e-mail" não comprova criação de outra conta nem entrega de uma mensagem. A [issue #7](https://github.com/IsaacCDSantos/MimosDaTaty/issues/7), sobre esse feedback, está encerrada como concluída no GitHub; seus critérios de aceite permanecem desmarcados na descrição.
 
-Habilite e-mail/senha no Supabase Auth e autorize a URL `/login` dos ambientes nas URLs de redirecionamento. A proteção de páginas não substitui as regras RLS das futuras tabelas de pedidos e produtos. As telas administrativas atuais ainda usam prévias e não persistem essas operações.
+Habilite e-mail/senha no Supabase Auth e autorize a URL `/login` dos ambientes nas URLs de redirecionamento. As operações do catálogo usam RLS nas tabelas categorias/pecas e políticas no bucket pecas. Somente administradores gravam; a vitrine consulta peças visíveis e não arquivadas. As rotas /previa/admin continuam usando apenas demonstração em memória. Pedidos e checkout ainda precisam da integração própria.
 
 1. **Clone o repositório:**
    ```bash
@@ -302,9 +304,11 @@ Para manter o histórico e a qualidade de engenharia do repositório, recomenda-
 - [ ] Implementar as telas Perfil e Meus pedidos do cliente ([issue #6](https://github.com/IsaacCDSantos/MimosDaTaty/issues/6)); as propostas foram prototipadas no Figma;
 - [ ] Revisar pendências identificadas no código de recuperação de senha: validação do retorno e de links inválidos/expirados, reenvio e avisos demonstrativos;
 - [ ] Revisar o botão da vitrine administrativa ([issue #5](https://github.com/IsaacCDSantos/MimosDaTaty/issues/5)), as prévias públicas administrativas ([issue #8](https://github.com/IsaacCDSantos/MimosDaTaty/issues/8)) e a responsividade em celulares ([issue #10](https://github.com/IsaacCDSantos/MimosDaTaty/issues/10));
-- [ ] Implementar o catálogo administrativo e persistência de produtos e pedidos;
+- [x] Interface de catálogo administrativo e operações temporárias sobre produtos fictícios;
+- [x] Catálogo persistente, fotos no Storage e regras administrativas do Supabase;
+- [ ] Persistência de pedidos e checkout;
 - [ ] Integração com gateway de pagamentos real (PIX dinâmico, cartão);
-- [ ] Conectar as operações do painel privado à gestão persistente de pedidos e produtos.
+- [ ] Conectar as operações de pedidos e checkout ao banco existente.
 
 ---
 
@@ -313,9 +317,9 @@ Para manter o histórico e a qualidade de engenharia do repositório, recomenda-
 - **Autenticação:** Supabase Auth integrado, separação entre cliente e administrador, proteção das rotas e mensagens genéricas para falhas de credenciais/perfil.
 - **Sessão do cliente:** avatar com foto ou iniciais e menu com Perfil e Meus pedidos indicados como futuros e Sair funcional.
 - **Recuperação de senha:** envio do link e alteração da senha integrados ao Supabase; o fluxo principal foi testado manualmente pelo usuário. Reenvio real, validação específica do retorno e correção do aviso demonstrativo permanecem pendentes.
-- **Banco de dados e pagamentos:** a modelagem da loja segue em trabalho separado; produtos e pedidos ainda não estão ligados a uma operação persistente no site. O checkout ainda não processa pagamentos reais.
+- **Banco de dados e pagamentos:** o catálogo usa a modelagem existente da loja no Supabase. Pedidos e checkout ainda não estão ligados ao mesmo fluxo persistente; o checkout não processa pagamentos reais.
 - **Configuração:** a ausência de configuração válida do Supabase não derruba as páginas públicas; o README e `.env.example` orientam a configuração antes do build na hospedagem.
-- **Navegação administrativa:** o ajuste posterior à integração de autenticação manteve o atalho de catálogo no painel enquanto a gestão de catálogo não está disponível. As telas de peças continuam sem persistência.
+- **Navegação administrativa:** os atalhos abrem o catálogo e os formulários no mesmo modo de acesso. A prévia compartilha apenas produtos fictícios em memória; o catálogo privado usa o Supabase real.
 - **Issue encerrada:** [#7 — Cadastro com e-mail existente aparenta criar uma nova conta](https://github.com/IsaacCDSantos/MimosDaTaty/issues/7). O GitHub a registra como concluída, embora os critérios de aceite permaneçam desmarcados. O relato trata da apresentação do resultado; nos testes relatados não foi constatada duplicação do mesmo e-mail no banco.
 
 ---
@@ -356,3 +360,15 @@ Projeto desenvolvido com carinho para o ateliê **Mimos da Taty** (artesanato in
 ## 📄 Licença
 
 Este projeto é desenvolvido para o ateliê **Mimos da Taty**. Todos os direitos reservados ou sob licença interna do projeto.
+
+## Catálogo conectado ao Supabase
+
+Configure VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY em .env.local no desenvolvimento e nas variáveis de ambiente da hospedagem antes do build. O arquivo local não é versionado. O cliente utiliza somente a chave pública; cada gravação é autorizada pela sessão do administrador e pelas políticas do banco.
+
+O contrato segue a estrutura existente da branch BancoDadosMimosDaTaty: categorias(id,nome,ativa,ordem), pecas(categoria_id,nome,descricao,preco_centavos,imagem_capa_url,tipo_disponibilidade,estoque_atual,prazo_producao_dias,visivel,arquivada) e bucket público pecas de 5 MB, com JPEG/PNG/WebP/AVIF. Não há criação ou alteração automática de tabelas pelo frontend. Preços são convertidos para centavos; prazos e estoque são validados sem extrair números de textos ambíguos.
+
+Salvar aguarda a resposta do banco; erros preservam os campos e a foto para nova tentativa. O catálogo atualiza os registros somente depois da confirmação. A exclusão arquiva a peça e a oculta da vitrine, preservando itens e fotos dos pedidos anteriores. Fotos novas só são enviadas ao salvar. Upload sem gravação é removido apenas quando há falha SQL confirmada; em resultado de rede desconhecido a imagem é preservada para não quebrar um registro possivelmente gravado. A troca de foto mantém a imagem anterior porque pedidos podem usá-la.
+
+A vitrine /catalogo usa a mesma fonte quando configurada e consulta somente peças visíveis e não arquivadas. Banco vazio ou erro de conexão não são substituídos por exemplos. Sem configuração, a vitrine preserva a demonstração identificada. Carrinho/checkout e indicadores do início do admin continuam com os comportamentos próprios existentes e não reservam estoque ou confirmam pedidos reais.
+
+Verificação local de leitura: node --env-file=.env.local scripts/verificar-conexao-supabase.mjs. Verificação transacional de CRUD/RLS: scripts/verificar-permissoes-catalogo.sql, para execução autorizada no SQL Editor do projeto; termina com ROLLBACK e não deixa registros de teste. npm test cobre validação, erros, upload, filtros e normalização; npm run lint e npm run build verificam o projeto.

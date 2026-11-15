@@ -1,14 +1,18 @@
 import { Route } from 'react-router-dom'
 import InicioAdmin from '../../paginas/Admin/InicioAdmin'
+import CatalogoAdmin from '../../paginas/Admin/CatalogoAdmin/CatalogoAdmin'
+import CatalogoPersistenteProvider from '../../paginas/Admin/CatalogoAdmin/CatalogoPersistenteProvider'
+import FormularioCatalogoAdmin from '../../paginas/Admin/CatalogoAdmin/FormularioCatalogoAdmin'
 import PedidosAdmin from '../../paginas/Admin/Pedidos/PedidosAdmin'
 import ExigirAdministrador from './ExigirAdministrador'
-import AdminEditarPeca from '../../paginas/Admin/EditarPeca/AdminEditarPeca'
-import AdminAdicionarPeca from '../../paginas/Admin/AdicionarPeca/AdminAdicionarPeca'
 
 export const rotasPrivadas = (
   <>
-    <Route path="/admin/editar-peca" element={<ExigirAdministrador><AdminEditarPeca /></ExigirAdministrador>} />
-    <Route path="/admin/adicionar-peca" element={<ExigirAdministrador><AdminAdicionarPeca /></ExigirAdministrador>} />
+    <Route element={<ExigirAdministrador><CatalogoPersistenteProvider /></ExigirAdministrador>}>
+      <Route path="/admin/catalogo" element={<CatalogoAdmin />} />
+      <Route path="/admin/adicionar-peca" element={<FormularioCatalogoAdmin />} />
+      <Route path="/admin/editar-peca" element={<FormularioCatalogoAdmin editar />} />
+    </Route>
     <Route path="/admin/pedidos" element={<ExigirAdministrador><PedidosAdmin /></ExigirAdministrador>} />
     <Route path="/admin/*" element={<ExigirAdministrador><InicioAdmin /></ExigirAdministrador>} />
   </>

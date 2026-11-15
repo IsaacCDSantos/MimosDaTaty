@@ -15,7 +15,7 @@ A guarda administrativa também retorna a `/` ao receber `SIGNED_OUT`, pois esse
 
 Ver vitrine da loja abre o início existente. Ver todas abre o catálogo público existente. Selecionar uma peça abre os detalhes em diálogo nativo com suporte a Escape e retorno do foco ao botão de origem.
 
-Acessar Pedidos abre a tela de pedidos no mesmo modo de acesso (prévia ou área protegida). Acessar Catálogo oferece links para a vitrine e para os formulários de adicionar e editar peça. Esses formulários ainda não salvam dados.
+Acessar Pedidos e Acessar Catálogo abrem as respectivas telas administrativas no mesmo modo de acesso (prévia ou área protegida). O catálogo permite filtrar categorias e, na prévia, adicionar/editar peças fictícias e alternar sua visibilidade.
 
 ## Formulários de peças
 
@@ -25,7 +25,7 @@ As páginas ficam em `paginas/Admin/AdicionarPeca/` e `paginas/Admin/EditarPeca/
 - `/adicionar-peca` e `/editar-peca`: endereços anteriores preservados como demonstrações.
 - `/admin/adicionar-peca` e `/admin/editar-peca`: rotas protegidas pela mesma guarda das demais telas administrativas.
 
-Os formulários validam nome e preço, aceitam uma imagem para prévia local e informam que não há persistência. Excluir permanece desabilitado. Home e Pedidos respeitam o modo de acesso; Catálogo, Voltar e Cancelar abrem a vitrine pública. O cadastro, a seleção da peça real, a edição e a exclusão deverão ser conectados ao backend autorizado.
+Na prévia de catálogo, os formulários compartilham produtos fictícios, validam todos os campos, recebem a peça selecionada por ID e permitem salvar ou excluir temporariamente, com confirmação para exclusão. Catálogo, Voltar e Cancelar abrem o catálogo administrativo; cancelar descarta os rascunhos. Os endereços anteriores continuam sendo prévias isoladas. Consulte CatalogoAdmin/README.md. As operações reais do catálogo usam agora o serviço pecas.js, dentro da guarda administrativa e com autorização pelas políticas do Supabase. Pedidos continuam em fluxo separado.
 
 ## Requisitos e próxima integração
 

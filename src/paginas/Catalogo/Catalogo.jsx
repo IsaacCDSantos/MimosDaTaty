@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { servicoPecas, supabaseConfigurado } from '../../servicos/catalogo';
 import './Catalogo.css';
 
 const PRODUTOS_INICIAIS = [
@@ -45,15 +46,69 @@ const PRODUTOS_INICIAIS = [
     }
 ];
 
+function produtoDaPeca(peca) {
+    const preco = Number(peca.preco);
+    const estoque = Number(peca.estoque);
+    if (!Number.isFinite(preco) || preco <= 0 || !Number.isSafeInteger(estoque) || estoque < 0) {
+        throw new Error('Os dados da peça são inválidos.');
+    }
+    const prazo = typeof peca.prazo === 'string' ? peca.prazo.trim() : '';
+    return {
+        ...peca,
+        preco,
+        estoque,
+        imagem: peca.imagem,
+        prazo: prazo ? (/^entrega\b/i.test(prazo) ? prazo : 'Entrega em até ' + prazo) : 'Consulte o prazo de entrega',
+        quantidade: 1,
+    };
+}
+
+function limiteDaPeca(produto) {
+    return supabaseConfigurado && produto.tipoDisponibilidade === 'pronta_entrega' ? produto.estoque : Infinity;
+}
+
 export default function Catalogo() {
-    const [produtos, setProdutos] = useState(PRODUTOS_INICIAIS);
+    const [produtos, setProdutos] = useState(() => supabaseConfigurado ? [] : PRODUTOS_INICIAIS);
+    const [situacao, setSituacao] = useState(supabaseConfigurado ? 'carregando' : 'pronto');
+    const [tentativa, setTentativa] = useState(0);
     const [totalCarrinho, setTotalCarrinho] = useState(0);
+
+    useEffect(() => {
+        if (!supabaseConfigurado) return;
+        let ativo = true;
+
+        async function carregarPecas() {
+            try {
+                const pecas = await servicoPecas.listarPecas({ somenteVisiveis: true });
+                const novosProdutos = pecas.map(produtoDaPeca);
+                if (ativo) {
+                    setProdutos(novosProdutos);
+                    setSituacao('pronto');
+                }
+            } catch {
+                if (ativo) {
+                    setProdutos([]);
+                    setSituacao('erro');
+                }
+            }
+        }
+
+        carregarPecas();
+        return () => { ativo = false; };
+    }, [tentativa]);
+
+    const tentarNovamente = () => {
+        setSituacao('carregando');
+        setTentativa(valor => valor + 1);
+    };
 
     const alterarQuantidade = (id, delta) => {
         setProdutos(produtosAnteriores =>
             produtosAnteriores.map(item => {
                 if (item.id === id) {
-                    const novaQtd = Math.max(1, item.quantidade + delta);
+                    const limite = limiteDaPeca(item);
+                    if (limite === 0) return item;
+                    const novaQtd = Math.min(limite, Math.max(1, item.quantidade + delta));
                     return { ...item, quantidade: novaQtd };
                 }
                 return item;
@@ -62,6 +117,7 @@ export default function Catalogo() {
     };
 
     const adicionarAoCarrinho = (produto) => {
+        if (produto.quantidade > limiteDaPeca(produto)) return;
         const valorAdicionado = produto.preco * produto.quantidade;
         setTotalCarrinho(totalAnterior => totalAnterior + valorAdicionado);
     };
@@ -100,6 +156,7 @@ export default function Catalogo() {
 
             {/* Conteúdo Principal */}
             <main className={'cardPrincipal'}>
+                {!supabaseConfigurado && <p className={'catalogoAvisoDemonstracao'}>Catálogo de demonstração. Produtos e valores ilustrativos.</p>}
                 {/* Filtros de Categorias */}
                 <section className={'barraCategorias'}>
                     <span className={'categoriasTitulo'}>Categorias:</span>
@@ -118,8 +175,11 @@ export default function Catalogo() {
                 </section>
 
                 {/* Mapeamento de Produtos */}
-                <section className={'listaProdutos'}>
-                    {produtos.map((produto) => (
+                <section className={'listaProdutos'} aria-busy={situacao === 'carregando'}>
+                    {situacao === 'carregando' && <p className={'catalogoEstado'} role="status">Carregando peças do catálogo...</p>}
+                    {situacao === 'erro' && <div className={'catalogoEstado'} role="alert"><p>Não foi possível carregar o catálogo agora. Tente novamente.</p><button type="button" className={'btnAdicionarCarrinho'} onClick={tentarNovamente}>Tentar novamente</button></div>}
+                    {situacao === 'pronto' && produtos.length === 0 && <p className={'catalogoEstado'} role="status">Nenhuma peça disponível no momento.</p>}
+                    {situacao === 'pronto' && produtos.map((produto) => (
                         <div key={produto.id} className={'itemCatalogo'}>
                             <img
                                 src={produto.imagem}
@@ -139,28 +199,36 @@ export default function Catalogo() {
                                 <div className={'itemControles'}>
                                     <div className={'seletorQtd'}>
                                         <button
+                                            type="button"
                                             className={'btnQtd'}
+                                            aria-label={'Diminuir quantidade de ' + produto.nome}
+                                            disabled={produto.quantidade <= 1}
                                             onClick={() => alterarQuantidade(produto.id, -1)}
                                         >
                                             -
                                         </button>
                                         <span className={'exibicaoQtd'}>Qtd: {produto.quantidade}</span>
                                         <button
+                                            type="button"
                                             className={'btnQtd'}
+                                            aria-label={'Aumentar quantidade de ' + produto.nome}
+                                            disabled={produto.quantidade >= limiteDaPeca(produto)}
                                             onClick={() => alterarQuantidade(produto.id, 1)}
                                         >
                                             +
                                         </button>
                                         <span className={'prazoEntrega'}>
-                                            Entrega em até 7 dias úteis
+                                            {produto.prazo || 'Entrega em até 7 dias úteis'}
                                         </span>
                                     </div>
 
                                     <button
+                                        type="button"
                                         className={'btnAdicionarCarrinho'}
+                                        disabled={limiteDaPeca(produto) === 0}
                                         onClick={() => adicionarAoCarrinho(produto)}
                                     >
-                                        Adicionar ao carrinho
+                                        {limiteDaPeca(produto) === 0 ? 'Sem estoque' : 'Adicionar ao carrinho'}
                                     </button>
                                 </div>
                             </div>
