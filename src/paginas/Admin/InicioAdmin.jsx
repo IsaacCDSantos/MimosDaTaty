@@ -9,7 +9,6 @@ import './InicioAdmin.css'
 function IconeAdmin({ nome, ...props }) {
   const desenhos = {
     seta: <path d="M4 12h16m-6-6 6 6-6 6" />,
-    externo: <path d="M7 17 17 7M7 7h10v10" />,
     coracao: <path d="M20.5 4.7a5.4 5.4 0 0 0-7.6 0L12 5.6l-.9-.9a5.4 5.4 0 0 0-7.6 7.6L12 21l8.5-8.7a5.4 5.4 0 0 0 0-7.6Z" />,
     escudo: <path d="m12 3 7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6l7-3Z" />,
     catalogo: <><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 8h18M3 13h18M3 18h18M8 3v18M13 3v18M18 3v18" /></>,
@@ -66,7 +65,6 @@ export default function InicioAdmin({ dados, demonstracao = false }) {
             <span><span className="admin-home-wordmark">Mimos da Taty</span><span className="admin-home-brand-caption">GESTÃO DO ATELIÊ</span></span>
           </Link>
           <div className="admin-home-header-actions">
-            <Link className="admin-home-shop-link" to="/">Ver vitrine da loja <IconeAdmin nome="externo" /></Link>
             <span className="admin-home-account"><span className="admin-home-dot" /><IconeAdmin nome="escudo" /> Admin: {nome}</span>
             {!demonstracao && <button className="admin-home-signout" type="button" disabled={saindo} onClick={sairDaConta}><IconeAdmin nome="sair" />{saindo ? 'Saindo…' : 'Sair da conta'}</button>}
           </div>
