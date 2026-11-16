@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { criarServicoPecas } from '../src/servicos/pecas.js'
+import { calcularIndicadoresCatalogo } from '../src/paginas/Admin/indicadoresCatalogo.js'
 
 const URL_PROJETO = 'https://catalogo-exemplo.supabase.co'
 const CATEGORIA_ID = '10000000-0000-4000-8000-000000000001'
@@ -361,4 +362,37 @@ test('edição sem versão é rejeitada antes do upload', async () => {
 test('falha de limpeza é comunicada na mensagem apresentada ao usuário', async () => {
   const { servico } = preparar({ erroLimpeza: { message: 'Erro' }, falhas: { 'pecas:insert': [{ error: { code: '23514' } }] } })
   await assert.rejects(servico.salvarPeca({ ...formulario, fotoArquivo: foto() }, { idNovaPeca: NOVA_ID }), /remover a foto recém-enviada/)
+})
+
+test('indicadores relidos do serviço acompanham cadastro, ocultação, reexibição e arquivamento', async () => {
+  const { servico, cliente } = preparar({ pecas: [
+    registro,
+    { ...registro, id: FOTO_ID, visivel: false },
+    { ...registro, id: OUTRA_FOTO_ID, visivel: true, arquivada: true },
+  ] })
+  async function conferir(esperado) {
+    const indicadores = calcularIndicadoresCatalogo(await servico.listarPecas())
+    assert.deepEqual(indicadores, esperado)
+    assert.equal(indicadores.total, indicadores.visiveis + indicadores.ocultas)
+  }
+
+  await conferir({ total: 2, visiveis: 1, ocultas: 1 })
+  await servico.salvarPeca({ ...formulario, nome: 'Manta recém-cadastrada', estoque: 0 }, { idNovaPeca: NOVA_ID })
+  await conferir({ total: 3, visiveis: 2, ocultas: 1 })
+  await servico.alterarVisibilidade(PECA_ID, false, registro.atualizado_em)
+  await conferir({ total: 3, visiveis: 1, ocultas: 2 })
+  await servico.alterarVisibilidade(PECA_ID, true, registro.atualizado_em)
+  await conferir({ total: 3, visiveis: 2, ocultas: 1 })
+  await servico.excluirPeca(PECA_ID, registro.atualizado_em)
+  await conferir({ total: 2, visiveis: 1, ocultas: 1 })
+
+  const servicoReaberto = criarServicoPecas({ cliente, urlSupabase: URL_PROJETO })
+  assert.deepEqual(calcularIndicadoresCatalogo(await servicoReaberto.listarPecas()), { total: 2, visiveis: 1, ocultas: 1 })
+})
+
+test('falha ao consultar as peças rejeita a leitura e nova consulta recupera os indicadores reais', async () => {
+  const { servico } = preparar({ falhas: { 'pecas:select': [{ error: { code: '42501' } }] } })
+
+  await assert.rejects(servico.listarPecas().then(calcularIndicadoresCatalogo), /permissão/)
+  assert.deepEqual(calcularIndicadoresCatalogo(await servico.listarPecas()), { total: 1, visiveis: 1, ocultas: 0 })
 })
