@@ -127,7 +127,7 @@ export default function Login({ recovery = false, onNavigate }) {
       }
 
       navigate(
-          destinoAposLogin(dadosPerfil.perfil, location.state?.origem),
+        destinoAposLogin(dadosPerfil.perfil, location.state?.origem),
         { replace: true }
       );
     } catch {

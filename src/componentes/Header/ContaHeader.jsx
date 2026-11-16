@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { supabase } from '../../servicos/supabase'
+import { Link } from 'react-router-dom'
 import './ContaHeader.css'
 
 function IconeConta() {
@@ -19,7 +20,16 @@ function MenuConta({ usuario }) {
   const container = useRef(null)
   const botao = useRef(null)
   const painelId = useId()
-  const nomeInformado = usuario.user_metadata?.nome || usuario.user_metadata?.full_name
+  const [nomeDoPerfil, setNomeDoPerfil] = useState('')
+  useEffect(() => {
+    if (!supabase) return
+    let ativo = true
+    function atualizarNome() { supabase.from('perfis').select('nome_completo').eq('id', usuario.id).maybeSingle().then(({ data, error }) => { if (ativo && !error) setNomeDoPerfil(data?.nome_completo || '') }).catch(() => {}) }
+    atualizarNome()
+    window.addEventListener('mimos:perfil-atualizado', atualizarNome)
+    return () => { ativo = false; window.removeEventListener('mimos:perfil-atualizado', atualizarNome) }
+  }, [usuario.id])
+  const nomeInformado = nomeDoPerfil || usuario.user_metadata?.nome || usuario.user_metadata?.full_name
   const nome = typeof nomeInformado === 'string' && nomeInformado.trim()
     ? nomeInformado.trim() : usuario.email?.split('@')[0] || 'Minha conta'
   const foto = usuario.user_metadata?.avatar_url
@@ -83,7 +93,7 @@ function MenuConta({ usuario }) {
             <span className="conta-header-email">{usuario.email}</span>
           </div>
           <ul aria-label="Opções da conta">
-            <li><button type="button" disabled>Perfil <span>Em breve</span></button></li>
+            <li><Link to="/meu-perfil" onClick={() => setAberto(false)}>Perfil</Link></li>
             <li><button type="button" disabled>Meus pedidos <span>Em breve</span></button></li>
             <li><button type="button" className="conta-header-sair" disabled={saindo} onClick={sair}>{saindo ? 'Saindo…' : 'Sair'}</button></li>
           </ul>

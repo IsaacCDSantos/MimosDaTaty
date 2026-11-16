@@ -65,7 +65,7 @@ A aplicação foi planejada para unir a sensibilidade e o acolhimento do artesan
   - Login por e-mail e senha com verificação do perfil protegido em `public.perfis`, bloqueio de perfil incompatível e mensagens genéricas de credenciais inválidas.
   - Cliente autenticado segue para `/`; administrador autenticado segue para `/admin`. A opção escolhida no formulário precisa corresponder ao perfil armazenado no banco.
   - Rotas `/admin` verificam a conta no Supabase Auth e o perfil no banco antes de exibir as telas; a sessão é acompanhada ao entrar, sair e atualizar a página.
-  - O cabeçalho identifica a conta conectada por foto ou iniciais e oferece Perfil e Meus pedidos (em breve) e Sair (encerra a sessão neste navegador).
+  - O cabeçalho identifica a conta conectada por foto ou iniciais e oferece Perfil, Meus pedidos (em breve) e Sair (encerra a sessão neste navegador).
 
 - 🎀 **Cadastro de Clientes (`/cadastro`)**:
   - Página responsiva em `src/paginas/Cadastro`, com nome, e-mail, senha e confirmação de senha.
@@ -184,6 +184,7 @@ Sistema Web Mimos da Taty/
 | `/login` | `Login` | **Público** | Página de autenticação para clientes e administradores. |
 | `/cadastro` | `Cadastro` | **Público** | Criação de conta de cliente pelo Supabase Auth. |
 | `/catalogo` | `Catalogo` | **Público** | Vitrine de produtos; não é o gerenciamento administrativo. |
+| `/meu-perfil` | `MeuPerfil` | **Exige login** | Dados pessoais da própria conta e cadastro/edição do endereço de entrega no Supabase. |
 | `/carrinho` | `Carrinho` | **Público** | Visualização do carrinho, controle de itens/quantidades e resumo de compras. |
 | `/recuperar-senha` | `RecuperacaoSenha` | **Público** | Solicita o link de recuperação pelo Supabase Auth. |
 | `/confirmacao` | `ConfirmacaoEnvioEmail` | **Público** | Tela de confirmação e orientações após a solicitação de redefinição. |
@@ -301,7 +302,8 @@ Para manter o histórico e a qualidade de engenharia do repositório, recomenda-
 - [x] Interface de pedidos admin com filtros, detalhes, rastreio e alterações temporárias na prévia;
 - [x] Migração SQL de perfis versionada e configuração por variáveis de ambiente;
 - [x] Issue sobre o retorno do cadastro com e-mail existente encerrada no GitHub ([issue #7](https://github.com/IsaacCDSantos/MimosDaTaty/issues/7)); os critérios de aceite continuam desmarcados na issue;
-- [ ] Implementar as telas Perfil e Meus pedidos do cliente ([issue #6](https://github.com/IsaacCDSantos/MimosDaTaty/issues/6)); as propostas foram prototipadas no Figma;
+- [x] Tela Meu perfil do cliente, com edição persistente de nome, telefone e endereço de entrega;
+- [ ] Implementar Meus pedidos do cliente ([issue #6](https://github.com/IsaacCDSantos/MimosDaTaty/issues/6)); o protótipo está no Figma;
 - [ ] Revisar pendências identificadas no código de recuperação de senha: validação do retorno e de links inválidos/expirados, reenvio e avisos demonstrativos;
 - [ ] Revisar o botão da vitrine administrativa ([issue #5](https://github.com/IsaacCDSantos/MimosDaTaty/issues/5)), as prévias públicas administrativas ([issue #8](https://github.com/IsaacCDSantos/MimosDaTaty/issues/8)) e a responsividade em celulares ([issue #10](https://github.com/IsaacCDSantos/MimosDaTaty/issues/10));
 - [x] Interface de catálogo administrativo e operações temporárias sobre produtos fictícios;
@@ -315,7 +317,7 @@ Para manter o histórico e a qualidade de engenharia do repositório, recomenda-
 ## 📝 Atualizações Recentes e Pendências
 
 - **Autenticação:** Supabase Auth integrado, separação entre cliente e administrador, proteção das rotas e mensagens genéricas para falhas de credenciais/perfil.
-- **Sessão do cliente:** avatar com foto ou iniciais e menu com Perfil e Meus pedidos indicados como futuros e Sair funcional.
+- **Sessão do cliente:** avatar com foto ou iniciais e menu com Perfil funcional, Meus pedidos em breve e Sair. O nome salvo no perfil atualiza as iniciais do cabeçalho.
 - **Recuperação de senha:** envio do link e alteração da senha integrados ao Supabase; o fluxo principal foi testado manualmente pelo usuário. Reenvio real, validação específica do retorno e correção do aviso demonstrativo permanecem pendentes.
 - **Banco de dados e pagamentos:** o catálogo usa a modelagem existente da loja no Supabase. Pedidos e checkout ainda não estão ligados ao mesmo fluxo persistente; o checkout não processa pagamentos reais.
 - **Configuração:** a ausência de configuração válida do Supabase não derruba as páginas públicas; o README e `.env.example` orientam a configuração antes do build na hospedagem.
@@ -409,3 +411,16 @@ Execute npm test, npm run lint e npm run build. Após publicar a função, node 
 Validação manual em 15/11/2026 no ambiente real: origem 61940-005, destino 20020-050 e pacote fixo de 1 kg, 30 × 20 × 10 cm. A API retornou PAC por R$ 28,22 (7 dias úteis) e SEDEX por R$ 50,34 (3 dias úteis). No checkout, uma peça de R$ 500,00 com PAC selecionado totalizou R$ 528,22. Trocar o CEP retirou imediatamente a cotação anterior. Esses valores registram o teste; o site sempre consulta a API para novas cotações. O checkout mantém pagamento desabilitado. A RPC antiga criar_pedido aceita frete do chamador; esta integração não a utiliza. Antes de integrar cobrança/pedido definitivo, o servidor deverá recalcular ou validar uma cotação armazenada para evitar confiar no valor do navegador.
 
 Referências oficiais: [autenticação SuperFrete](https://superfrete.readme.io/reference/primeiros-passos), [cotação de frete](https://superfrete.readme.io/reference/cotacao-de-frete), [autorização de funções Supabase](https://supabase.com/docs/guides/functions/auth-headers).
+
+
+## Meu perfil do cliente
+
+A opção Perfil no menu da conta abre `/meu-perfil`. Sem sessão, a tela direciona ao login e retorna ao perfil após a autenticação. O formulário usa os dados reais da conta conectada, sem exemplos ou armazenamento de dados pessoais no navegador.
+
+Nome completo e telefone são atualizados em `public.perfis`; o e-mail vem do Supabase Auth e é somente leitura. Cancelar descarta as alterações ainda não salvas. O endereço tem um formulário independente, com validação de CEP, campos de entrega e UF. A tela carrega o endereço principal; quando não existe principal, usa o mais antigo. A edição preserva o proprietário e a indicação de principal; o primeiro cadastro cria um endereço principal. Não há exclusão ou gerenciamento de múltiplos endereços nesta tela.
+
+O serviço confirma a identidade com `auth.getUser()` antes das operações e exige o mesmo usuário que carregou o formulário. Ele grava somente nome/telefone ou os campos de entrega permitidos. As políticas existentes restringem perfis e endereços ao proprietário; o navegador não pode alterar permissões administrativas. Não foi necessário alterar o esquema nem ampliar permissões no Supabase. O ambiente precisa ter as tabelas `perfis` e `enderecos_cliente`, suas políticas RLS e as variáveis públicas do Supabase já utilizadas pelo projeto.
+
+O sucesso é exibido somente após a confirmação da linha pelo banco. Uma falha de conexão com resultado desconhecido bloqueia novas gravações até recarregar os dados. Salvar endereço é independente do botão Salvar alterações dos dados pessoais. Meus pedidos continua indicado como disponível em breve.
+
+Validação: 19 testes específicos de perfil/endereço e retorno do login, além da suíte geral (136 testes aprovados em 15/11/2026), lint e build. No navegador, foram conferidos o acesso pelo menu, salvar e recarregar nome/telefone, cadastrar endereço, cancelar rascunhos e os layouts de 810 px e 390 px. Os dados fictícios usados no teste foram removidos ao final e a conta de teste foi restaurada. O arquivo `scripts/verificar-permissoes-perfil.sql` verifica edição própria, isolamento entre contas, bloqueio de alteração de perfil e bloqueio de visitantes em uma transação que termina com ROLLBACK; exige a conta de teste indicada no script e uma segunda conta existente. Não altera o esquema nem deixa dados de teste.
