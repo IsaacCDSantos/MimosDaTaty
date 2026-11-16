@@ -92,7 +92,7 @@ function Contato() {
             </div>
 
             <a
-              href="https://wa.me/5511999999999"
+              href="https://wa.me/5585999710182"
               target="_blank"
               rel="noopener noreferrer"
               className="contato-botao botao-whatsapp"
