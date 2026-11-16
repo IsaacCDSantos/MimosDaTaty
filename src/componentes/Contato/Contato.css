@@ -23,7 +23,7 @@
   color: #92614b;
   display: inline-flex;
   font-family: 'Inter', Arial, sans-serif;
-  font-size: 13px;
+  font-size: var(--fonte-sobretitulo);
   font-weight: 700;
   gap: 12px;
   letter-spacing: 2px;
@@ -41,7 +41,7 @@
 .contato-titulo {
   color: #7f533f;
   font-family: 'Great Vibes', cursive;
-  font-size: clamp(52px, 5.6vw, 76px);
+  font-size: var(--fonte-titulo-pagina);
   font-weight: 400;
   line-height: 1.1;
   margin: 0 0 16px;
@@ -50,7 +50,7 @@
 .contato-subtitulo {
   color: #5e3f32;
   font-family: 'Alice', serif;
-  font-size: clamp(18px, 1.8vw, 22px);
+  font-size: var(--fonte-subtitulo);
   font-weight: 400;
   line-height: 1.55;
   margin: 0;
@@ -166,7 +166,7 @@
 
 .contato-badge-status {
   font-family: 'Inter', -apple-system, sans-serif;
-  font-size: 13px;
+  font-size: var(--fonte-etiqueta);
   font-weight: 600;
   padding: 6px 14px;
   border-radius: 20px;
@@ -212,7 +212,7 @@
 
 .contato-card-titulo {
   font-family: 'Inter', -apple-system, sans-serif;
-  font-size: 26px;
+  font-size: var(--fonte-titulo-secao);
   font-weight: 700;
   color: #7a4a3a;
   margin: 0 0 12px;
@@ -221,7 +221,7 @@
 
 .contato-card-texto {
   font-family: 'Inter', -apple-system, sans-serif;
-  font-size: 16px;
+  font-size: var(--fonte-corpo);
   font-weight: 400;
   color: #6b7280;
   line-height: 1.6;
@@ -235,7 +235,7 @@
   background-color: #d99294;
   color: #ffffff;
   font-family: 'Inter', -apple-system, sans-serif;
-  font-size: 15px;
+  font-size: var(--fonte-botao);
   font-weight: 600;
   text-decoration: none;
   padding: 15px 28px;
@@ -297,7 +297,7 @@
 
 .contato-horario {
   font-family: 'Inter', -apple-system, sans-serif;
-  font-size: 15px;
+  font-size: var(--fonte-apoio);
   color: #6b7280;
   margin: 0;
 }
@@ -594,34 +594,34 @@
   }
 
   .contato-card-titulo {
-    font-size: 22px;
+    font-size: var(--fonte-titulo-secao);
   }
 
   .contato-card-texto {
-    font-size: 15px;
+    font-size: var(--fonte-corpo);
   }
 
   .contato-info-atendimento {
     padding: 12px 18px;
     border-radius: 18px;
-    font-size: 13px;
+    font-size: var(--fonte-apoio);
     text-align: center;
   }
 }
 @media (max-width: 820px) {
   .contato-secao { padding:44px 16px 48px; }
-  .contato-titulo { font-size:clamp(42px,12vw,60px); line-height:1.2; }
-  .contato-tagline { max-width:100%; font-size:11px; letter-spacing:.08em; gap:8px; }
+  .contato-titulo { font-size:var(--fonte-titulo-pagina); line-height:1.2; }
+  .contato-tagline { max-width:100%; font-size:var(--fonte-sobretitulo); letter-spacing:.08em; gap:8px; }
   .contato-tagline .linha-tagline { flex:0 0 24px; }
-  .contato-subtitulo { font-size:18px; }
+  .contato-subtitulo { font-size:var(--fonte-subtitulo); }
   .contato-grid { grid-template-columns:minmax(0,1fr); gap:20px; }
   .contato-card { min-width:0; padding:24px 20px; }
   .contato-card-header { gap:12px; flex-wrap:wrap; }
-  .contato-card-texto { font-size:16px; overflow-wrap:anywhere; }
+  .contato-card-texto { font-size:var(--fonte-corpo); overflow-wrap:anywhere; }
   .contato-botao { min-height:48px; gap:12px; padding:13px 18px; line-height:1.4; }
   .contato-info-atendimento { width:100%; min-width:0; padding:16px; align-items:flex-start; gap:10px; }
-  .contato-horario { font-size:14px; line-height:1.55; }
-  .contato-footer p { font-size:12px; line-height:1.6; overflow-wrap:anywhere; }
+  .contato-horario { font-size:var(--fonte-apoio); line-height:1.55; }
+  .contato-footer p { font-size:var(--fonte-apoio); line-height:1.6; overflow-wrap:anywhere; }
   .contato-secao .animar-rolagem,
   .contato-secao .contato-card.animar-rolagem :is(.contato-icone-container,.contato-badge-status,.contato-card-titulo,.contato-card-texto,.contato-botao) { opacity:1; transform:none; filter:none; transition:none; }
   .contato-secao .contato-hero-card.animar-rolagem .contato-hero-img { transform:none; transition:none; }

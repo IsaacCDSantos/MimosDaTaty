@@ -139,7 +139,7 @@ function Checkout({ aoNavegar }) {
             {formaPagamento === 'pix' && (
               <div className="secao-checkout" style={{ textAlign: 'center', padding: '20px 0' }}>
                 <h3 className="secao-titulo">Pagamento via Pix</h3>
-                <p style={{ fontSize: '0.9rem', color: '#7A7A7A' }}>
+                <p style={{ fontSize: 'var(--fonte-apoio)', color: '#7A7A7A' }}>
                   O QR Code e a chave Pix "Copia e Cola" serão gerados na próxima etapa, após você clicar em "Pagar".
                 </p>
               </div>

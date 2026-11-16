@@ -57,11 +57,12 @@
   border-radius: 38px;
   padding: 10px 20px;
   font-family: 'Inter', sans-serif;
-  font-size: 15px;
-  font-weight: 600;
+  font-size: var(--fonte-botao);
+  font-weight: var(--peso-botao);
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(135, 94, 75, 0.12);
   transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  line-height: var(--entrelinha-corpo);
 }
 
 .btnVoltarCatalogo:hover {
@@ -74,16 +75,17 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 14px;
+  font-size: var(--fonte-apoio);
   color: var(--cor-texto-marrom);
+  line-height: var(--entrelinha-corpo);
 }
 
 .breadcrumbLink {
   background: none;
   border: none;
   padding: 0;
-  font: inherit;
-  font-weight: 600;
+  font: var(--peso-destaque) var(--fonte-apoio)/var(--entrelinha-corpo) Inter, Arial, sans-serif;
+  font-weight: var(--peso-destaque);
   color: var(--cor-texto-marrom);
   cursor: pointer;
   text-decoration: underline;
@@ -96,7 +98,7 @@
 
 .breadcrumbAtual {
   color: #5e4438;
-  font-weight: 500;
+  font-weight: var(--peso-destaque);
 }
 
 /* Card principal */
@@ -151,9 +153,10 @@
   border: 1px solid #ecd1c6;
   border-radius: 999px;
   padding: 6px 14px;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--fonte-etiqueta);
+  font-weight: var(--peso-destaque);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  line-height: var(--entrelinha-corpo);
 }
 
 .detalheResumoArtesanal {
@@ -175,9 +178,9 @@
 
 .detalheTitulo {
   margin: 0;
-  font-size: 26px;
-  line-height: 1.25;
-  font-weight: 700;
+  font-size: var(--fonte-titulo-pagina);
+  line-height: var(--entrelinha-titulo);
+  font-weight: var(--peso-destaque);
   color: var(--cor-texto-marrom);
 }
 
@@ -188,21 +191,22 @@
   border: 1px solid var(--cor-destaque-rosa);
   border-radius: 999px;
   padding: 6px 14px;
-  font-size: 18px;
-  font-weight: 700;
+  font-size: var(--fonte-preco);
+  font-weight: var(--peso-destaque);
+  line-height: var(--entrelinha-corpo);
 }
 
 .detalheDescricao {
   margin: 0;
-  font-size: 15px;
-  line-height: 1.6;
+  font-size: var(--fonte-corpo);
+  line-height: var(--entrelinha-corpo);
   color: #4b5563;
 }
 
 .detalheDescricaoExtra {
   margin: 0;
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: var(--fonte-corpo);
+  line-height: var(--entrelinha-corpo);
   color: var(--cor-texto-suave);
 }
 
@@ -219,9 +223,10 @@
   display: flex;
   align-items: center;
   gap: 9px;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--fonte-apoio);
+  font-weight: var(--peso-destaque);
   color: var(--cor-texto-marrom);
+  line-height: var(--entrelinha-corpo);
 }
 
 /* Coluna direita - Formulário de personalização */
@@ -250,26 +255,27 @@
 }
 
 .detalheEyebrow {
-  font-size: 12px;
-  font-weight: 700;
+  font-size: var(--fonte-sobretitulo);
+  font-weight: var(--peso-destaque);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #b77073;
+  line-height: var(--entrelinha-corpo);
 }
 
 .detalheSubtituloScript {
   margin: 0;
   font-family: 'Great Vibes', cursive;
-  font-size: 40px;
-  font-weight: 400;
-  line-height: 1.1;
+  font-size: var(--fonte-titulo-secao);
+  font-weight: var(--peso-corpo);
+  line-height: var(--entrelinha-titulo);
   color: var(--cor-texto-marrom);
 }
 
 .detalheInstrucao {
   margin: 0;
-  font-size: 14px;
-  line-height: 1.55;
+  font-size: var(--fonte-corpo);
+  line-height: var(--entrelinha-corpo);
   color: var(--cor-texto-suave);
 }
 
@@ -287,15 +293,17 @@
 }
 
 .detalheLabel {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: var(--fonte-rotulo);
+  font-weight: var(--peso-destaque);
   color: var(--cor-texto-marrom);
+  line-height: var(--entrelinha-corpo);
 }
 
 .detalheContador {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--fonte-apoio);
+  font-weight: var(--peso-destaque);
   color: var(--cor-texto-apagado);
+  line-height: var(--entrelinha-corpo);
 }
 
 .detalheChipsSugestao {
@@ -310,11 +318,12 @@
   border-radius: 999px;
   padding: 5px 12px;
   font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: var(--fonte-botao);
+  font-weight: var(--peso-botao);
   color: var(--cor-texto-marrom);
   cursor: pointer;
   transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+  line-height: var(--entrelinha-corpo);
 }
 
 .chipSugestao:hover {
@@ -330,8 +339,8 @@
   border-radius: 20px;
   padding: 16px 18px;
   font-family: 'Inter', sans-serif;
-  font-size: 15px;
-  line-height: 1.55;
+  font-size: var(--fonte-corpo);
+  line-height: var(--entrelinha-corpo);
   color: #374151;
   background: #fffdfb;
   resize: vertical;
@@ -392,15 +401,17 @@
 
 .dropzoneTitulo {
   margin: 0;
-  font-size: 15px;
-  font-weight: 600;
+  font-size: var(--fonte-rotulo);
+  font-weight: var(--peso-destaque);
   color: var(--cor-texto-marrom);
+  line-height: var(--entrelinha-corpo);
 }
 
 .dropzoneSubtitulo {
   margin: 0;
-  font-size: 13px;
+  font-size: var(--fonte-apoio);
   color: var(--cor-texto-suave);
+  line-height: var(--entrelinha-corpo);
 }
 
 .detalheErroAnexo {
@@ -410,8 +421,9 @@
   background: #fef2f2;
   border: 1px solid #fecaca;
   color: #b91c1c;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--fonte-corpo);
+  font-weight: var(--peso-destaque);
+  line-height: var(--entrelinha-corpo);
 }
 
 /* Galeria de anexos */
@@ -463,17 +475,19 @@
 }
 
 .anexoNome {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: var(--fonte-apoio);
+  font-weight: var(--peso-destaque);
   color: var(--cor-texto-marrom);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: var(--entrelinha-corpo);
 }
 
 .anexoTamanho {
-  font-size: 11px;
+  font-size: var(--fonte-apoio);
   color: var(--cor-texto-suave);
+  line-height: var(--entrelinha-corpo);
 }
 
 .anexoBtnRemover {
@@ -518,11 +532,12 @@
 }
 
 .detalheQtdLabel {
-  font-size: 12px;
-  font-weight: 700;
+  font-size: var(--fonte-rotulo);
+  font-weight: var(--peso-destaque);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--cor-texto-suave);
+  line-height: var(--entrelinha-corpo);
 }
 
 .btnAdicionarPersonalizado {
@@ -538,11 +553,12 @@
   border-radius: 24px;
   padding: 15px 24px;
   font-family: 'Inter', sans-serif;
-  font-size: 16px;
-  font-weight: 700;
+  font-size: var(--fonte-botao);
+  font-weight: var(--peso-botao);
   cursor: pointer;
   box-shadow: 0 8px 18px rgba(217, 146, 148, 0.42);
   transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  line-height: var(--entrelinha-corpo);
 }
 
 .btnAdicionarPersonalizado:hover {
@@ -581,11 +597,13 @@
   flex-direction: column;
   gap: 3px;
   color: #166534;
-  font-size: 13px;
+  font-size: var(--fonte-corpo);
+  line-height: var(--entrelinha-corpo);
 }
 
 .feedbackTexto strong {
-  font-size: 14px;
+  font-size: var(--fonte-corpo);
+  line-height: var(--entrelinha-corpo);
 }
 
 .btnIrCarrinhoRapido {
@@ -595,10 +613,11 @@
   border-radius: 999px;
   padding: 9px 16px;
   font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--fonte-botao);
+  font-weight: var(--peso-botao);
   cursor: pointer;
   transition: background-color 0.2s ease;
+  line-height: var(--entrelinha-corpo);
 }
 
 .btnIrCarrinhoRapido:hover {
@@ -651,9 +670,10 @@
 .detalheLightboxConteudo p {
   margin: 0;
   text-align: center;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--fonte-apoio);
+  font-weight: var(--peso-destaque);
   color: var(--cor-texto-marrom);
+  line-height: var(--entrelinha-corpo);
 }
 
 .detalheLightboxFechar {
@@ -695,11 +715,13 @@
   }
 
   .detalheTitulo {
-    font-size: 22px;
+    font-size: var(--fonte-titulo-pagina);
+    line-height: var(--entrelinha-titulo);
   }
 
   .detalheSubtituloScript {
-    font-size: 34px;
+    font-size: var(--fonte-titulo-secao);
+    line-height: var(--entrelinha-titulo);
   }
 
   .btnAdicionarPersonalizado {
@@ -717,4 +739,59 @@
   .detalheLightbox {
     animation: none;
   }
+}
+
+/* A tipografia compartilhada mantém a personalização legível sem comprimir as ações. */
+
+.detalhePecaWrapper { font-size:var(--fonte-corpo); line-height:var(--entrelinha-corpo); font-weight:var(--peso-corpo); min-width:0; }
+
+.detalhePecaWrapper :is(button, textarea) { font-family:inherit; }
+
+.detalhePecaWrapper :is(.detalheColunaVitrine, .detalheColunaPersonalizacao, .detalheResumoArtesanal, .detalheBlocoCampo) { min-width:0; }
+
+.detalheTituloLinha { flex-wrap:wrap; }
+
+.detalheTitulo { flex:1 1 100%; min-width:0; overflow-wrap:anywhere; }
+
+.detalheBreadcrumb { flex-wrap:wrap; min-width:0; }
+
+.breadcrumbAtual { min-width:0; overflow-wrap:anywhere; }
+
+.breadcrumbLink { min-height:44px; display:inline-flex; align-items:center; }
+
+.detalheLabelLinha { flex-wrap:wrap; }
+
+.detalheBadgeCategoria { max-width:calc(100% - 32px); overflow-wrap:anywhere; }
+
+.detalhePecaWrapper :is(.detalheInstrucao, .detalheDescricao, .detalheDescricaoExtra, .detalheErroAnexo, .dropzoneTitulo, .dropzoneSubtitulo, .feedbackTexto) { overflow-wrap:anywhere; }
+
+.detalhePecaWrapper :is(.btnVoltarCatalogo, .chipSugestao, .btnAdicionarPersonalizado, .btnIrCarrinhoRapido) { min-height:44px; }
+
+.detalhePecaWrapper .chipSugestao { max-width:100%; white-space:normal; text-align:left; }
+
+.detalheQtdGrupo { min-width:0; max-width:100%; }
+
+.btnAdicionarPersonalizado { min-width:0; flex-wrap:wrap; }
+
+.btnAdicionarPersonalizado > span { flex:1 1 10rem; }
+
+.btnAdicionarPersonalizado strong { font-size:var(--fonte-preco); font-weight:var(--peso-destaque); white-space:nowrap; }
+
+.feedbackTexto strong { font-weight:var(--peso-destaque); }
+
+.anexoNome { white-space:normal; overflow-wrap:anywhere; text-overflow:clip; }
+
+.anexoBtnRemover { width:44px; height:44px; }
+
+.detalheLightboxConteudo { min-width:0; overflow:auto; }
+
+.detalheLightboxConteudo p { overflow-wrap:anywhere; }
+
+.detalheLightboxFechar { width:44px; height:44px; top:8px; right:8px; }
+
+@media (max-width:600px) {
+ .detalhePecaWrapper .detalheGaleriaAnexos { grid-template-columns:repeat(auto-fill,minmax(min(150px,100%),1fr)); }
+ .detalhePecaWrapper .btnAdicionarPersonalizado { width:100%; gap:8px; }
+ .detalheLightbox { padding:14px; }
+ .detalheLightboxConteudo { max-width:100%; max-height:calc(100svh - 28px); }
 }
