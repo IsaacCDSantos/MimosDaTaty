@@ -1,27 +1,6 @@
-import { Link, useNavigate } from 'react-router-dom'
-import ContaHeader from '../Header/ContaHeader'
-import logo from '../../assets/imagens/logo-mimos-da-taty.png'
+import { Link } from 'react-router-dom'
+import Header from '../Header/Header'
 import '../../paginas/MeuPerfil/MeuPerfil.css'
-
-function CabecalhoConta() {
-  const navigate = useNavigate()
-  return (
-    <header className="meu-perfil-header">
-      <div className="meu-perfil-header-conteudo">
-        <Link className="meu-perfil-logo" to="/" aria-label="Mimos da Tati — início">
-          <img src={logo} alt="Mimos da Tati" width="38" height="38" />
-        </Link>
-        <nav className="meu-perfil-header-nav" aria-label="Navegação da loja">
-          <Link to="/">Início</Link><Link to="/catalogo">Catálogo</Link>
-          <Link to="/#sobre">Sobre nós</Link><Link to="/#contato">Contato</Link>
-        </nav>
-        <div className="meu-perfil-header-acoes">
-          <ContaHeader onEntrar={() => navigate('/login')} /><Link to="/carrinho">Carrinho</Link>
-        </div>
-      </div>
-    </header>
-  )
-}
 
 export function EstruturaContaCliente({
   titulo = 'Meu perfil',
@@ -31,7 +10,7 @@ export function EstruturaContaCliente({
 }) {
   return (
     <div className={'meu-perfil-page ' + classe}>
-      <CabecalhoConta />
+      <Header />
       <main className="meu-perfil-main">
         <p className="meu-perfil-eyebrow">MINHA CONTA</p>
         <h1>{titulo}</h1>
