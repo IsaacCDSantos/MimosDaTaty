@@ -306,7 +306,8 @@ Para manter o histórico e a qualidade de engenharia do repositório, recomenda-
 - [x] Tela Meu perfil do cliente, com edição persistente de nome, telefone e endereço de entrega;
 - [x] Meus pedidos do cliente, com histórico próprio, filtros, etapas e detalhes conectados ao Supabase ([issue #6](https://github.com/IsaacCDSantos/MimosDaTaty/issues/6));
 - [ ] Revisar pendências identificadas no código de recuperação de senha: validação do retorno e de links inválidos/expirados, reenvio e avisos demonstrativos;
-- [ ] Revisar o botão da vitrine administrativa ([issue #5](https://github.com/IsaacCDSantos/MimosDaTaty/issues/5)), as prévias públicas administrativas ([issue #8](https://github.com/IsaacCDSantos/MimosDaTaty/issues/8)) e a responsividade em celulares ([issue #10](https://github.com/IsaacCDSantos/MimosDaTaty/issues/10));
+- [ ] Revisar o botão da vitrine administrativa ([issue #5](https://github.com/IsaacCDSantos/MimosDaTaty/issues/5)) e as prévias públicas administrativas ([issue #8](https://github.com/IsaacCDSantos/MimosDaTaty/issues/8));
+- [x] Responsividade em celulares, com revisão das jornadas públicas, de compra, da conta e administrativas ([issue #10](https://github.com/IsaacCDSantos/MimosDaTaty/issues/10));
 - [x] Interface de catálogo administrativo e operações temporárias sobre produtos fictícios;
 - [x] Catálogo persistente, fotos no Storage e regras administrativas do Supabase;
 - [ ] Persistência de pedidos e checkout;
@@ -440,3 +441,10 @@ Ver detalhes do pedido abre uma janela com todas as peças e personalizações, 
 Validação: 161 testes automatizados aprovados, incluindo 22 de consulta/normalização de pedidos do cliente e 3 de retorno do login; lint e build aprovados. O script `scripts/verificar-permissoes-pedidos-cliente.sql` verifica leitura própria, isolamento de pedidos e itens, bloqueio de escrita por clientes e bloqueio de leitura por visitantes. Ele usa fixtures em transação e termina com ROLLBACK. No navegador foram conferidos menu/sidebar, filtros, detalhes, rastreio, Escape/retorno de foco, atualização, estados vazios e layouts de 810 px e 390 px. Os dois pedidos fictícios da conta reservada usados na verificação visual foram removidos junto com seus itens, sem alterar estoque ou avançar a sequência de números de pedido.
 
 Limitação preexistente relativa ao RF20: o papel `authenticated` tem SELECT na tabela `pedidos` inteira. Esta tela não solicita nem exibe `observacao_interna`, mas um cliente pode consultar essa coluna de seus próprios pedidos diretamente pela API. RLS isola linhas, não colunas. A proteção desse campo no banco exige uma alteração coordenada com a leitura administrativa; esta implementação preserva o esquema e as permissões existentes.
+
+
+## Responsividade para celular
+
+As telas foram ajustadas para 360, 375, 390 e 430 px: navegação sem sobreposição, menu da conta dentro da tela, cards e formulários empilhados, campos de 16 px, áreas de toque de 44 px e diálogos roláveis. O cabeçalho móvel acompanha a altura do conteúdo e as âncoras compensam essa altura. No desktop, o layout permanece igual.
+
+Foram conferidas 20 telas nas quatro larguras, além dos menus, diálogos e layouts de 1024/1440 px. O projeto continua com 161 testes, lint e build aprovados. Consulte [a matriz e o roteiro de validação](docs/validacao-mobile.md).

@@ -269,3 +269,45 @@
 .catalogoContainer .catalogoEstado p { margin: 0; }
 .catalogoContainer .catalogoEstado button { margin-top: 16px; min-height: 44px; }
 .catalogoContainer :is(.btnQtd, .btnAdicionarCarrinho):disabled { cursor: not-allowed; opacity: .5; }
+
+/* Telas estreitas: navegação e peças sem comprimir os controles. */
+@media (max-width: 960px) {
+    .catalogoContainer { padding: 24px; }
+    .catalogoContainer .catalogoHeader { flex-wrap: wrap; gap: 20px; }
+    .catalogoContainer .catalogoNav { flex-wrap: wrap; gap: 10px; min-width: 0; }
+    .catalogoContainer .navBtn { font-size: 15px; padding: 10px 16px; min-height: 44px; }
+    .catalogoContainer .cardPrincipal { padding: 24px; border-radius: 28px; }
+    .catalogoContainer .itemConteudo { min-width: 0; }
+    .catalogoContainer .itemHeader { flex-wrap: wrap; gap: 8px 16px; }
+    .catalogoContainer .itemControles { flex-wrap: wrap; gap: 16px; }
+    .catalogoContainer .seletorQtd { flex-wrap: wrap; gap: 8px; min-width: 0; }
+    .catalogoContainer .btnQtd { width: 44px; height: 44px; flex: 0 0 44px; }
+    .catalogoContainer .btnAdicionarCarrinho { min-height: 44px; }
+    .catalogoContainer :is(.itemTitulo, .itemDescricao, .prazoEntrega, .catalogoEstado) { overflow-wrap: anywhere; }
+}
+
+@media (max-width: 640px) {
+    .catalogoContainer { padding: 20px 14px 36px; }
+    .catalogoContainer .catalogoHeader { align-items: stretch; flex-direction: column; gap: 14px; margin-bottom: 20px; }
+    .catalogoContainer .catalogoNav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .catalogoContainer .navBtn { display: flex; align-items: center; justify-content: center; padding: 10px; font-size: 14px; text-align: center; }
+    .catalogoContainer .botaoCarrinho { min-height: 44px; height: auto; max-width: 100%; font-size: 16px; }
+    .catalogoContainer .cardPrincipal { padding: 16px; border-radius: 24px; }
+    .catalogoContainer .barraCategorias { padding: 14px; gap: 4px 14px; margin-bottom: 20px; border-radius: 18px; }
+    .catalogoContainer .categoriasTitulo { flex-basis: 100%; font-size: 18px; }
+    .catalogoContainer .categoriaItem { min-height: 44px; font-size: 14px; gap: 8px; }
+    .catalogoContainer .categoriaItem input[type="checkbox"] { width: 22px; height: 22px; flex-shrink: 0; }
+    .catalogoContainer .listaProdutos { gap: 18px; }
+    .catalogoContainer .itemCatalogo { flex-direction: column; align-items: stretch; gap: 14px; padding: 14px; border-radius: 18px; }
+    .catalogoContainer .itemImagem { width: 100%; max-width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; }
+    .catalogoContainer .itemConteudo { width: 100%; gap: 10px; }
+    .catalogoContainer .itemHeader { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .catalogoContainer :is(.itemTitulo, .itemPreco) { font-size: 20px; line-height: 1.35; }
+    .catalogoContainer .itemDescricao { font-size: 14px; line-height: 1.6; }
+    .catalogoContainer .itemControles { flex-direction: column; align-items: stretch; gap: 12px; }
+    .catalogoContainer .seletorQtd { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; gap: 8px; }
+    .catalogoContainer .exibicaoQtd { min-height: 44px; display: grid; place-items: center; padding: 6px; font-size: 15px; }
+    .catalogoContainer .prazoEntrega { grid-column: 1 / -1; margin: 2px 0 0; font-size: 13px; line-height: 1.5; }
+    .catalogoContainer .btnAdicionarCarrinho { width: 100%; font-size: 15px; padding: 10px 12px; }
+    .catalogoContainer .catalogoEstado { padding: 20px 14px; font-size: 14px; }
+}

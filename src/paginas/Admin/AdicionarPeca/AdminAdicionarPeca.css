@@ -140,3 +140,25 @@
   .admin-adicionar-peca .coluna-foto { max-width: 300px; width: 100%; margin: 0 auto; }
   .admin-adicionar-peca .linha-dupla { grid-template-columns: minmax(0, 1fr); }
 }
+
+@media (max-width: 760px) {
+  .admin-adicionar-peca.admin-page-bg { min-height: 100dvh; }
+  .admin-adicionar-peca .admin-nav, .admin-adicionar-peca .nav-links, .admin-adicionar-peca .nav-user { min-width: 0; flex-wrap: wrap; }
+  .admin-adicionar-peca .nav-btn, .admin-adicionar-peca .nav-btn-user,
+  .admin-adicionar-peca .btn-voltar, .admin-adicionar-peca .btn-outline, .admin-adicionar-peca .btn-salvar { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; max-width: 100%; text-align: center; }
+  .admin-adicionar-peca .titulo-editar { font-size: clamp(32px, 9vw, 38px); line-height: 1.2; overflow-wrap: anywhere; }
+  .admin-adicionar-peca .campo input, .admin-adicionar-peca .campo textarea, .admin-adicionar-peca .campo select { font-size: 16px; min-height: 44px; }
+  .admin-adicionar-peca .campo textarea { resize: vertical; }
+  .admin-adicionar-peca .foto-placeholder { aspect-ratio: 1; height: auto; }
+  .admin-adicionar-peca .toggle-label { min-height: 44px; gap: 12px; }
+  .admin-adicionar-peca .toggle-switch { flex-shrink: 0; }
+  .admin-adicionar-peca .aviso-formulario, .admin-adicionar-peca .aviso-demonstracao { overflow-wrap: anywhere; }
+}
+@media (max-width: 480px) {
+  .admin-adicionar-peca.admin-page-bg { padding: 16px 12px; }
+  .admin-adicionar-peca .nav-links { flex: 1 1 100%; gap: 8px; }
+  .admin-adicionar-peca .nav-btn { flex: 1; min-width: 0; padding: 10px 12px; }
+  .admin-adicionar-peca .acoes-rodape { align-items: stretch; flex-direction: column; gap: 12px; padding-top: 20px; }
+  .admin-adicionar-peca .acoes-direita { width: 100%; gap: 12px; }
+  .admin-adicionar-peca .acoes-direita > :is(a, button) { flex: 1 1 120px; min-width: 0; padding: 10px 16px; }
+}

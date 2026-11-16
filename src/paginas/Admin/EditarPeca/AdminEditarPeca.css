@@ -263,3 +263,25 @@
   .admin-editar-peca .coluna-foto { max-width: 300px; width: 100%; margin: 0 auto; }
   .admin-editar-peca .linha-dupla { grid-template-columns: minmax(0, 1fr); }
 }
+
+@media (max-width: 760px) {
+  .admin-editar-peca.admin-page-bg { min-height: 100dvh; }
+  .admin-editar-peca .admin-nav, .admin-editar-peca .nav-links, .admin-editar-peca .nav-user { min-width: 0; flex-wrap: wrap; }
+  .admin-editar-peca .nav-btn, .admin-editar-peca .nav-btn-user,
+  .admin-editar-peca .btn-voltar, .admin-editar-peca .btn-outline, .admin-editar-peca .btn-salvar { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; max-width: 100%; text-align: center; }
+  .admin-editar-peca .titulo-editar { font-size: clamp(32px, 9vw, 38px); line-height: 1.2; overflow-wrap: anywhere; }
+  .admin-editar-peca .campo input, .admin-editar-peca .campo textarea, .admin-editar-peca .campo select { font-size: 16px; min-height: 44px; }
+  .admin-editar-peca .campo textarea { resize: vertical; }
+  .admin-editar-peca .foto-placeholder { aspect-ratio: 1; height: auto; }
+  .admin-editar-peca .toggle-label { min-height: 44px; gap: 12px; }
+  .admin-editar-peca .toggle-switch { flex-shrink: 0; }
+  .admin-editar-peca .aviso-formulario, .admin-editar-peca .aviso-demonstracao { overflow-wrap: anywhere; }
+}
+@media (max-width: 480px) {
+  .admin-editar-peca.admin-page-bg { padding: 16px 12px; }
+  .admin-editar-peca .nav-links { flex: 1 1 100%; gap: 8px; }
+  .admin-editar-peca .nav-btn { flex: 1; min-width: 0; padding: 10px 12px; }
+  .admin-editar-peca .acoes-rodape { align-items: stretch; flex-direction: column; gap: 12px; padding-top: 20px; }
+  .admin-editar-peca .acoes-direita { width: 100%; gap: 12px; }
+  .admin-editar-peca .acoes-direita > :is(a, button) { flex: 1 1 120px; min-width: 0; padding: 10px 16px; }
+}

@@ -19,6 +19,7 @@ function MenuConta({ usuario }) {
   const [fotoFalhou, setFotoFalhou] = useState(false)
   const container = useRef(null)
   const botao = useRef(null)
+  const painel = useRef(null)
   const painelId = useId()
   const [nomeDoPerfil, setNomeDoPerfil] = useState('')
   useEffect(() => {
@@ -55,6 +56,32 @@ function MenuConta({ usuario }) {
     }
   }, [aberto])
 
+  useEffect(() => {
+    if (!aberto) return
+    function posicionarPainel() {
+      if (!window.matchMedia('(max-width: 820px)').matches || !painel.current || !botao.current) return
+      const larguraViewport = document.documentElement.clientWidth
+      const largura = Math.min(280, larguraViewport - 32)
+      const posicao = botao.current.getBoundingClientRect()
+      const esquerda = Math.max(16, Math.min(posicao.right - largura, larguraViewport - largura - 16))
+      const alturaViewport = window.visualViewport?.height || window.innerHeight
+      const altura = Math.min(painel.current.scrollHeight, alturaViewport - 32)
+      const topo = Math.max(16, Math.min(posicao.bottom + 10, alturaViewport - altura - 16))
+      painel.current.style.setProperty('--conta-painel-esquerda', esquerda + 'px')
+      painel.current.style.setProperty('--conta-painel-topo', topo + 'px')
+      painel.current.style.setProperty('--conta-painel-largura', largura + 'px')
+    }
+    posicionarPainel()
+    window.addEventListener('resize', posicionarPainel)
+    window.addEventListener('scroll', posicionarPainel, true)
+    window.visualViewport?.addEventListener('resize', posicionarPainel)
+    return () => {
+      window.removeEventListener('resize', posicionarPainel)
+      window.removeEventListener('scroll', posicionarPainel, true)
+      window.visualViewport?.removeEventListener('resize', posicionarPainel)
+    }
+  }, [aberto])
+
   async function sair() {
     if (saindo) return
     setSaindo(true)
@@ -86,7 +113,7 @@ function MenuConta({ usuario }) {
         <span className="conta-header-status" aria-hidden="true" />
       </button>
       {aberto && (
-        <div className="conta-header-painel" id={painelId}>
+        <div className="conta-header-painel" id={painelId} ref={painel}>
           <div className="conta-header-identidade">
             <span className="conta-header-conectado">Você está conectado</span>
             <strong>{nome}</strong>

@@ -122,3 +122,21 @@
 }
 
 .catalog-admin-page a[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
+
+@media (max-width: 760px) {
+  .catalog-admin-page .catalog-admin-shell,
+  .catalog-admin-page .catalog-admin-header,
+  .catalog-admin-page .catalog-admin-nav { min-width: 0; }
+  .catalog-admin-page .catalog-admin-heading h1 { overflow-wrap: anywhere; }
+  .catalog-admin-page .catalog-admin-primary-button,
+  .catalog-admin-page .catalog-admin-secondary-button { min-height: 44px; font-size: 14px; }
+  .catalog-admin-page .catalog-admin-heading-copy > p,
+  .catalog-admin-page .catalog-admin-product-description { font-size: 13px; line-height: 1.5; }
+  .catalog-admin-page .catalog-admin-filter { font-size: 13px; }
+  .catalog-admin-page .catalog-admin-filter input { width: 20px; height: 20px; }
+  .catalog-admin-page .catalog-admin-actions > :is(.catalog-admin-primary-button, .catalog-admin-secondary-button) { font-size: 14px; }
+  .catalog-admin-page .catalog-admin-price { white-space: normal; overflow-wrap: anywhere; }
+  .catalog-admin-page .catalog-admin-feedback { font-size: 14px; }
+  .catalog-admin-page .catalog-admin-feedback :is(a, button) { display: inline-flex; align-items: center; min-height: 44px; }
+  .catalog-admin-page .catalog-admin-feedback button { font-size: 14px; padding: 8px 12px; }
+}

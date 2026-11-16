@@ -65,3 +65,35 @@
 .meu-perfil-campo-largo { grid-column:1/-1; }
 @media(max-width:620px) { .meu-perfil-campo input, .meu-perfil-campo select { min-height:40px; font-size:14px; } .meu-perfil-main { width:calc(100% - 32px); padding-bottom:40px; } .meu-perfil-header-conteudo { width:calc(100% - 32px); display:grid; grid-template-columns:auto 1fr; gap:8px 16px; padding:10px 0; } .meu-perfil-header-nav { grid-column:1/-1; grid-row:2; justify-content:center; gap:18px; } .meu-perfil-header-acoes { justify-self:end; } .meu-perfil-conteudo { grid-template-columns:1fr; } .meu-perfil-sidebar-topo { display:flex; align-items:center; gap:15px; } .meu-perfil-iniciais { margin-bottom:0; } .meu-perfil-sidebar h2 { margin-bottom:3px; } .meu-perfil-sidebar p { margin-bottom:10px; } .meu-perfil-sidebar-nav { grid-template-columns:1fr 1fr; align-items:center; } .meu-perfil-sidebar-nav .meu-perfil-voltar { grid-column:1/-1; } .meu-perfil-campos { width:100%; gap:18px 22px; } .meu-perfil-page .meu-perfil-primario, .meu-perfil-page .meu-perfil-secundario { min-height:40px; } }
 @media(max-width:390px) { .meu-perfil-campos, .meu-perfil-endereco-campos { grid-template-columns:1fr; } .meu-perfil-endereco { flex-direction:column; gap:12px; } .meu-perfil-header-nav { gap:13px; } }
+
+@media (max-width: 620px) {
+  .meu-perfil-page { font-size: 14px; }
+  .meu-perfil-header-conteudo { gap: 6px 12px; }
+  .meu-perfil-logo { justify-content: center; width: 44px; min-height: 44px; }
+  .meu-perfil-header-nav { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); width: 100%; gap: 4px; }
+  .meu-perfil-header-nav a { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 6px 2px; font-size: 12px; text-align: center; }
+  .meu-perfil-header-acoes > a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 6px; font-size: 13px; }
+  .meu-perfil-page .conta-header-avatar { width: 44px; height: 44px; font-size: 14px; }
+  .meu-perfil-descricao { font-size: 14px; }
+  .meu-perfil-sidebar-nav a { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px; font-size: 14px; }
+  .meu-perfil-sidebar-nav .meu-perfil-voltar { font-size: 13px; }
+  .meu-perfil-sidebar p { font-size: 12px; }
+  .meu-perfil-card { padding: 20px; }
+  .meu-perfil-card > h2 { margin-bottom: 16px; font-size: 20px; }
+  .meu-perfil-campos { grid-template-columns: 1fr; gap: 18px; }
+  .meu-perfil-campo label { font-size: 13px; }
+  .meu-perfil-campo input, .meu-perfil-campo select { min-height: 44px; padding: 10px; font-size: 16px; }
+  .meu-perfil-email-ajuda { font-size: 12px; }
+  .meu-perfil-endereco { flex-direction: column; gap: 12px; }
+  .meu-perfil-endereco h3 { font-size: 16px; }
+  .meu-perfil-endereco p, .meu-perfil-endereco .meu-perfil-endereco-local { font-size: 13px; }
+  .meu-perfil-page .meu-perfil-primario, .meu-perfil-page .meu-perfil-secundario { min-height: 44px; padding: 10px 12px; font-size: 14px; }
+  .meu-perfil-acoes > button { flex: 1 1 120px; }
+  .meu-perfil-estado { padding: 20px; }
+  .meu-perfil-estado a { margin: 8px 0 0; min-height: 44px; display: flex; align-items: center; }
+  .meu-perfil-dialogo { max-height: calc(100svh - 32px); max-height: calc(100dvh - 32px); padding: 20px; overscroll-behavior: contain; }
+  .meu-perfil-footer { padding: 16px; font-size: 12px; }
+}
+@media (max-width: 480px) {
+  .meu-perfil-endereco-campos { grid-template-columns: 1fr; }
+}

@@ -321,3 +321,24 @@
     padding: 6px 8px;
   }
 }
+
+/* O cabeçalho acompanha o conteúdo das duas linhas no celular. */
+@media (max-width: 820px) {
+  .site-header-wrapper { height:auto; position:sticky; top:0; }
+  .site-header { position:relative; top:auto; left:auto; }
+  .header-conteudo, .site-header.scrolled .header-conteudo {
+    display:grid; grid-template-columns:minmax(0,1fr) auto; grid-template-areas:"marca acoes" "nav nav";
+    gap:8px 12px; height:auto; min-height:132px; padding:10px 16px 12px;
+    transition:background-color .3s ease,box-shadow .3s ease;
+  }
+  .marca { grid-area:marca; height:64px; min-width:0; }
+  .marca a { width:80px; height:64px; }
+  .marca img, .site-header.scrolled .marca img { height:76px; left:0; }
+  .site-header nav { grid-area:nav; min-width:0; width:100%; }
+  .site-header nav ul { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; }
+  .site-header nav a, .site-header.scrolled nav a { align-items:center; min-height:44px; padding:8px 4px; font-size:12px; text-align:center; white-space:normal; }
+  .header-acoes { grid-area:acoes; margin:0; gap:8px; }
+  .header-acoes > a { min-width:44px; height:44px; padding:8px; }
+  .header-acoes > a span { display:none; }
+  .borda-croche { height:18px; bottom:-17px; }
+}

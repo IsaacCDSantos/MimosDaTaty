@@ -742,3 +742,27 @@
   }
 }
 
+/* No celular, a arte apoia o formulário sem disputar espaço com os campos. */
+@media (max-width: 600px) {
+  .auth-page { padding: 20px 16px 40px; }
+  .auth-card { border-radius: 24px; }
+  .auth-pane { min-width: 0; padding: 26px 20px 24px; }
+  .auth-pane-inner, .auth-form { min-width: 0; }
+  .auth-page .auth-title { font-size: clamp(42px, 12vw, 52px); }
+  .auth-profiles { gap: 6px; }
+  .auth-profile { min-width: 0; min-height: 44px; padding-inline: 10px; font-size: 14px; }
+  .auth-input-wrap { height: 50px; padding-inline: 12px; }
+  .auth-input-wrap input { font-size: 16px; }
+  .auth-password-toggle { width: 44px; height: 44px; }
+  .auth-forgot, .auth-back { display: flex; align-items: center; justify-content: center; min-height: 44px; padding-block: 8px; }
+  .auth-forgot { justify-content: flex-end; margin-top: 4px; }
+  .auth-back, .auth-back--home { margin-top: 8px; }
+  .auth-signup a { display: inline-flex; align-items: center; min-height: 44px; padding-inline: 4px; }
+  .auth-page .auth-welcome, .auth-page .auth-description, .auth-page .auth-notice { overflow-wrap: anywhere; }
+  .auth-visual-overlay { height: 144px; }
+  .auth-visual-content { padding: 20px; }
+  .auth-visual-top { gap: 10px; min-width: 0; }
+  .auth-visual-logo { flex: 0 0 44px; width: 44px; height: 44px; }
+  .auth-visual-tag { min-width: 0; padding: 6px 10px; font-size: 11px; }
+  .auth-visual-Quote, .auth-hearts, .auth-page--admin .auth-hearts { display: none; }
+}

@@ -385,3 +385,16 @@
     border-radius: 20px;
   }
 }
+
+@media (max-width: 820px) {
+  .sobre { padding:48px 16px; }
+  .sobre-grid-mosaico { grid-template-columns:minmax(0,1fr); }
+  .sobre-titulo { font-size:clamp(42px,12vw,60px); line-height:1.2; }
+  .sobre-subtitulo { font-size:18px; }
+  .sobre-tagline { max-width:100%; font-size:11px; letter-spacing:.1em; gap:8px; }
+  .sobre-badge { max-width:100%; padding:8px 16px; }
+  .card-conteudo { min-width:0; padding:24px 20px; }
+  .card-topico-texto { font-size:16px; line-height:1.6; overflow-wrap:anywhere; }
+  .sobre .animar-rolagem, .sobre .card-conteudo.animar-rolagem :is(.card-topico-titulo,.card-topico-texto) { opacity:1; transform:none; filter:none; transition:none; }
+  .sobre .card-foto-wrapper.animar-rolagem .imagem-mosaico { transform:none; transition:none; }
+}

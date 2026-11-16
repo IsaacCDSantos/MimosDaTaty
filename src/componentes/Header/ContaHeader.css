@@ -56,3 +56,13 @@
   .conta-header-avatar, .conta-header-carregando { width: 36px; height: 36px; font-size: 13px; }
   .conta-header-painel { right: -52px; }
 }
+
+@media (max-width: 820px) {
+  .conta-header-avatar, .conta-header-carregando { min-width:44px; width:44px; height:44px; font-size:14px; }
+  .conta-header-painel {
+    position:fixed; right:auto; left:var(--conta-painel-esquerda,16px); top:var(--conta-painel-topo,72px);
+    width:var(--conta-painel-largura,min(280px,calc(100vw - 32px)));
+    max-height:calc(100dvh - var(--conta-painel-topo,72px) - 16px); overflow-y:auto; overscroll-behavior:contain;
+  }
+  .conta-header-painel button, .conta-header-painel a { min-height:44px; height:auto; font-size:15px; white-space:normal; transform:none; }
+}
