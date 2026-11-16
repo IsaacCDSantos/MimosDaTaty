@@ -60,10 +60,10 @@ export default function InicioAdmin({ dados, demonstracao = false }) {
     <div className="admin-home">
       <div className="admin-home-container">
         <header className="admin-home-header">
-          <Link className="admin-home-brand" to="/" aria-label="Mimos da Taty — ir para a vitrine">
+          <div className="admin-home-brand">
             <img src={logoMimos} alt="" width="64" height="49" />
             <span><span className="admin-home-wordmark">Mimos da Taty</span><span className="admin-home-brand-caption">GESTÃO DO ATELIÊ</span></span>
-          </Link>
+          </div>
           <div className="admin-home-header-actions">
             <span className="admin-home-account"><span className="admin-home-dot" /><IconeAdmin nome="escudo" /> Admin: {nome}</span>
             {!demonstracao && <button className="admin-home-signout" type="button" disabled={saindo} onClick={sairDaConta}><IconeAdmin nome="sair" />{saindo ? 'Saindo…' : 'Sair da conta'}</button>}
