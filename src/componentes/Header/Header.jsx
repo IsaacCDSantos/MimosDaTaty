@@ -3,8 +3,12 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import './Header.css'
 import logo from '../../assets/imagens/logo-mimos-da-taty.png'
 import ContaHeader from './ContaHeader'
+import { useCarrinho } from '../../carrinho/useCarrinho'
+
+const moeda = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
 
 function Header({ onAbrirLogin }) {
+  const { subtotalCentavos } = useCarrinho()
   const navigate = useNavigate()
   const location = useLocation()
   const [isScrolled, setIsScrolled] = useState(false)
@@ -197,7 +201,7 @@ function Header({ onAbrirLogin }) {
                 <circle cx="9" cy="21" r="1" fill="currentColor" />
                 <circle cx="20" cy="21" r="1" fill="currentColor" />
               </svg>
-              <span>R$0,00</span>
+              <span>{moeda.format(subtotalCentavos / 100)}</span>
             </Link>
           </div>
         </div>

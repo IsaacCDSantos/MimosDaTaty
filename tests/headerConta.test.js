@@ -5,26 +5,32 @@ import { createServer } from 'vite'
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { MemoryRouter } from 'react-router-dom'
+import { subtotalDoCarrinho } from '../src/carrinho/modelo.js'
 
 let servidor
 let Header
 let EstruturaContaCliente
 let MenuContaCliente
+let CarrinhoProvider
+let CarrinhoContexto
 
 before(async () => {
   servidor = await createServer({
     root: fileURLToPath(new URL('..', import.meta.url)),
-    server: { middlewareMode: true, hmr: false },
+    server: { middlewareMode: true, hmr: false, ws: false },
     logLevel: 'error',
   })
   ;({ default: Header } = await servidor.ssrLoadModule('/src/componentes/Header/Header.jsx'))
   ;({ EstruturaContaCliente, MenuContaCliente } = await servidor.ssrLoadModule('/src/componentes/ContaCliente/ContaCliente.jsx'))
+  ;({ default: CarrinhoProvider } = await servidor.ssrLoadModule('/src/carrinho/CarrinhoProvider.jsx'))
+  ;({ CarrinhoContexto } = await servidor.ssrLoadModule('/src/carrinho/contexto.js'))
 })
 
 after(async () => { await servidor?.close() })
 
 function renderizar(elemento, rota) {
-  return renderToStaticMarkup(React.createElement(MemoryRouter, { initialEntries: [rota] }, elemento))
+  return renderToStaticMarkup(React.createElement(CarrinhoProvider, {},
+    React.createElement(MemoryRouter, { initialEntries: [rota] }, elemento)))
 }
 
 function cabecalho(html) {
@@ -37,6 +43,34 @@ const paginas = [
   { rota: '/meu-perfil', titulo: 'Meu perfil', atual: 'perfil' },
   { rota: '/meus-pedidos', titulo: 'Meus pedidos', atual: 'pedidos' },
 ]
+
+function valorDoCarrinho(html) {
+  const link = html.match(/<a\b[^>]*href="\/carrinho"[^>]*>[\s\S]*?<\/a>/)?.[0]
+  assert.ok(link, 'O cabeçalho deve manter o acesso ao carrinho')
+  return link.match(/<span>([^<]+)<\/span>/)?.[1].replace(/\s/g, ' ')
+}
+
+test('Header mostra zero para o carrinho vazio fornecido pelo Provider no SSR', () => {
+  assert.equal(valorDoCarrinho(renderizar(React.createElement(Header), '/')), 'R$ 0,00')
+})
+
+for (const { itens, esperado } of [
+  { itens: [{ precoCentavos: 4500, quantidade: 2 }], esperado: 'R$ 90,00' },
+  { itens: [{ precoCentavos: 2990, quantidade: 3 }], esperado: 'R$ 89,70' },
+  { itens: [{ precoCentavos: 123456, quantidade: 1 }, { precoCentavos: 799, quantidade: 2 }], esperado: 'R$ 1.250,54' },
+]) {
+  test(`Header exibe o subtotal em centavos do contexto: ${esperado}`, () => {
+    const contexto = { itens, subtotalCentavos: subtotalDoCarrinho(itens) }
+    for (const elemento of [React.createElement(Header), React.createElement(EstruturaContaCliente, { titulo: 'Minha conta' })]) {
+      const html = renderizar(React.createElement(CarrinhoContexto.Provider, { value: contexto }, elemento), '/meu-perfil')
+      assert.equal(valorDoCarrinho(html), esperado)
+    }
+  })
+}
+
+test('Header sem Provider informa a falha de integração em vez de apresentar carrinho vazio', () => {
+  assert.throws(() => renderToStaticMarkup(React.createElement(MemoryRouter, {}, React.createElement(Header))), /Carrinho indisponível/)
+})
 
 for (const pagina of paginas) {
   test(`${pagina.titulo} apresenta o mesmo cabeçalho e a mesma logo da loja`, () => {

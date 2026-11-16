@@ -9,7 +9,7 @@ function congelar(valor) {
   }
   return valor
 }
-const pedido = congelar({ id: 1042, data: '2026-09-29', status: 'novo', cliente: { nome: 'Patrícia Rocha' }, itens: [{ nome: 'Kit de berço', quantidade: 2, precoUnitario: 189 }], frete: 54, desconto: 0, codigoRastreio: '', observacaoCliente: 'Acabamento rosa.', observacaoInterna: '' })
+const pedido = congelar({ id: 1042, data: '2026-09-29', status: 'novo', statusPagamento: 'aprovado', cliente: { nome: 'Patrícia Rocha' }, itens: [{ nome: 'Kit de berço', quantidade: 2, precoUnitario: 189 }], frete: 54, desconto: 0, codigoRastreio: '', observacaoCliente: 'Acabamento rosa.', observacaoInterna: '' })
 
 test('resumo financeiro calcula quantidades, frete e desconto em centavos', () => {
   assert.deepEqual(calcularResumo(pedido), { subtotal: 378, frete: 54, desconto: 0, total: 432 })

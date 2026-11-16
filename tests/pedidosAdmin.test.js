@@ -8,7 +8,7 @@ import { supabaseSimulado } from './apoio/supabaseSimulado.js'
 function registro(id = '0001') {
   return {
     id, numero_pedido: Number(id), criado_em: '2026-11-15T01:30:00+00:00', atualizado_em: '2026-11-15T01:30:00+00:00',
-    status_pedido: 'novo', cliente_nome_snapshot: 'Compradora', entrega_destinatario: 'Destinatária diferente',
+    status_pedido: 'novo', status_pagamento: 'aprovado', cliente_nome_snapshot: 'Compradora', entrega_destinatario: 'Destinatária diferente',
     entrega_ponto_referencia: 'Portaria dos fundos', forma_pagamento: 'pix',
     subtotal_centavos: 10000, frete_centavos: 1500, total_centavos: 11500,
     itens_pedido: [{ id: `item-${id}`, quantidade: 2, preco_unitario_centavos: 5000, nome_peca_snapshot: 'Manta', personalizacao: 'Azul' }],
@@ -31,6 +31,7 @@ test('mapeamento mantém destinatário, referência, personalização, versão e
   assert.equal(pedido.itens[0].nome, 'Manta (Azul)')
   assert.equal(calcularResumo(pedido).total, 115)
   assert.equal(pedido.formaPagamento, 'Pix')
+  assert.equal(pedido.statusPagamento, 'aprovado')
 })
 
 test('carrega mais de 1000 pedidos e todos os itens mesmo com limite da API menor que o lote', async () => {
@@ -86,11 +87,12 @@ test('mudança concorrente de observação também invalida a versão anterior',
 
 test('atualização devolve dados e versão confirmados pelo servidor', async () => {
   const pedido = mapearPedidoSupabase(registro())
-  const cliente = supabaseSimulado(() => ({ data: { id: pedido.uuid, status_pedido: 'enviado', atualizado_em: 'nova-versao', codigo_rastreio: 'RASTREIO', observacao_interna: 'Confirmada' }, error: null }))
+  const cliente = supabaseSimulado(() => ({ data: { id: pedido.uuid, status_pedido: 'enviado', status_pagamento: 'aprovado', atualizado_em: 'nova-versao', codigo_rastreio: 'RASTREIO', observacao_interna: 'Confirmada' }, error: null }))
   const resultado = await atualizarPedidoAdmin(cliente, pedido, { status_pedido: 'enviado', codigo_rastreio: 'RASTREIO' })
   assert.equal(resultado.atualizadoEm, 'nova-versao')
   assert.equal(resultado.codigoRastreio, 'RASTREIO')
   assert.equal(resultado.observacaoInterna, 'Confirmada')
+  assert.equal(resultado.statusPagamento, 'aprovado')
   assert.deepEqual(resultado.itens, pedido.itens)
   assert.equal(pedido.status, 'novo')
 })
@@ -107,13 +109,14 @@ test('SDK real envia filtros de concorrência e solicita registro de retorno', a
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
     global: { fetch: async (url, init) => {
       requisicao = { url: new URL(url), init }
-      return new Response(JSON.stringify({ id: pedido.uuid, status_pedido: 'em_producao', atualizado_em: 'versao-confirmada' }), { status: 200, headers: { 'Content-Type': 'application/json' } })
+      return new Response(JSON.stringify({ id: pedido.uuid, status_pedido: 'em_producao', status_pagamento: 'aprovado', atualizado_em: 'versao-confirmada' }), { status: 200, headers: { 'Content-Type': 'application/json' } })
     } },
   })
   const resultado = await atualizarPedidoAdmin(cliente, pedido, { status_pedido: 'em_producao' })
   assert.equal(requisicao.init.method, 'PATCH')
   assert.equal(requisicao.url.searchParams.get('status_pedido'), 'eq.novo')
   assert.equal(requisicao.url.searchParams.get('atualizado_em'), `eq.${pedido.atualizadoEm}`)
+  assert.equal(requisicao.url.searchParams.get('status_pagamento'), 'eq.aprovado')
   assert.match(new Headers(requisicao.init.headers).get('prefer'), /return=representation/)
   assert.equal(resultado.atualizadoEm, 'versao-confirmada')
 })

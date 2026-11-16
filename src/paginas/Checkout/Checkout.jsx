@@ -15,6 +15,19 @@ const prazo = opcao => opcao.prazoMinDias === opcao.prazoMaxDias ? opcao.prazoMa
 const finais = ['recusado', 'cancelado', 'expirado', 'estornado']
 const rotulos = { preparado: 'Confira os dados e conclua o pagamento', processando: 'Estamos verificando seu pagamento', pendente: 'Aguardando confirmação do pagamento', aprovado: 'Pagamento aprovado!', recusado: 'Pagamento não aprovado', cancelado: 'Pagamento cancelado', expirado: 'Pagamento expirado', estornado: 'Pagamento estornado ou contestado' }
 
+export function ResumoCheckout({ atual, subtotal, selecionada, total, aoEditarCarrinho }) {
+  return <aside className="card-resumo">
+    <h2 className="script-title">Resumo</h2><p className="card-subtitle">{atual ? 'Valores registrados para este pedido.' : 'Confira os valores antes de finalizar.'}</p>
+    {!atual && <div className="resumo-linhas"><div className="resumo-linha"><span>Subtotal</span><strong>{moeda(subtotal)}</strong></div><div className="resumo-linha"><span>Frete</span><strong>{selecionada ? moeda(selecionada.precoCentavos) : 'A calcular'}</strong></div></div>}
+    <div className="resumo-total"><span>{atual || selecionada ? 'Total' : 'Total parcial'}</span><span className="valor-total">{moeda(total)}</span></div>
+    <p className="total-obs">{atual
+      ? 'Inclui o envio escolhido. Os juros de parcelamento, quando houver, aparecem nas opções do cartão.'
+      : selecionada ? 'Inclui o frete selecionado.' : 'Selecione o frete para incluir o envio no total.'}</p>
+    {!atual && <button type="button" className="btn-editar-carrinho" onClick={aoEditarCarrinho}>Editar carrinho</button>}
+    {atual && <p className="frete-detalhe">Pedido {atual.numeroPedido || atual.pedidoId}</p>}
+  </aside>
+}
+
 export default function Checkout({ aoNavegar }) {
   const navigate = useNavigate()
   const { itens, subtotalCentavos } = useCarrinho()
@@ -155,14 +168,7 @@ export default function Checkout({ aoNavegar }) {
   return <div className="checkout-container">
     <nav className="checkout-nav" aria-label="Navegação do checkout">{[['/', 'Início'], ['/catalogo', 'Catálogo'], ['/#sobre', 'Sobre Nós'], ['/#contato', 'Contato']].map(([destino, texto]) => <button key={destino} type="button" className="nav-btn" onClick={() => navegar(destino)}>{texto}</button>)}</nav>
     <div className="checkout-content">
-      <aside className="card-resumo">
-        <h2 className="script-title">Resumo</h2><p className="card-subtitle">{atual ? 'Valores registrados para este pedido.' : 'Confira os valores antes de finalizar.'}</p>
-        {!atual && <div className="resumo-linhas"><div className="resumo-linha"><span>Subtotal</span><strong>{moeda(subtotal)}</strong></div><div className="resumo-linha"><span>Frete</span><strong>{frete.selecionada ? moeda(frete.selecionada.precoCentavos) : 'A calcular'}</strong></div></div>}
-        <div className="resumo-total"><span>{atual || frete.selecionada ? 'Total' : 'Total parcial'}</span><span className="valor-total">{moeda(total)}</span></div>
-        <p className="total-obs">{atual ? 'Inclui o envio escolhido. Os juros de parcelamento, quando houver, aparecem nas opções do cartão.' : 'Selecione o frete para incluir o envio no total.'}</p>
-        {!atual && <button type="button" className="btn-editar-carrinho" onClick={() => navegar('/carrinho')}>Editar carrinho</button>}
-        {atual && <p className="frete-detalhe">Pedido {atual.numeroPedido || atual.pedidoId}</p>}
-      </aside>
+      <ResumoCheckout atual={atual} subtotal={subtotal} selecionada={frete.selecionada} total={total} aoEditarCarrinho={() => navegar('/carrinho')} />
       <section className="card-checkout" aria-busy={ocupado || recuperando}>
         <h1 className="script-title">Checkout</h1><p className="card-subtitle">Finalize sua encomenda com carinho e segurança.</p>
         <div className="checkout-avisos">

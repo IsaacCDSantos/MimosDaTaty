@@ -144,11 +144,12 @@
   width: 100%;
 }
 .orders-admin-col-number { width: 7.576%; }
-.orders-admin-col-customer { width: 18.561%; }
-.orders-admin-col-items { width: 39.899%; }
-.orders-admin-col-total { width: 10.732%; }
-.orders-admin-col-status { width: 12.247%; }
-.orders-admin-col-actions { width: 10.985%; }
+.orders-admin-col-customer { width: 17%; }
+.orders-admin-col-items { width: 26%; }
+.orders-admin-col-total { width: 10%; }
+.orders-admin-col-status { width: 12%; }
+.orders-admin-col-payment { width: 17%; }
+.orders-admin-col-actions { width: 10.424%; }
 .orders-admin-table th { color: #a78b7f; font-size: var(--fonte-corpo); font-weight: 400; height: calc(var(--orders-unit) * 1.4); line-height: var(--entrelinha-corpo); padding: 0 calc(var(--orders-unit) * 1.2); vertical-align: middle; }
 .orders-admin-table td { background: #fcebdd; height: calc(var(--orders-unit) * 4.1); padding: 0 calc(var(--orders-unit) * 1.2); vertical-align: middle; }
 .orders-admin-table td:first-child { border-radius: calc(var(--orders-unit) * 1.1) 0 0 calc(var(--orders-unit) * 1.1); }
@@ -261,6 +262,13 @@
 .orders-admin-payment { border-top: 1px solid #ecd9cb; margin-top: 18px !important; padding-top: 14px; }
 .orders-admin-payment > span { color: #a78b7f; display: block; font-size: var(--fonte-apoio); letter-spacing: .5px; }
 .orders-admin-payment > strong { display: block; font-size: var(--fonte-corpo); font-weight: 500; margin-top: 6px; line-height: var(--entrelinha-corpo); }
+.orders-admin-financial-status { display: grid; gap: 8px; justify-items: start; margin-top: 16px; }
+.orders-admin-financial-status > span:first-child { color: #a78b7f; font-size: var(--fonte-apoio); }
+.orders-admin-payment-status { background: #ece9e5; border: 1px solid #c8c0b7; border-radius: 10px; color: #61574e; display: inline-block; font-size: var(--fonte-etiqueta); line-height: 1.4; max-width: 100%; padding: 5px 9px; text-align: center; }
+.orders-admin-payment-status--pendente { background: #fff1ce; border-color: #e6cb85; color: #73591d; }
+.orders-admin-payment-status--aprovado { background: #e9f5e4; border-color: #c3d8b9; color: #496b42; }
+.orders-admin-payment-status--recusado, .orders-admin-payment-status--cancelado, .orders-admin-payment-status--estornado { background: #fff0ee; border-color: #f0c1b7; color: #9a4c3d; }
+.orders-admin-payment-block { background: #fff1ce; border: 1px solid #e6cb85; border-radius: 10px; color: #73591d; font-size: var(--fonte-apoio); line-height: 1.5; margin-top: 16px !important; padding: 12px; }
 .orders-admin-progress { list-style: none; padding: 0; }
 .orders-admin-progress li { align-items: center; color: #a18c7f; display: flex; font-size: var(--fonte-corpo); gap: 10px; min-height: 38px; position: relative; line-height: var(--entrelinha-corpo); }
 .orders-admin-progress li > span { align-items: center; background: #efe6df; border: 1px solid #e1d4c9; border-radius: 50%; color: #978375; display: flex; flex: none; font-size: var(--fonte-apoio); height: 24px; justify-content: center; position: relative; width: 24px; z-index: 1; }
@@ -303,7 +311,7 @@
   .orders-admin-table colgroup { display: none; }
   .orders-admin-table thead { border: 0; clip: rect(0, 0, 0, 0); clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; white-space: nowrap; width: 1px; }
   .orders-admin-table tbody { display: grid; gap: 12px; width: 100%; }
-  .orders-admin-table tbody tr { background: #fcebdd; border-radius: 12px; display: grid; gap: 12px; grid-template-areas: 'number status' 'customer customer' 'items items' 'total actions'; grid-template-columns: minmax(0, 1fr) auto; padding: 14px; }
+  .orders-admin-table tbody tr { background: #fcebdd; border-radius: 12px; display: grid; gap: 12px; grid-template-areas: 'number status' 'payment payment' 'customer customer' 'items items' 'total actions'; grid-template-columns: minmax(0, 1fr) auto; padding: 14px; }
   .orders-admin-table td { background: transparent; border-radius: 0 !important; display: block; height: auto; min-width: 0; overflow-wrap: anywhere; padding: 0; }
   .orders-admin-number { font-weight: 600; grid-area: number; }
   .orders-admin-number::before { content: attr(data-label) ' '; font-size: var(--fonte-apoio); font-weight: 400; }
@@ -314,6 +322,7 @@
   .orders-admin-items::before, .orders-admin-total::before { color: #a78b7f; content: attr(data-label); display: block; font-size: var(--fonte-apoio); font-weight: 400; margin-bottom: 4px; }
   .orders-admin-total { align-self: end; grid-area: total; }
   .orders-admin-status-cell { align-self: start; grid-area: status; justify-self: end; }
+  .orders-admin-payment-cell { grid-area: payment; }
   .orders-admin-status { font-size: var(--fonte-etiqueta); height: auto; min-height: 24px; padding: 4px 10px; }
   .orders-admin-actions { grid-area: actions; }
   .orders-admin-actions > button { font-size: var(--fonte-botao); height: auto; min-height: 44px; padding: 10px 18px; width: auto; font-weight: var(--peso-botao); }
