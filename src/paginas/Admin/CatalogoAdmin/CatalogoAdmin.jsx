@@ -1,19 +1,19 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import MiniaturaProduto from '../../Catalogo/MiniaturaProduto'
-import { CATEGORIAS_CATALOGO, filtrarPorCategorias } from './catalogoModelo'
+import { filtrarPorCategorias } from './catalogoModelo'
 import { useCatalogoAdmin } from './useCatalogoAdmin'
 import './CatalogoAdmin.css'
 
 const moeda = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
 
-export default function CatalogoAdmin({ demonstracao = false }) {
+export default function CatalogoAdmin() {
   const catalogo = useCatalogoAdmin()
   const [categorias, setCategorias] = useState([])
   const [erroAcao, setErroAcao] = useState('')
   const [fotoAmpliada, setFotoAmpliada] = useState(null)
   const bloqueado = !catalogo || Boolean(catalogo.carregando || catalogo.erro || catalogo.ocupado || catalogo.confirmacaoPendente)
-  const inicio = demonstracao ? '/previa/admin' : '/admin'
+  const inicio = '/admin'
 
   useEffect(() => {
     if (!fotoAmpliada) return
@@ -23,12 +23,10 @@ export default function CatalogoAdmin({ demonstracao = false }) {
     window.addEventListener('keydown', aoPressionarEsc)
     return () => window.removeEventListener('keydown', aoPressionarEsc)
   }, [fotoAmpliada])
-  const categoriasDisponiveis = demonstracao
-    ? CATEGORIAS_CATALOGO
-    : [...new Set([
-        ...(catalogo?.categorias || []).filter(item => item.ativa !== false && item.nome !== 'Presentes').map(item => item.nome),
-        ...(catalogo?.pecas || []).map(item => item.categoria).filter(nome => nome && nome !== 'Presentes'),
-      ])]
+  const categoriasDisponiveis = [...new Set([
+    ...(catalogo?.categorias || []).filter(item => item.ativa !== false && item.nome !== 'Presentes').map(item => item.nome),
+    ...(catalogo?.pecas || []).map(item => item.categoria).filter(nome => nome && nome !== 'Presentes'),
+  ])]
   const pecas = filtrarPorCategorias(catalogo?.pecas ?? [], categorias.filter(nome => categoriasDisponiveis.includes(nome)), categoriasDisponiveis)
 
   function selecionarCategoria(categoria) {
@@ -53,7 +51,7 @@ export default function CatalogoAdmin({ demonstracao = false }) {
             <Link className="catalog-admin-nav-active" to={inicio + '/catalogo'} aria-current="page">Catálogo</Link>
             <Link to={inicio + '/pedidos'}>Pedidos</Link>
           </nav>
-          <span className="catalog-admin-account">{demonstracao ? 'Admin: Tati' : 'Admin'}</span>
+          <span className="catalog-admin-account">Admin</span>
         </header>
         <main aria-labelledby="catalog-admin-title">
           <section className="catalog-admin-heading">
@@ -162,7 +160,6 @@ export default function CatalogoAdmin({ demonstracao = false }) {
             {catalogo?.aviso && <p className="catalog-admin-feedback" role="status">{catalogo.aviso}</p>}
           </section>
         </main>
-        {demonstracao && <footer className="catalog-admin-footer">Prévia com produtos fictícios · alterações temporárias</footer>}
       </div>
 
       {fotoAmpliada && (

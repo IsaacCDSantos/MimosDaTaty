@@ -170,7 +170,6 @@
 .catalog-admin-page .catalog-admin-add-button:hover { background: #fff8f2; border-color: #bd9291; }
 .catalog-admin-page .catalog-admin-feedback { background: #fff7ee; border: 1px solid #e7cebf; border-radius: 12px; color: #906756; font-size: var(--fonte-corpo); line-height: var(--entrelinha-corpo); margin-top: 16px; overflow-wrap: anywhere; padding: 12px 16px; width: 100%; }
 .catalog-admin-page .catalog-admin-empty { background: #fff8f1; border: 1px dashed #e3cdbf; border-radius: 15px; color: #a18b7d; font-size: var(--fonte-corpo); line-height: var(--entrelinha-corpo); margin-top: 18px; padding: 50px 20px; text-align: center; width: 100%; }
-.catalog-admin-page .catalog-admin-footer { color: #a48272; font-family: 'Alice', Georgia, serif; font-size: var(--fonte-apoio); line-height: 1.5; margin-top: 24px; overflow-wrap: anywhere; text-align: center; width: 100%; }
 .catalog-admin-page .catalog-admin-sr-only { border: 0; clip: rect(0, 0, 0, 0); clip-path: inset(50%); height: 1px; margin: -1px !important; overflow: hidden; padding: 0; position: absolute; white-space: nowrap; width: 1px; }
 
 @media (max-width: 760px) {

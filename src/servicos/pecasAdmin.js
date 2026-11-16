@@ -10,7 +10,7 @@ function inteiro(texto, padrao, minimo, mensagem) {
   return valor
 }
 
-export function validarDadosPeca(peca, categorias = [], demonstracao = false) {
+export function validarDadosPeca(peca, categorias = []) {
   if (peca.nome.trim().length < 2) throw new Error('Informe um nome com pelo menos dois caracteres.')
   const preco = peca.preco.trim().match(/^(\d+)(?:[,.](\d{1,2}))?$/)
   const centavos = preco ? Number(preco[1]) * 100 + Number((preco[2] || '').padEnd(2, '0')) : NaN
@@ -19,7 +19,7 @@ export function validarDadosPeca(peca, categorias = [], demonstracao = false) {
   }
   const estoque = inteiro(peca.estoque, /^(\d+)(?:\s+unidades?)?$/i, 0, 'Informe um estoque inteiro igual ou maior que zero.')
   const prazo = inteiro(peca.prazo, /^(\d+)(?:\s+dias?(?:\s+(?:útil|úteis|util|uteis))?)?$/i, 1, 'Informe um prazo inteiro maior que zero, em dias.')
-  if (!demonstracao && (!UUID.test(peca.categoria_id) || !categorias.some(cat => cat.id === peca.categoria_id))) {
+  if (!UUID.test(peca.categoria_id) || !categorias.some(cat => cat.id === peca.categoria_id)) {
     throw new Error('Selecione uma categoria válida carregada da loja.')
   }
   return {

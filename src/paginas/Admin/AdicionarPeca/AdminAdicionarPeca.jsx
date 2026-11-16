@@ -4,7 +4,7 @@ import { lerFotoDaPeca } from '../CatalogoAdmin/fotoCatalogo';
 import { CATEGORIAS_CATALOGO } from '../CatalogoAdmin/catalogoModelo';
 import './AdminAdicionarPeca.css';
 
-export const AdminAdicionarPeca = ({ demonstracao = false, pecaInicial = null, aoSalvar, voltarPara, categorias = CATEGORIAS_CATALOGO.map(nome => ({ nome, ativa: true })), operacaoPendente = false, confirmacaoPendente = false }) => {
+export const AdminAdicionarPeca = ({ pecaInicial = null, aoSalvar, voltarPara, categorias = CATEGORIAS_CATALOGO.map(nome => ({ nome, ativa: true })), operacaoPendente = false, confirmacaoPendente = false }) => {
   const fileInputRef = useRef(null);
   const envioPendente = useRef(false);
   const conferirResultado = useRef(false);
@@ -17,7 +17,7 @@ export const AdminAdicionarPeca = ({ demonstracao = false, pecaInicial = null, a
   const [salvando, setSalvando] = useState(false);
   const bloqueado = carregandoFoto || salvando || operacaoPendente;
   const edicaoBloqueada = bloqueado || confirmacaoPendente || requerConferencia;
-  const inicio = demonstracao ? '/previa/admin' : '/admin';
+  const inicio = '/admin';
   const catalogo = voltarPara || inicio + '/catalogo';
   const [peca, setPeca] = useState(() => pecaInicial ? { ...pecaInicial, preco: pecaInicial.preco.toFixed(2).replace('.', ','), estoque: String(pecaInicial.estoque) } : {
     nome: '', descricao: '', preco: '', categoria: categorias[0]?.nome || '',
@@ -41,7 +41,7 @@ export const AdminAdicionarPeca = ({ demonstracao = false, pecaInicial = null, a
     setCarregandoFoto(true);
     setAviso('Carregando foto...');
     try {
-      const foto = await lerFotoDaPeca(arquivo, { permitirGif: demonstracao });
+      const foto = await lerFotoDaPeca(arquivo);
       setFotoPreview(foto);
       setFotoArquivo(arquivo);
       setAviso('');
@@ -53,7 +53,7 @@ export const AdminAdicionarPeca = ({ demonstracao = false, pecaInicial = null, a
     e.preventDefault();
     if (envioPendente.current || bloqueado || confirmacaoPendente || conferirResultado.current) return;
     if (!aoSalvar) {
-      setAviso(demonstracao ? 'Esta página é uma demonstração isolada. Abra o catálogo para testar o formulário completo.' : 'Abra este formulário a partir do catálogo administrativo.');
+      setAviso('Abra este formulário a partir do catálogo administrativo.');
       return;
     }
     envioPendente.current = true;
@@ -74,7 +74,7 @@ export const AdminAdicionarPeca = ({ demonstracao = false, pecaInicial = null, a
           <Link className="nav-btn" aria-disabled={bloqueado} onClick={impedirNavegacao} to={`${inicio}/pedidos`}>Pedidos</Link>
         </div>
         <div className="nav-user">
-          <span className="nav-btn-user">{demonstracao ? 'Prévia: Tati' : 'Admin'}</span>
+          <span className="nav-btn-user">Admin</span>
         </div>
       </nav>
 
@@ -86,7 +86,7 @@ export const AdminAdicionarPeca = ({ demonstracao = false, pecaInicial = null, a
         <p className="subtitulo-editar">
           Para adicionar uma peça nova, preencha este formulário.
         </p>
-        <p className="aviso-demonstracao">{demonstracao ? 'Demonstração com produtos fictícios: as alterações são temporárias.' : 'As peças e as fotos serão salvas no catálogo da loja.'}</p>
+        <p className="aviso-catalogo">As peças e as fotos serão salvas no catálogo da loja.</p>
 
         <form id="adicionar-peca-form" onSubmit={handleSalvar} className="form-grid">
           <div className="coluna-foto">
@@ -117,7 +117,7 @@ export const AdminAdicionarPeca = ({ demonstracao = false, pecaInicial = null, a
               type="file"
               disabled={edicaoBloqueada}
               aria-label="Selecionar foto da peça"
-              accept={demonstracao ? 'image/png,image/jpeg,image/webp,image/avif,image/gif' : 'image/png,image/jpeg,image/webp,image/avif'}
+              accept="image/png,image/jpeg,image/webp,image/avif"
               ref={fileInputRef}
               onChange={handleFotoChange}
               style={{ display: 'none' }}

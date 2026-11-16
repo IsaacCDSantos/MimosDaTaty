@@ -85,5 +85,5 @@ export default function CatalogoPersistenteProvider() {
     })
   }
 
-  return <CatalogoAdminContext.Provider value={{ ...estado, demonstracao: false, ocupado, confirmacaoPendente, aviso, erroAcao, salvar, alternar, excluir, recarregar }}><Outlet /></CatalogoAdminContext.Provider>
+  return <CatalogoAdminContext.Provider value={{ ...estado, ocupado, confirmacaoPendente, aviso, erroAcao, salvar, alternar, excluir, recarregar }}><Outlet /></CatalogoAdminContext.Provider>
 }

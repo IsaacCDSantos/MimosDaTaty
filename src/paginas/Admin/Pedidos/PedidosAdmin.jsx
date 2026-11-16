@@ -23,7 +23,7 @@ function SeloStatus({ status }) {
   return <span className={`orders-admin-status orders-admin-status--${status}`}>{rotulo}</span>
 }
 
-function DetalhesPedido({ pedido, demonstracao, aoAlterar, aoFechar }) {
+function DetalhesPedido({ pedido, aoAlterar, aoFechar }) {
   const [codigo, setCodigo] = useState(pedido.codigoRastreio || '')
   const [observacao, setObservacao] = useState(pedido.observacaoInterna || '')
   const [salvando, setSalvando] = useState(false)
@@ -43,12 +43,6 @@ function DetalhesPedido({ pedido, demonstracao, aoAlterar, aoFechar }) {
     } catch (erro) {
       setAviso({ erro: true, texto: erro.message })
       campo?.current?.focus()
-      return
-    }
-
-    if (demonstracao) {
-      aoAlterar(atualizado)
-      setAviso({ erro: false, texto: `${mensagem} nesta prévia. As alterações são temporárias.` })
       return
     }
 
@@ -131,7 +125,6 @@ function DetalhesPedido({ pedido, demonstracao, aoAlterar, aoFechar }) {
         <SeloStatus status={pedido.status} />
         <button className="orders-admin-close" type="button" aria-label="Fechar detalhes do pedido" onClick={aoFechar} autoFocus><IconePedido nome="fechar" /></button>
       </header>
-      {demonstracao && <p className="orders-admin-demo-notice">Pedido fictício para demonstração. Nenhuma encomenda real será alterada.</p>}
       <div className="orders-admin-detail-grid">
         <div className="orders-admin-detail-main">
           <section className="orders-admin-detail-section" aria-labelledby="orders-admin-customer-title">
@@ -178,10 +171,10 @@ function DetalhesPedido({ pedido, demonstracao, aoAlterar, aoFechar }) {
 const FILTROS = [{ valor: 'todos', rotulo: 'Todos' }, { valor: 'em_producao', rotulo: 'Em produção' }, { valor: 'enviado', rotulo: 'Enviados' }, { valor: 'entregue', rotulo: 'Entregues' }]
 const POR_PAGINA = 6
 
-export default function PedidosAdmin({ pedidosIniciais = [], demonstracao = false }) {
+export default function PedidosAdmin({ pedidosIniciais = [] }) {
   const [pedidos, setPedidos] = useState(() => pedidosIniciais.map(pedido => ({ ...pedido })))
-  const [carregando, setCarregando] = useState(!demonstracao && !!supabase)
-  const [erroCarga, setErroCarga] = useState(!demonstracao && !supabase ? 'Serviço do banco de dados não configurado.' : '')
+  const [carregando, setCarregando] = useState(!!supabase)
+  const [erroCarga, setErroCarga] = useState(!supabase ? 'Serviço do banco de dados não configurado.' : '')
   const [revisao, setRevisao] = useState(0)
   const [busca, setBusca] = useState('')
   const [filtro, setFiltro] = useState('todos')
@@ -197,10 +190,10 @@ export default function PedidosAdmin({ pedidosIniciais = [], demonstracao = fals
   const primeiroIndice = (paginaAtual - 1) * POR_PAGINA
   const visiveis = filtrados.slice(primeiroIndice, primeiroIndice + POR_PAGINA)
   const selecionado = pedidos.find(pedido => pedido.id === pedidoSelecionadoId)
-  const inicio = demonstracao ? '/previa/admin' : '/admin'
+  const inicio = '/admin'
 
   useEffect(() => {
-    if (demonstracao || !supabase) return
+    if (!supabase) return
     let ativo = true
     const controlador = new AbortController()
     carregarPedidosAdmin(supabase, controlador.signal).then((lista) => {
@@ -211,7 +204,7 @@ export default function PedidosAdmin({ pedidosIniciais = [], demonstracao = fals
       if (ativo) setCarregando(false)
     })
     return () => { ativo = false; controlador.abort() }
-  }, [demonstracao, revisao])
+  }, [revisao])
 
   function recarregarPedidos() {
     setCarregando(true)
@@ -247,9 +240,9 @@ export default function PedidosAdmin({ pedidosIniciais = [], demonstracao = fals
     <div className="orders-admin-page">
       <div className="orders-admin-circle orders-admin-circle--left" aria-hidden="true" /><div className="orders-admin-circle orders-admin-circle--right" aria-hidden="true" />
       <div className="orders-admin-shell">
-        <header className="orders-admin-header"><nav aria-label="Navegação administrativa"><Link to={inicio}>Home</Link><Link to={inicio + "/catalogo"}>Catálogo</Link><Link className="orders-admin-nav-active" to={`${inicio}/pedidos`} aria-current="page">Pedidos</Link></nav><span className="orders-admin-account">{demonstracao ? 'Prévia: Tati' : 'Admin: Tati'}</span></header>
+        <header className="orders-admin-header"><nav aria-label="Navegação administrativa"><Link to={inicio}>Home</Link><Link to={inicio + "/catalogo"}>Catálogo</Link><Link className="orders-admin-nav-active" to={`${inicio}/pedidos`} aria-current="page">Pedidos</Link></nav><span className="orders-admin-account">Admin: Tati</span></header>
         <main className="orders-admin-card" aria-labelledby="orders-admin-title">
-          <div className="orders-admin-heading">{!demonstracao && <button type="button" className="orders-admin-secondary-button" disabled={carregando || !supabase} onClick={recarregarPedidos}>{carregando ? 'Carregando...' : 'Atualizar pedidos'}</button>}<h1 id="orders-admin-title">Pedidos</h1><p>Acompanhe e atualize o andamento dos pedidos da loja.</p>{demonstracao && <span className="orders-admin-demo-label">Prévia · dados de exemplo</span>}</div>
+          <div className="orders-admin-heading"><button type="button" className="orders-admin-secondary-button" disabled={carregando || !supabase} onClick={recarregarPedidos}>{carregando ? 'Carregando...' : 'Atualizar pedidos'}</button><h1 id="orders-admin-title">Pedidos</h1><p>Acompanhe e atualize o andamento dos pedidos da loja.</p></div>
           {erroCarga && <p className="orders-admin-detail-feedback orders-admin-detail-feedback--error" role="alert">{erroCarga}</p>}
           <div className="orders-admin-summary" aria-label="Resumo de todos os pedidos"><div><span>Novos</span><strong>{contagens.novo}</strong></div><div><span>Em produção</span><strong>{contagens.em_producao}</strong></div><div><span>Enviados</span><strong>{contagens.enviado}</strong></div></div>
           <div className="orders-admin-toolbar"><div className="orders-admin-filters" role="group" aria-label="Filtrar pedidos por status">{FILTROS.map(item => <button key={item.valor} type="button" className={filtro === item.valor ? 'orders-admin-filter-active' : ''} aria-pressed={filtro === item.valor} onClick={() => { setFiltro(item.valor); setPagina(1) }}>{item.rotulo}</button>)}</div><div className="orders-admin-search"><label className="orders-admin-sr-only" htmlFor="orders-admin-search">Buscar cliente ou número do pedido</label><input ref={campoBusca} id="orders-admin-search" type="search" placeholder="Buscar cliente ou nº do pedido" value={busca} onChange={event => { setBusca(event.target.value); setPagina(1) }} autoComplete="off" /></div></div>
@@ -259,8 +252,8 @@ export default function PedidosAdmin({ pedidosIniciais = [], demonstracao = fals
           <nav className="orders-admin-pagination" aria-label="Paginação dos pedidos"><output aria-live="polite">{filtrados.length ? `Mostrando ${primeiroIndice + 1}–${Math.min(primeiroIndice + POR_PAGINA, filtrados.length)} de ${filtrados.length} ${filtrados.length === 1 ? 'pedido' : 'pedidos'}` : '0 pedidos encontrados'}</output><div><button type="button" aria-label="Página anterior" disabled={paginaAtual <= 1} onClick={() => setPagina(paginaAtual - 1)}><IconePedido nome="esquerda" /> Anterior</button><span>Página {paginaAtual} de {totalPaginas}</span><button type="button" aria-label="Próxima página" disabled={paginaAtual >= totalPaginas} onClick={() => setPagina(paginaAtual + 1)}>Próxima <IconePedido nome="direita" /></button></div></nav>
         </main>
       </div>
-      <footer className="orders-admin-footer"><div className="orders-admin-border" aria-hidden="true" /><p><span aria-hidden="true" />{demonstracao ? 'Prévia com dados de exemplo · alterações temporárias' : 'Gestão de pedidos do Ateliê Mimos da Taty'}</p></footer>
-      <dialog className="orders-admin-dialog" ref={dialogo} aria-labelledby="orders-admin-detail-title" onClose={fecharDetalhes}>{selecionado && <DetalhesPedido key={selecionado.id} pedido={selecionado} demonstracao={demonstracao} aoAlterar={atualizarPedido} aoFechar={() => dialogo.current.close()} />}</dialog>
+      <footer className="orders-admin-footer"><div className="orders-admin-border" aria-hidden="true" /><p><span aria-hidden="true" />Gestão de pedidos do Ateliê Mimos da Taty</p></footer>
+      <dialog className="orders-admin-dialog" ref={dialogo} aria-labelledby="orders-admin-detail-title" onClose={fecharDetalhes}>{selecionado && <DetalhesPedido key={selecionado.id} pedido={selecionado} aoAlterar={atualizarPedido} aoFechar={() => dialogo.current.close()} />}</dialog>
     </div>
   )
 }

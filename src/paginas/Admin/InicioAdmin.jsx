@@ -24,21 +24,21 @@ function IconeAdmin({ nome, ...props }) {
 
 const formatoMoeda = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
 
-export default function InicioAdmin({ dados, demonstracao = false }) {
+export default function InicioAdmin() {
   const navigate = useNavigate()
   const [saindo, setSaindo] = useState(false)
   const [erroSaida, setErroSaida] = useState('')
   const saidaEmAndamento = useRef(false)
   const [produtoSelecionado, setProdutoSelecionado] = useState(null)
   const dialogoProduto = useRef(null)
-  const nome = dados?.administradora || 'Tati'
+  const nome = 'Tati'
   const catalogo = useCatalogoAdmin()
   const carregandoIndicadores = Boolean(catalogo?.carregando)
   const erroIndicadores = catalogo?.erro || (!catalogo ? 'Não foi possível carregar os indicadores do catálogo.' : '')
   const confirmacaoPendente = Boolean(catalogo?.confirmacaoPendente)
   const resumo = !carregandoIndicadores && !erroIndicadores && !confirmacaoPendente ? calcularIndicadoresCatalogo(catalogo.pecas) : null
-  const destaques = dados?.destaques || []
-  const categorias = catalogo?.categorias ? catalogo.categorias.filter(item => item.ativa).map(item => item.nome) : dados?.categorias || []
+  const destaques = []
+  const categorias = catalogo?.categorias ? catalogo.categorias.filter(item => item.ativa).map(item => item.nome) : []
 
   async function sairDaConta() {
     if (saidaEmAndamento.current) return
@@ -72,7 +72,7 @@ export default function InicioAdmin({ dados, demonstracao = false }) {
           </div>
           <div className="admin-home-header-actions">
             <span className="admin-home-account"><span className="admin-home-dot" /><IconeAdmin nome="escudo" /> Admin: {nome}</span>
-            {!demonstracao && <button className="admin-home-signout" type="button" disabled={saindo} onClick={sairDaConta}><IconeAdmin nome="sair" />{saindo ? 'Saindo…' : 'Sair da conta'}</button>}
+            <button className="admin-home-signout" type="button" disabled={saindo} onClick={sairDaConta}><IconeAdmin nome="sair" />{saindo ? 'Saindo…' : 'Sair da conta'}</button>
           </div>
         </header>
         {erroSaida && <p className="admin-home-signout-error" role="alert">{erroSaida}</p>}
@@ -80,7 +80,7 @@ export default function InicioAdmin({ dados, demonstracao = false }) {
         <main>
           <section className="admin-home-welcome" aria-labelledby="admin-home-title">
             <div className="admin-home-welcome-copy">
-              <div className="admin-home-eyebrow"><span className="admin-home-kicker">ESPAÇO DA ARTESÃ</span><span>{demonstracao ? 'Prévia com dados de exemplo' : carregandoIndicadores ? 'Carregando catálogo do ateliê' : erroIndicadores || confirmacaoPendente ? 'Catálogo aguardando atualização' : 'Visão geral do ateliê'}</span></div>
+              <div className="admin-home-eyebrow"><span className="admin-home-kicker">ESPAÇO DA ARTESÃ</span><span>{carregandoIndicadores ? 'Carregando catálogo do ateliê' : erroIndicadores || confirmacaoPendente ? 'Catálogo aguardando atualização' : 'Visão geral do ateliê'}</span></div>
               <h1 id="admin-home-title">Olá, {nome}! Bem-vinda ao seu ateliê</h1>
               <p className="admin-home-welcome-description">Escolha abaixo para onde deseja ir. Gerencie suas peças artesanais, cadastre novas criações ou acompanhe suas encomendas com um clique.</p>
               <div className="admin-home-summary" role="region" aria-label="Resumo do catálogo" aria-busy={carregandoIndicadores}>
@@ -98,7 +98,7 @@ export default function InicioAdmin({ dados, demonstracao = false }) {
                       <p className="admin-home-summary-caption">{categorias.length ? `${categorias.length} categorias ativas: ${categorias.join(', ')}` : 'Peças organizadas por categoria'}</p>
                     </div>
                   )}
-                  {!demonstracao && catalogo?.recarregar && <button type="button" className="admin-home-summary-refresh" disabled={carregandoIndicadores || catalogo.ocupado} onClick={catalogo.recarregar}>{erroIndicadores || confirmacaoPendente ? 'Tentar novamente' : 'Atualizar indicadores'}</button>}
+                  {catalogo?.recarregar && <button type="button" className="admin-home-summary-refresh" disabled={carregandoIndicadores || catalogo.ocupado} onClick={catalogo.recarregar}>{erroIndicadores || confirmacaoPendente ? 'Tentar novamente' : 'Atualizar indicadores'}</button>}
                 </div>
               </div>
             </div>
@@ -115,11 +115,11 @@ export default function InicioAdmin({ dados, demonstracao = false }) {
               <div className="admin-home-section-heading"><div><h2 id="admin-home-shortcuts-title">Atalhos do Ateliê</h2><p>Acesso direto às áreas principais de gerenciamento da sua loja</p></div><span className="admin-home-navigation-label">Navegação Rápida</span></div>
               <div className="admin-home-shortcut-grid">
                 <article className="admin-home-shortcut admin-home-shortcut--catalog">
-                  <div className="admin-home-shortcut-top"><span className="admin-home-shortcut-icon"><IconeAdmin nome="catalogo" /></span><Link to={demonstracao ? '/previa/admin/catalogo' : '/admin/catalogo'}>Acessar Catálogo <IconeAdmin nome="seta" /></Link></div>
+                  <div className="admin-home-shortcut-top"><span className="admin-home-shortcut-icon"><IconeAdmin nome="catalogo" /></span><Link to="/admin/catalogo">Acessar Catálogo <IconeAdmin nome="seta" /></Link></div>
                   <h3>Catálogo da Loja</h3><p>Adicione novas peças, edite valores, descrições e controle o que fica visível na vitrine.</p>
                 </article>
                 <article className="admin-home-shortcut admin-home-shortcut--orders">
-                  <div className="admin-home-shortcut-top"><span className="admin-home-shortcut-icon"><IconeAdmin nome="pedidos" /></span><Link to={demonstracao ? '/previa/admin/pedidos' : '/admin/pedidos'}>Acessar Pedidos <IconeAdmin nome="seta" /></Link></div>
+                  <div className="admin-home-shortcut-top"><span className="admin-home-shortcut-icon"><IconeAdmin nome="pedidos" /></span><Link to="/admin/pedidos">Acessar Pedidos <IconeAdmin nome="seta" /></Link></div>
                   <h3>Painel de Pedidos</h3><p>Veja os pedidos novos, acompanhe a produção das encomendas e atualize o status de envio.</p>
                 </article>
               </div>
@@ -136,10 +136,10 @@ export default function InicioAdmin({ dados, demonstracao = false }) {
           </div>
         </main>
 
-        <footer className="admin-home-footer"><p><span className="admin-home-dot" /> Painel Administrativo Mimos da Taty{demonstracao ? ' · Prévia com dados de exemplo' : ''}</p><p>Ateliê Mimos da Taty · Bordados &amp; Crochê</p></footer>
+        <footer className="admin-home-footer"><p><span className="admin-home-dot" /> Painel Administrativo Mimos da Taty</p><p>Ateliê Mimos da Taty · Bordados &amp; Crochê</p></footer>
       </div>
       <dialog ref={dialogoProduto} className="admin-home-product-dialog" aria-labelledby="admin-home-product-title" onClose={() => setProdutoSelecionado(null)}>
-        {produtoSelecionado && <><button className="admin-home-dialog-close" type="button" aria-label="Fechar detalhes da peça" onClick={() => dialogoProduto.current.close()} autoFocus><IconeAdmin nome="fechar" /></button><img src={produtoSelecionado.imagem} alt={produtoSelecionado.nome} width="240" height="240" /><div className="admin-home-dialog-copy"><span className="admin-home-kicker">{demonstracao ? 'PEÇA DE EXEMPLO' : produtoSelecionado.categoria}</span><h2 id="admin-home-product-title">{produtoSelecionado.nome}</h2><p>{produtoSelecionado.descricao}</p><strong>{formatoMoeda.format(produtoSelecionado.preco)}</strong><dl><div><dt>Categoria</dt><dd>{produtoSelecionado.categoria}</dd></div><div><dt>Prazo de entrega</dt><dd>{produtoSelecionado.prazo}</dd></div><div><dt>Na vitrine</dt><dd>{produtoSelecionado.visivel ? 'Visível' : 'Oculta'}</dd></div></dl></div></>}
+        {produtoSelecionado && <><button className="admin-home-dialog-close" type="button" aria-label="Fechar detalhes da peça" onClick={() => dialogoProduto.current.close()} autoFocus><IconeAdmin nome="fechar" /></button><img src={produtoSelecionado.imagem} alt={produtoSelecionado.nome} width="240" height="240" /><div className="admin-home-dialog-copy"><span className="admin-home-kicker">{produtoSelecionado.categoria}</span><h2 id="admin-home-product-title">{produtoSelecionado.nome}</h2><p>{produtoSelecionado.descricao}</p><strong>{formatoMoeda.format(produtoSelecionado.preco)}</strong><dl><div><dt>Categoria</dt><dd>{produtoSelecionado.categoria}</dd></div><div><dt>Prazo de entrega</dt><dd>{produtoSelecionado.prazo}</dd></div><div><dt>Na vitrine</dt><dd>{produtoSelecionado.visivel ? 'Visível' : 'Oculta'}</dd></div></dl></div></>}
       </dialog>
     </div>
   )

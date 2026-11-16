@@ -32,10 +32,9 @@ test('rejeita intervalos, negativos, decimais e números fora do limite do Postg
   assert.throws(() => validarDadosPeca({ ...formulario, nome: 'A' }, [categoria]), /nome/)
 })
 
-test('categoria precisa ser UUID e constar na lista carregada; prévia não exige categoria real', () => {
+test('categoria precisa ser UUID e constar na lista carregada', () => {
   assert.throws(() => validarDadosPeca({ ...formulario, categoria_id: 'Enxovais' }, [categoria]), /categoria/)
   assert.throws(() => validarDadosPeca(formulario, []), /categoria/)
-  assert.doesNotThrow(() => validarDadosPeca({ ...formulario, categoria_id: 'Maternidade' }, [], true))
 })
 
 test('cadastro exige foto válida antes de qualquer requisição', async () => {

@@ -4,7 +4,7 @@ import { lerFotoDaPeca } from '../CatalogoAdmin/fotoCatalogo';
 import { CATEGORIAS_CATALOGO } from '../CatalogoAdmin/catalogoModelo';
 import './AdminEditarPeca.css';
 
-export const AdminEditarPeca = ({ demonstracao = false, pecaInicial = null, aoSalvar, aoExcluir, voltarPara, categorias = CATEGORIAS_CATALOGO.map(nome => ({ nome, ativa: true })), operacaoPendente = false, confirmacaoPendente = false }) => {
+export const AdminEditarPeca = ({ pecaInicial = null, aoSalvar, aoExcluir, voltarPara, categorias = CATEGORIAS_CATALOGO.map(nome => ({ nome, ativa: true })), operacaoPendente = false, confirmacaoPendente = false }) => {
   const fileInputRef = useRef(null);
   const envioPendente = useRef(false);
   const conferirResultado = useRef(false);
@@ -19,7 +19,7 @@ export const AdminEditarPeca = ({ demonstracao = false, pecaInicial = null, aoSa
   const [salvando, setSalvando] = useState(false);
   const bloqueado = carregandoFoto || salvando || operacaoPendente || excluindo;
   const edicaoBloqueada = bloqueado || confirmacaoPendente || requerConferencia;
-  const inicio = demonstracao ? '/previa/admin' : '/admin';
+  const inicio = '/admin';
   const catalogo = voltarPara || inicio + '/catalogo';
   const [peca, setPeca] = useState(() => pecaInicial ? { ...pecaInicial, preco: pecaInicial.preco.toFixed(2).replace('.', ','), estoque: String(pecaInicial.estoque) } : {
     nome: '', descricao: '', preco: '', categoria: categorias[0]?.nome || '',
@@ -43,7 +43,7 @@ export const AdminEditarPeca = ({ demonstracao = false, pecaInicial = null, aoSa
     setCarregandoFoto(true);
     setAviso('Carregando foto...');
     try {
-      const foto = await lerFotoDaPeca(arquivo, { permitirGif: demonstracao });
+      const foto = await lerFotoDaPeca(arquivo);
       setFotoPreview(foto);
       setFotoArquivo(arquivo);
       setAviso('');
@@ -55,7 +55,7 @@ export const AdminEditarPeca = ({ demonstracao = false, pecaInicial = null, aoSa
     e.preventDefault();
     if (envioPendente.current || bloqueado || confirmacaoPendente || conferirResultado.current) return;
     if (!aoSalvar) {
-      setAviso(demonstracao ? 'Esta página é uma demonstração isolada. Abra o catálogo para testar o formulário completo.' : 'Abra este formulário a partir do catálogo administrativo.');
+      setAviso('Abra este formulário a partir do catálogo administrativo.');
       return;
     }
     envioPendente.current = true;
@@ -86,7 +86,7 @@ export const AdminEditarPeca = ({ demonstracao = false, pecaInicial = null, aoSa
           <Link className="nav-btn" aria-disabled={bloqueado} onClick={impedirNavegacao} to={`${inicio}/pedidos`}>Pedidos</Link>
         </div>
         <div className="nav-user">
-          <span className="nav-btn-user">{demonstracao ? 'Prévia: Tati' : 'Admin'}</span>
+          <span className="nav-btn-user">Admin</span>
         </div>
       </nav>
 
@@ -97,7 +97,7 @@ export const AdminEditarPeca = ({ demonstracao = false, pecaInicial = null, aoSa
         <p className="subtitulo-editar">
           Confira os dados da peça neste formulário.
         </p>
-        <p className="aviso-demonstracao">{demonstracao ? 'Demonstração com produtos fictícios: as alterações são temporárias.' : 'As peças e as fotos serão salvas no catálogo da loja.'}</p>
+        <p className="aviso-catalogo">As peças e as fotos serão salvas no catálogo da loja.</p>
 
         <form id="editar-peca-form" onSubmit={handleSalvar} className="form-grid">
           {/* Coluna da Esquerda: Foto */}
@@ -130,7 +130,7 @@ export const AdminEditarPeca = ({ demonstracao = false, pecaInicial = null, aoSa
               type="file"
               disabled={edicaoBloqueada}
               aria-label="Selecionar foto da peça"
-              accept={demonstracao ? 'image/png,image/jpeg,image/webp,image/avif,image/gif' : 'image/png,image/jpeg,image/webp,image/avif'}
+              accept="image/png,image/jpeg,image/webp,image/avif"
               ref={fileInputRef}
               onChange={handleFotoChange}
               style={{ display: 'none' }}
@@ -209,7 +209,7 @@ export const AdminEditarPeca = ({ demonstracao = false, pecaInicial = null, aoSa
       </main>
       <dialog ref={confirmarExclusao} className="catalog-admin-delete-dialog" aria-labelledby="catalog-admin-delete-title" onCancel={event => { if (bloqueado) event.preventDefault(); }}>
         <h2 id="catalog-admin-delete-title">Excluir esta peça?</h2>
-        <p>{demonstracao ? 'A peça será removida da demonstração.' : 'A peça sairá do catálogo. Os pedidos anteriores e suas fotos serão preservados.'}</p>{erroExclusao && <p role="alert">{erroExclusao}</p>}
+        <p>A peça sairá do catálogo. Os pedidos anteriores e suas fotos serão preservados.</p>{erroExclusao && <p role="alert">{erroExclusao}</p>}
         <div>{confirmacaoPendente || requerConferencia ? <Link className="btn-outline" to={catalogo}>Conferir catálogo</Link> : <button type="button" className="btn-outline" disabled={bloqueado} onClick={() => confirmarExclusao.current.close()}>Não, manter peça</button>}<button type="button" className="btn-salvar" disabled={edicaoBloqueada} onClick={handleExcluir}>{excluindo ? 'Excluindo...' : 'Confirmar exclusão'}</button></div>
       </dialog>
     </div>

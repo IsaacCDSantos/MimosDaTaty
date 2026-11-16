@@ -58,7 +58,7 @@ A aplicação une a identidade visual acolhedora do artesanato a uma navegação
 - 🛍️ **Checkout, Frete e Pagamento (`/checkout`)**:
   - Cotação de frete em tempo real por CEP via Edge Function `calcular-frete` (**SuperFrete**, em sandbox), com validação de preços e prazos no servidor.
   - Pagamento em ambiente **Sandbox** via **Mercado Pago (Checkout Transparente / Orders API)** com cartão (MercadoPago.js) e Pix (QR Code e copia e cola), orquestrado pela Edge Function `checkout` e atualizado por `mercado-pago-webhook`.
-- 🧵 **Área Administrativa (`/admin/*` e prévias em `/previa/admin/*`)**:
+- 🧵 **Área Administrativa (`/admin/*`)**:
   - Rotas protegidas por verificação de sessão e perfil `admin`.
   - Gestão persistente do catálogo (cadastro, edição, upload de fotos, visibilidade e arquivamento) e painel de acompanhamento de pedidos.
 
@@ -69,7 +69,7 @@ A aplicação une a identidade visual acolhedora do artesanato a uma navegação
 | Tecnologia | Descrição |
 | :--- | :--- |
 | **[React](https://react.dev/) 19 & [Vite](https://vite.dev/) 8** | Interface declarativa em componentes e build/HMR rápido. |
-| **[React Router DOM](https://reactrouter.com/) v7** | Roteamento SPA com separação entre rotas públicas, prévias e privadas. |
+| **[React Router DOM](https://reactrouter.com/) v7** | Roteamento SPA com separação entre rotas públicas e privadas. |
 | **[Supabase](https://supabase.com/)** | Autenticação, banco PostgreSQL com RLS, Storage e Edge Functions. |
 | **[Mercado Pago](https://www.mercadopago.com.br/developers) & [SuperFrete](https://superfrete.com/)** | Processamento de pagamentos (Sandbox) e cálculo de frete por CEP via servidor. |
 | **CSS3 Modular & SVG** | Estilização temática responsiva com paleta pastel/terrosa e ícones vetoriais. |
@@ -115,7 +115,6 @@ Sistema Web Mimos da Taty/
 | `/meus-pedidos` | Exige login | Histórico, filtros por etapa e detalhes dos pedidos. |
 | `/recuperar-senha`, `/confirmacao`, `/redefinir-senha` | Público (gravação exige sessão do link) | Fluxo de recuperação e alteração de senha. |
 | `/admin`, `/admin/catalogo`, `/admin/pedidos`, `/admin/adicionar-peca`, `/admin/editar-peca` | Restrito (`admin`) | Painel administrativo conectado ao Supabase. |
-| `/previa/admin/*` | Público (demonstração) | Prévia navegável do painel administrativo com dados fictícios. |
 | `*` | — | Redireciona rotas inexistentes para `/`. |
 
 ---
