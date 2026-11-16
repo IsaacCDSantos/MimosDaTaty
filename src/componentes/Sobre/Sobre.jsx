@@ -45,7 +45,7 @@ function Sobre() {
         <header className="sobre-cabecalho">
           <div className="sobre-tagline animar-rolagem animar-esquerda">
             <span className="linha-tagline" aria-hidden="true" />
-            <span>MIMOS DA TATY</span>
+            <span>MIMOS DA TATI</span>
           </div>
 
           <h2 id="sobre-titulo" className="sobre-titulo animar-rolagem animar-cima atraso-1">

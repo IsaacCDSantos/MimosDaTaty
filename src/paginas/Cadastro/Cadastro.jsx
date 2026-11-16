@@ -106,7 +106,7 @@ export default function Cadastro() {
         </div>
         <aside className="cadastro-visual" aria-hidden="true">
           <img className="cadastro-imagem" src={imagemAtelie} alt="" />
-          <div className="cadastro-marca"><img src={logoMimos} alt="" /><span>Ateliê Mimos da Taty</span></div>
+          <div className="cadastro-marca"><img src={logoMimos} alt="" /><span>Ateliê Mimos da Tati</span></div>
           <div className="cadastro-mensagem">
             <h2>Cada ponto feito com muito amor</h2>
             <p>Um cantinho especial para acolher você e os momentos mais doces do seu bebê.</p>

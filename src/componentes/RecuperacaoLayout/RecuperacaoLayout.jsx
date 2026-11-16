@@ -16,8 +16,8 @@ export default function RecuperacaoLayout({ titulo, subtitulo, descricao, icone 
   return (
     <main className="senha-page" lang="pt-BR">
       <section className="senha-card" aria-labelledby="senha-titulo">
-        <aside className="senha-arte" aria-label="Mimos da Taty">
-          <div className="senha-marca"><p>Mimos da Taty</p><span>FEITO À MÃO, COM AMOR</span></div>
+        <aside className="senha-arte" aria-label="Mimos da Tati">
+          <div className="senha-marca"><p>Mimos da Tati</p><span>FEITO À MÃO, COM AMOR</span></div>
           <CartaAnimada />
           <div className="senha-mensagem"><p>Um novo começo,<br />com o mesmo carinho.</p><span>Seu acesso aos nossos mimos está logo ali.</span></div>
           <img className="senha-costura" src={costura} width="440" height="4" alt="" />

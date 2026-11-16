@@ -209,7 +209,7 @@ export default function Login({ recovery = false, onNavigate }) {
                   tabIndex={isPaneActive ? 0 : -1}
                   value={username}
                   onChange={(event) => setUsername(event.target.value)}
-                  placeholder={isPaneAdmin ? 'admin@mimosdataty.com' : 'nome@exemplo.com'}
+                  placeholder={isPaneAdmin ? 'admin@exemplo.com' : 'nome@exemplo.com'}
                   autoComplete="username"
                   autoCapitalize="none"
                   spellCheck={false}
@@ -342,7 +342,7 @@ export default function Login({ recovery = false, onNavigate }) {
             <div className="auth-visual-track">
               <img
                 src={imagemAtelie}
-                alt="Bonequinha de crochê e linhas do ateliê Mimos da Taty"
+                alt="Bonequinha de crochê e linhas do ateliê Mimos da Tati"
                 className="auth-visual-img"
               />
               <div className="auth-visual-gradient" />
@@ -350,7 +350,7 @@ export default function Login({ recovery = false, onNavigate }) {
               <div className="auth-visual-content">
                 <div className="auth-visual-top">
                   <img src={logoMimos} alt="" className="auth-visual-logo" />
-                  <span className="auth-visual-tag">Ateliê Mimos da Taty</span>
+                  <span className="auth-visual-tag">Ateliê Mimos da Tati</span>
                 </div>
 
                 <div className="auth-visual-Quote">

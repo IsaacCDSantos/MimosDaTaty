@@ -1,8 +1,8 @@
 <div align="center">
 
-  <img src="./src/assets/imagens/logo-mimos-da-taty.png" alt="Logo Mimos da Taty" width="180" />
+  <img src="./src/assets/imagens/logo-mimos-da-taty.png" alt="Logo Mimos da Tati" width="180" />
 
-  # 🎀 Sistema Web - Mimos da Taty
+  # 🎀 Sistema Web - Mimos da Tati
 
   **Plataforma web de apresentação e e-commerce para ateliê de produtos artesanais e enxovais infantis.**
 
@@ -38,7 +38,7 @@
 
 ## 📖 Sobre o Projeto
 
-O **Sistema Web Mimos da Taty** é uma aplicação web desenvolvida para modernizar a presença digital e a operação comercial do ateliê **Mimos da Taty**, fundado em 2006 pela artesã Tati. O ateliê é especializado na criação personalizada de **enxovais de bebê de alto padrão**, englobando peças em crochê e bordado como mantas, fraldas, toalhas, trocadores, kits de berço e itens decorativos.
+O **Sistema Web Mimos da Tati** é uma aplicação web desenvolvida para modernizar a presença digital e a operação comercial do ateliê **Mimos da Tati**, fundado em 2006 pela artesã Tati. O ateliê é especializado na criação personalizada de **enxovais de bebê de alto padrão**, englobando peças em crochê e bordado como mantas, fraldas, toalhas, trocadores, kits de berço e itens decorativos.
 
 A aplicação une a identidade visual acolhedora do artesanato a uma navegação responsiva, permitindo aos clientes:
 
@@ -98,7 +98,7 @@ Nos módulos de frete e checkout, `index.ts` inicia o serviço, `handler.js` coo
 ## 📂 Estrutura do Projeto
 
 ```text
-Sistema Web Mimos da Taty/
+Sistema Web Mimos da Tati/
 ├── public/                     # Favicons e arquivos estáticos públicos
 ├── scripts/                    # Scripts auxiliares de verificação de conexão/RLS
 ├── src/
@@ -248,4 +248,4 @@ O checkout permite retomar uma tentativa ativa, consultar seu status e cancelar 
 
 ## 📄 Licença
 
-Projeto desenvolvido para o ateliê **Mimos da Taty**. Todos os direitos reservados ou sob licença interna do projeto.
+Projeto desenvolvido para o ateliê **Mimos da Tati**. Todos os direitos reservados ou sob licença interna do projeto.

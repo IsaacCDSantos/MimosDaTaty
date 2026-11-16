@@ -145,7 +145,7 @@ function Header({ onAbrirLogin }) {
               }}
               aria-label="Voltar ao início"
             >
-              <img src={logo} alt="Mimos da Taty" />
+              <img src={logo} alt="Mimos da Tati" />
             </a>
           </div>
 
