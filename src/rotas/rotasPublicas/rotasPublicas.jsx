@@ -29,6 +29,7 @@ export const rotasPublicas = (
     <Route path="/cadastro" element={<Cadastro />} />
 
     <Route path="/catalogo" element={<Catalogo />} />
+    <Route path="/catalogo/:pecaSlug" element={<Catalogo />} />
 
     {/* A prévia compartilha somente produtos fictícios, mantidos em memória. */}
     <Route element={<CatalogoAdminProvider />}>
