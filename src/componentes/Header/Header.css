@@ -130,13 +130,18 @@
 }
 
 
+.site-header :is(a, button):focus-visible {
+  outline: 3px solid #704631;
+  outline-offset: 3px;
+}
+
 .header-acoes {
   align-items: center;
   display: flex;
   gap: 12px;
 }
 
-.header-acoes a {
+.header-acoes > a {
   align-items: center;
   background: #fcc7c7;
   border: 1px solid #d99294;
@@ -155,13 +160,13 @@
   white-space: nowrap;
 }
 
-.header-acoes a:hover {
+.header-acoes > a:hover {
   background: #f7b7b7;
   box-shadow: 2px 6px 12px rgba(151, 100, 78, 0.28);
   transform: translateY(-2px);
 }
 
-.header-acoes a:active {
+.header-acoes > a:active {
   background: #eaa9ad;
   box-shadow: 1px 2px 4px rgba(151, 100, 78, 0.2);
   transform: translateY(1px);
@@ -221,7 +226,7 @@
     padding: 9px 18px;
   }
 
-  .header-acoes a {
+  .header-acoes > a {
     font-size: var(--fonte-menu);
     height: 40px;
     padding: 7px 12px;
@@ -283,7 +288,7 @@
     margin-left: auto;
   }
 
-  .header-acoes a {
+  .header-acoes > a {
     font-size: var(--fonte-menu);
     height: 36px;
     padding: 6px 12px;
@@ -311,11 +316,11 @@
     padding: 5px 8px;
   }
 
-  .header-acoes a span {
+  .header-acoes > a span {
     display: none;
   }
 
-  .header-acoes a {
+  .header-acoes > a {
     height: 34px;
     min-width: 36px;
     padding: 6px 8px;

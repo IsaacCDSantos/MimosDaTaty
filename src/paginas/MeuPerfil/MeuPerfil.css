@@ -1,18 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@400;500;600;700&display=swap');
 .meu-perfil-page { min-height:100vh; min-height:100svh; display:flex; flex-direction:column; background:#fff9f3; color:#80533e; font-family:var(--familia-corpo); font-size:var(--fonte-corpo); line-height:var(--entrelinha-corpo); }
 .meu-perfil-page *, .meu-perfil-page *::before, .meu-perfil-page *::after { box-sizing:border-box; }
-.meu-perfil-header { background:#f7d7b7; min-height:60px; }
-.meu-perfil-header-conteudo { width:calc(100% - 116px); max-width:1076px; min-height:60px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:24px; }
-.meu-perfil-logo { display:flex; flex-shrink:0; align-items:center; }
-.meu-perfil-logo img { width:38px; height:38px; object-fit:contain; }
-.meu-perfil-header-nav { display:flex; align-items:center; flex-wrap:wrap; gap:26px; }
-.meu-perfil-page a { color:inherit; text-decoration:none; }
-.meu-perfil-header-nav a, .meu-perfil-header-acoes > a { font-size:var(--fonte-menu); }
-.meu-perfil-header-acoes { display:flex; gap:10px; align-items:center; }
-.meu-perfil-page .conta-header-avatar { border:0; background:transparent; color:#aa5d6d; width:44px; height:44px; font:var(--peso-destaque) var(--fonte-avatar)/var(--entrelinha-corpo) var(--familia-corpo); }
-.meu-perfil-page .conta-header-avatar:hover { background:#f2c7ac; box-shadow:none; }
-.meu-perfil-page .conta-header-status { display:none; }
-.meu-perfil-main { width:calc(100% - 72px); max-width:1120px; margin:0 auto; padding:24px 0 68px; flex:1; }
+.meu-perfil-main a { color:inherit; text-decoration:none; }
+.meu-perfil-main { width:calc(100% - 72px); max-width:1120px; margin:0 auto; padding:48px 0 68px; flex:1; }
 .meu-perfil-eyebrow { color:#b34d64; font-size:var(--fonte-sobretitulo); font-weight:var(--peso-destaque); margin:0; }
 .meu-perfil-main > h1 { font-family:var(--familia-destaque); font-size:var(--fonte-titulo-pagina); line-height:var(--entrelinha-titulo); font-weight:var(--peso-corpo); margin:11px 0 14px; }
 .meu-perfil-descricao { color:#98796a; margin:0 0 13px; font-size:var(--fonte-corpo); }
@@ -56,23 +46,17 @@
 .meu-perfil-estado { border:1px solid #efddd1; background:#fffdfa; border-radius:14px; padding:25px; }
 .meu-perfil-estado a { display:inline-block; margin-left:15px; text-decoration:underline; }
 .meu-perfil-footer { background:#f7d7b7; text-align:center; padding:13px 20px; color:#8c6a56; font-size:var(--fonte-apoio); }
-.meu-perfil-page :is(a,button,input,select):focus-visible { outline:2px solid #aa5d6d; outline-offset:3px; }
+.meu-perfil-main :is(a,button,input,select):focus-visible { outline:2px solid #aa5d6d; outline-offset:3px; }
 .meu-perfil-dialogo { width:min(680px, calc(100vw - 32px)); max-height:calc(100svh - 48px); overflow:auto; margin:auto; border:1px solid #efddd1; border-radius:16px; padding:24px; color:#80533e; background:#fffdfa; }
 .meu-perfil-dialogo::backdrop { background:#49342a75; }
 .meu-perfil-dialogo h2 { font:var(--peso-corpo) var(--fonte-titulo-card)/var(--entrelinha-titulo) var(--familia-titulo); margin:0 0 10px; }
 .meu-perfil-dialogo form > p { font-size:var(--fonte-corpo); color:#98796a; }
 .meu-perfil-endereco-campos { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px 18px; border:0; padding:0; margin:18px 0; min-width:0; }
 .meu-perfil-campo-largo { grid-column:1/-1; }
-@media(max-width:620px) { .meu-perfil-campo input, .meu-perfil-campo select { min-height:40px; } .meu-perfil-main { width:calc(100% - 32px); padding-bottom:40px; } .meu-perfil-header-conteudo { width:calc(100% - 32px); display:grid; grid-template-columns:auto 1fr; gap:8px 16px; padding:10px 0; } .meu-perfil-header-nav { grid-column:1/-1; grid-row:2; justify-content:center; gap:18px; } .meu-perfil-header-acoes { justify-self:end; } .meu-perfil-conteudo { grid-template-columns:1fr; } .meu-perfil-sidebar-topo { display:flex; align-items:center; gap:15px; } .meu-perfil-iniciais { margin-bottom:0; } .meu-perfil-sidebar h2 { margin-bottom:3px; } .meu-perfil-sidebar p { margin-bottom:10px; } .meu-perfil-sidebar-nav { grid-template-columns:1fr 1fr; align-items:center; } .meu-perfil-sidebar-nav .meu-perfil-voltar { grid-column:1/-1; } .meu-perfil-campos { width:100%; gap:18px 22px; } .meu-perfil-page .meu-perfil-primario, .meu-perfil-page .meu-perfil-secundario { min-height:40px; } }
-@media(max-width:390px) { .meu-perfil-campos, .meu-perfil-endereco-campos { grid-template-columns:1fr; } .meu-perfil-endereco { flex-direction:column; gap:12px; } .meu-perfil-header-nav { gap:13px; } }
+@media(max-width:620px) { .meu-perfil-campo input, .meu-perfil-campo select { min-height:40px; } .meu-perfil-main { width:calc(100% - 32px); padding-bottom:40px; } .meu-perfil-conteudo { grid-template-columns:1fr; } .meu-perfil-sidebar-topo { display:flex; align-items:center; gap:15px; } .meu-perfil-iniciais { margin-bottom:0; } .meu-perfil-sidebar h2 { margin-bottom:3px; } .meu-perfil-sidebar p { margin-bottom:10px; } .meu-perfil-sidebar-nav { grid-template-columns:1fr 1fr; align-items:center; } .meu-perfil-sidebar-nav .meu-perfil-voltar { grid-column:1/-1; } .meu-perfil-campos { width:100%; gap:18px 22px; } .meu-perfil-page .meu-perfil-primario, .meu-perfil-page .meu-perfil-secundario { min-height:40px; } }
+@media(max-width:390px) { .meu-perfil-campos, .meu-perfil-endereco-campos { grid-template-columns:1fr; } .meu-perfil-endereco { flex-direction:column; gap:12px; } }
 
 @media (max-width: 620px) {
-  .meu-perfil-header-conteudo { gap: 6px 12px; }
-  .meu-perfil-logo { justify-content: center; width: 44px; min-height: 44px; }
-  .meu-perfil-header-nav { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); width: 100%; gap: 4px; }
-  .meu-perfil-header-nav a { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 6px 2px; text-align: center; }
-  .meu-perfil-header-acoes > a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 6px; }
-  .meu-perfil-page .conta-header-avatar { width: 44px; height: 44px; }
   .meu-perfil-sidebar-nav a { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px; }
   .meu-perfil-card { padding: 20px; }
   .meu-perfil-card > h2 { margin-bottom: 16px; }
@@ -90,3 +74,5 @@
   .meu-perfil-endereco-campos { grid-template-columns: 1fr; }
 }
 @media (max-width: 900px) { .meu-perfil-campos { grid-template-columns: 1fr; } }
+.meu-perfil-page > .site-header-wrapper { flex-shrink: 0; }
+@media (max-width: 820px) { .meu-perfil-main { padding-top: 32px; } }

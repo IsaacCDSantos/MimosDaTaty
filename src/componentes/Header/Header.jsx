@@ -87,35 +87,34 @@ function Header({ onAbrirLogin }) {
   }, [cancelarAnimacaoScroll])
 
   const rolarPara = useCallback((id) => {
-    const executarRolagem = () => {
-      if (id === 'inicio') {
-        rolarSuavemente(0, 1500)
-        return
-      }
-
-      const elemento = document.getElementById(id)
-      if (elemento) {
-        // Compensa a altura do header fixo para dar respiro visual ao título
-        const compensacaoHeader = window.matchMedia('(max-width: 820px)').matches
-          ? (cabecalhoRef.current?.getBoundingClientRect().height || 140) + 24
-          : isScrolledRef.current ? 88 : 96
-        const posicaoDestino = Math.max(0, elemento.getBoundingClientRect().top + window.scrollY - compensacaoHeader)
-        const distancia = Math.abs(posicaoDestino - window.scrollY)
-        // Duração ampliada para 1400ms - 2000ms para um movimento bem calmo e perceptível
-        const duracao = Math.min(Math.max(distancia * 1.1, 1400), 2000)
-
-        rolarSuavemente(posicaoDestino, duracao)
-      }
-    }
-
-    if (location.pathname !== '/') {
-      navigate('/')
-      setTimeout(executarRolagem, 150)
+    if (id === 'inicio') {
+      rolarSuavemente(0, 1500)
       return
     }
 
-    executarRolagem()
-  }, [location.pathname, navigate, rolarSuavemente])
+    const elemento = document.getElementById(id)
+    if (elemento) {
+      // Compensa a altura do header fixo para dar respiro visual ao título
+      const compensacaoHeader = window.matchMedia('(max-width: 820px)').matches
+        ? (cabecalhoRef.current?.getBoundingClientRect().height || 140) + 24
+        : isScrolledRef.current ? 88 : 96
+      const posicaoDestino = Math.max(0, elemento.getBoundingClientRect().top + window.scrollY - compensacaoHeader)
+      const distancia = Math.abs(posicaoDestino - window.scrollY)
+      // Duração ampliada para 1400ms - 2000ms para um movimento bem calmo e perceptível
+      const duracao = Math.min(Math.max(distancia * 1.1, 1400), 2000)
+
+      rolarSuavemente(posicaoDestino, duracao)
+    }
+  }, [rolarSuavemente])
+
+  const aoClicarSecao = (evento, id) => {
+    // Em outra rota, o novo cabeçalho da home recebe o destino pelo hash.
+    // Cliques com modificadores conservam a abertura normal em outra aba.
+    if (location.pathname !== '/' || evento.button !== 0 ||
+      evento.ctrlKey || evento.metaKey || evento.shiftKey || evento.altKey) return
+    evento.preventDefault()
+    rolarPara(id)
+  }
 
   // Executa rolagem suave caso o usuário chegue na página inicial com hash (#sobre ou #contato)
   useEffect(() => {
@@ -137,55 +136,43 @@ function Header({ onAbrirLogin }) {
       <header ref={cabecalhoRef} className={`site-header ${isScrolled ? 'scrolled' : ''}`}>
         <div className="header-conteudo">
           <div className="marca">
-            <a
-              href="#inicio"
-              onClick={(e) => {
-                e.preventDefault()
-                rolarPara('inicio')
-              }}
+            <Link
+              to="/#inicio"
+              onClick={(evento) => aoClicarSecao(evento, 'inicio')}
               aria-label="Voltar ao início"
             >
               <img src={logo} alt="Mimos da Tati" />
-            </a>
+            </Link>
           </div>
 
           <nav aria-label="Navegação principal">
             <ul>
               <li>
-                <a
-                  href="#inicio"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    rolarPara('inicio')
-                  }}
+                <Link
+                  to="/#inicio"
+                  onClick={(evento) => aoClicarSecao(evento, 'inicio')}
                 >
                   Início
-                </a>
+                </Link>
               </li>
               <li>
                 <Link to="/catalogo">Catálogo</Link>
               </li>
               <li>
-                <a
-                  href="#sobre"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    rolarPara('sobre')
-                  }}
+                <Link
+                  to="/#sobre"
+                  onClick={(evento) => aoClicarSecao(evento, 'sobre')}
                 >
                   Sobre Nós
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#contato"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    rolarPara('contato')
-                  }}
+                <Link
+                  to="/#contato"
+                  onClick={(evento) => aoClicarSecao(evento, 'contato')}
                 >
                   Contato
-                </a>
+                </Link>
               </li>
             </ul>
           </nav>
@@ -195,12 +182,8 @@ function Header({ onAbrirLogin }) {
                 if (onAbrirLogin) onAbrirLogin()
                 else navigate('/login')
             }} />
-            <a
-              href="/carrinho"
-              onClick={(e) => {
-                e.preventDefault()
-                navigate('/carrinho')
-              }}
+            <Link
+              to="/carrinho"
               aria-label="Ir para o carrinho"
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -215,7 +198,7 @@ function Header({ onAbrirLogin }) {
                 <circle cx="20" cy="21" r="1" fill="currentColor" />
               </svg>
               <span>R$0,00</span>
-            </a>
+            </Link>
           </div>
         </div>
 
