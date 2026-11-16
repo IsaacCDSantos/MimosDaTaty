@@ -175,9 +175,11 @@ Validação concluída em 15/11/2026 (horário de Brasília):
 - Resultado recuperado após atualizar a página e pedido conferido no painel administrativo. Um único item e um único pagamento persistidos; estoque da peça preservado.
 - Notificação automática do Mercado Pago recebida com **HTTP 200** às 22:46:42, identificada nos logs por `MercadoPago WebHook v1.0 order` e pela referência do pedido. O erro anterior de geração da assinatura deixou de impedir as notificações.
 - Verificações adicionais: assinatura válida aceita (200), assinatura inválida rejeitada (401) e repetição da notificação aceita sem duplicar o pagamento. O simulador manual do painel retornou 401; o evento automático do pagamento de teste foi recebido com sucesso, mantendo a validação de assinatura ativa.
-- Suíte local: **182 testes aprovados**. ESLint e build também passaram na validação da integração.
+- Suíte local: **184 testes aprovados**. ESLint e build também passaram na validação da integração.
 
 O checkout verifica a tentativa anterior antes de exibir o formulário. Um Pix pendente pode ser encerrado pelo botão **Cancelar Pix e trocar forma de pagamento**: o servidor consulta a order, solicita o [cancelamento pela Orders API](https://www.mercadopago.com.br/developers/pt/reference/online-payments/checkout-api/cancel-order/post) e confirma o resultado antes de liberar outra tentativa. Uma aprovação simultânea é preservada; uma falha de rede mantém a tentativa disponível para consulta. Consultas atrasadas não reabrem sessões encerradas. O pedido de teste **#1006** foi gerado com Pix e cancelado pela interface, com o cancelamento confirmado no Mercado Pago e no banco. A navegação de volta ao carrinho e retorno ao checkout também foi conferida, incluindo consulta com atraso simulado.
+
+Ao retornar ao checkout com uma tentativa ativa, a tela oferece **continuar o pagamento** ou **cancelar e escolher outro pagamento**. O QR Code só reaparece após a escolha de continuar o Pix. O botão **Atualizar status do pagamento** consulta o resultado, sem criar outra cobrança; ele aparece apenas em pagamentos pendentes ou em processamento. Os avisos têm intervalo de 12 px e a etapa seguinte começa 24 px abaixo.
 
 Para receber pagamentos reais, ainda é necessário ativar e revisar as credenciais e configurações de produção, homologar os meios de pagamento e ajustar deliberadamente o bloqueio de produção no backend. Os segredos locais ficam no arquivo ignorado `supabase/functions/.env.local`; não devem ser versionados nem enviados pelo chat.
 

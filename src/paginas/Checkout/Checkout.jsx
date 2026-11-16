@@ -5,6 +5,7 @@ import { useCotacaoFrete } from '../../carrinho/useCotacaoFrete'
 import { cepValido } from '../../servicos/freteModelo'
 import { supabase } from '../../servicos/supabase'
 import { operarCheckout } from '../../servicos/checkout'
+import { etapaDoCheckout } from '../../servicos/checkoutModelo'
 import CartaoMercadoPago from './CartaoMercadoPago'
 import './Checkout.css'
 
@@ -25,6 +26,7 @@ export default function Checkout({ aoNavegar }) {
   const [cpf, setCpf] = useState('')
   const [telefone, setTelefone] = useState('')
   const [pagamento, setPagamento] = useState(null)
+  const [retomada, setRetomada] = useState(null)
   const [recuperacaoVerificada, setRecuperacaoVerificada] = useState(null)
   const [tentativaRecuperacao, setTentativaRecuperacao] = useState(0)
   const [tokenPreparadoPara, setTokenPreparadoPara] = useState(null)
@@ -45,6 +47,8 @@ export default function Checkout({ aoNavegar }) {
   const sessaoAtual = atual?.sessaoId
   const estadoAtual = atual?.estado
   const recuperando = !authVerificada || Boolean(conta && recuperacaoVerificada !== conta.id)
+  const etapa = etapaDoCheckout(atual, recuperando, Boolean(retomada && retomada.dono === conta?.id && retomada.sessaoId === atual?.sessaoId))
+  const podeTrocar = atual && (atual.estado === 'preparado' || (atual.metodo === 'pix' && ['pendente', 'processando'].includes(atual.estado) && atual.orderId))
 
   useEffect(() => {
     let ativo = true
@@ -65,7 +69,10 @@ export default function Checkout({ aoNavegar }) {
       if (finais.includes(dados.estado)) {
         try { sessionStorage.removeItem(armazenamento) } catch { /* A recuperação não depende da limpeza local. */ }
         setPagamento(null)
-      } else setPagamento({ ...dados, dono: conta.id })
+      } else {
+        setPagamento({ ...dados, dono: conta.id })
+        setRetomada({ sessaoId: dados.sessaoId, dono: conta.id })
+      }
       setRecuperacaoVerificada(conta.id)
     }).catch(erro => {
       if (!ativo) return
@@ -126,7 +133,7 @@ export default function Checkout({ aoNavegar }) {
     })
   }
   function novaTentativa() {
-    versaoPagamento.current++; chave.current = null; token.current = null; setTokenPreparadoPara(null); setPagamento(null); setMensagem('')
+    versaoPagamento.current++; chave.current = null; token.current = null; setTokenPreparadoPara(null); setPagamento(null); setRetomada(null); setMensagem('')
     try { sessionStorage.removeItem(armazenamento) } catch { /* Não bloquear a interface. */ }
   }
   async function trocarPagamento() {
@@ -158,11 +165,23 @@ export default function Checkout({ aoNavegar }) {
       </aside>
       <section className="card-checkout" aria-busy={ocupado || recuperando}>
         <h1 className="script-title">Checkout</h1><p className="card-subtitle">Finalize sua encomenda com carinho e segurança.</p>
+        <div className="checkout-avisos">
         {config?.ambiente === 'sandbox' && <p className="frete-aviso" role="status">Ambiente de teste. Use somente os dados de teste do Mercado Pago.</p>}
         {config && !config.configurado && <p className="frete-aviso" role="status">O pagamento está temporariamente indisponível. Tente novamente em instantes.</p>}
         {authVerificada && !conta && <p className="frete-aviso">Para finalizar, <Link to="/login" state={{ origem: '/checkout' }}>entre na sua conta</Link>.</p>}
         {mensagem && <p className="frete-aviso" role="alert">{mensagem}</p>}
-        {recuperando ? <div className="checkout-recuperacao" role="status"><p>{mensagem ? 'Verifique a tentativa anterior antes de iniciar outro pagamento.' : 'Verificando sua conta e possíveis pagamentos em andamento…'}</p>{mensagem && conta && <button type="button" className="btn-calcular-frete" onClick={() => { setMensagem(''); setTentativaRecuperacao(valor => valor + 1) }}>Verificar tentativa anterior</button>}</div> : !atual ? <form ref={formulario} onSubmit={preparar}>
+        </div>
+        <div className="checkout-etapa">
+        {etapa === 'verificando' ? <div className="checkout-recuperacao" role="status"><p>{mensagem ? 'Verifique a tentativa anterior antes de iniciar outro pagamento.' : 'Verificando sua conta e possíveis pagamentos em andamento…'}</p>{mensagem && conta && <button type="button" className="btn-calcular-frete" onClick={() => { setMensagem(''); setTentativaRecuperacao(valor => valor + 1) }}>Verificar tentativa anterior</button>}</div> : etapa === 'retomada' ? <section className="checkout-retomada" aria-labelledby="checkout-retomada-titulo">
+          <h2 id="checkout-retomada-titulo" className="secao-titulo">Você tem um pagamento em andamento</h2>
+          <p className="frete-detalhe">{atual.metodo === 'pix' && atual.estado === 'pendente' ? 'O Pix anterior continua aguardando pagamento. Escolha como deseja continuar.' : 'Uma tentativa anterior está registrada. Você pode retomá-la para conferir os próximos passos.'}</p>
+          <div className="checkout-acoes">
+            <button type="button" className="btn-pagar" disabled={ocupado} onClick={() => setRetomada(null)}>{atual.metodo === 'pix' && atual.estado === 'pendente' ? 'Continuar com este Pix' : 'Continuar pagamento'}</button>
+            {podeTrocar && <button type="button" className="btn-trocar-pagamento" disabled={ocupado} onClick={trocarPagamento}>{ocupado ? 'Aguarde…' : atual.estado === 'preparado' ? 'Alterar dados ou forma de pagamento' : 'Cancelar Pix e escolher outro pagamento'}</button>}
+            <button type="button" className="btn-editar-carrinho" disabled={ocupado} onClick={() => navegar('/carrinho')}>Voltar ao carrinho</button>
+          </div>
+          {podeTrocar && atual.estado !== 'preparado' && <p className="frete-detalhe">Para trocar a forma de pagamento, primeiro confirmaremos o cancelamento deste Pix.</p>}
+        </section> : etapa === 'formulario' ? <form ref={formulario} onSubmit={preparar}>
           {!itens.length && <p className="frete-aviso">Seu carrinho está vazio. <Link to="/catalogo">Escolher peças</Link></p>}
           <fieldset disabled={ocupado} className="checkout-campos"><legend className="secao-titulo">Forma de pagamento</legend><div className="opcoes-pagamento">
             {[['cartao_credito', 'Cartão de crédito', 'Consulte as parcelas disponíveis.'], ['pix', 'Pix', 'QR Code e copia e cola nesta tela.']].map(([valor, nome, descricao]) => <label className={'opcao-card ' + (metodo === valor ? 'ativo' : '')} key={valor}><input type="radio" name="forma-pagamento" value={valor} checked={metodo === valor} onChange={() => setMetodo(valor)} /><span><strong>{nome}</strong><small>{descricao}</small></span></label>)}
@@ -191,12 +210,13 @@ export default function Checkout({ aoNavegar }) {
           {atual.estado === 'pendente' && atual.pixCopiaCola && <><label htmlFor="checkout-pix-codigo">Pix copia e cola</label><textarea id="checkout-pix-codigo" readOnly value={atual.pixCopiaCola} rows={3} /><button type="button" className="btn-editar-carrinho" onClick={() => executar(async () => { await navigator.clipboard.writeText(atual.pixCopiaCola); setMensagem('Código Pix copiado.') })}>Copiar código Pix</button><p className="frete-detalhe">Pague no aplicativo do banco. A confirmação aparecerá aqui. Validade: {new Date(atual.expiraEm).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}.</p></>}
           {atual.estado === 'processando' && <p className="frete-detalhe">Sua tentativa está registrada. Consulte o resultado antes de iniciar outro pagamento.</p>}
           {atual.estado === 'processando' && !atual.orderId && (atual.metodo === 'pix' || tokenPreparadoPara === atual.sessaoId) && <button type="button" className="btn-pagar" disabled={ocupado} onClick={pagar}>Retomar a mesma tentativa</button>}
-          {(atual.estado === 'preparado' || (atual.metodo === 'pix' && ['pendente', 'processando'].includes(atual.estado) && atual.orderId)) && <div className="checkout-trocar"><button type="button" className="btn-trocar-pagamento" disabled={ocupado} onClick={trocarPagamento}>{ocupado ? 'Aguarde…' : atual.estado === 'preparado' ? 'Alterar dados ou forma de pagamento' : 'Cancelar Pix e trocar forma de pagamento'}</button>{atual.estado !== 'preparado' && <p className="frete-detalhe">O Pix atual será cancelado antes de liberar uma nova tentativa.</p>}</div>}
+          {podeTrocar && <div className="checkout-trocar"><button type="button" className="btn-trocar-pagamento" disabled={ocupado} onClick={trocarPagamento}>{ocupado ? 'Aguarde…' : atual.estado === 'preparado' ? 'Alterar dados ou forma de pagamento' : 'Cancelar Pix e trocar forma de pagamento'}</button>{atual.estado !== 'preparado' && <p className="frete-detalhe">O Pix atual será cancelado antes de liberar uma nova tentativa.</p>}</div>}
           {atual.estado === 'aprovado' && <p className="frete-detalhe">Recebemos a confirmação do pagamento. Sua encomenda está registrada com o número acima.</p>}
           {finais.includes(atual.estado) && <button type="button" className="btn-pagar" disabled={ocupado} onClick={novaTentativa}>Voltar ao checkout</button>}
-          {['pendente', 'processando', 'preparado'].includes(atual.estado) && <button type="button" className="btn-calcular-frete checkout-consultar" disabled={ocupado} onClick={() => executar(async () => guardar(await operarCheckout('consultar', { sessaoId: atual.sessaoId })))}>Consultar pagamento</button>}
+          {['pendente', 'processando'].includes(atual.estado) && <div className="checkout-status"><p className="frete-detalhe">A confirmação é verificada automaticamente. Você também pode atualizar o status agora.</p><button type="button" className="btn-calcular-frete checkout-consultar" disabled={ocupado} onClick={() => executar(async () => guardar(await operarCheckout('consultar', { sessaoId: atual.sessaoId })))}>Atualizar status do pagamento</button></div>}
           {atual.estado === 'aprovado' && <button type="button" className="btn-editar-carrinho" onClick={() => navegar('/catalogo')}>Voltar ao catálogo</button>}
         </section>}
+        </div>
       </section>
     </div>
   </div>

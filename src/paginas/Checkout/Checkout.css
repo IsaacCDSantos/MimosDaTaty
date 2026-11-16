@@ -17,13 +17,21 @@
 .checkout-container .form-group select { min-width: 0; width: 100%; padding: 12px; border: 1px solid #e6bfa3; border-radius: 16px; background: #fdf3ea; color: #333; }
 .checkout-container .form-group input { min-width: 0; width: 100%; box-sizing: border-box; }
 .checkout-container .checkout-pix-qr { display: block; width: min(100%, 260px); margin: 8px auto; }
-.checkout-container .checkout-resultado { display: flex; flex-direction: column; gap: 16px; margin-top: 24px; }
+.checkout-container .checkout-resultado { display: flex; flex-direction: column; gap: 16px; margin: 0; }
 .checkout-container .checkout-resultado > :is(h2, p) { margin: 0; }
 .checkout-container .checkout-resultado textarea { display: block; width: 100%; box-sizing: border-box; margin: 0; border: 1px solid #e6bfa3; border-radius: 12px; padding: 12px; resize: vertical; overflow-wrap: anywhere; }
 .checkout-container .checkout-consultar { display: block; width: 100%; margin-top: 16px; }
 .checkout-container .checkout-resultado .checkout-consultar { margin-top: 0; }
-.checkout-container .card-checkout > .frete-aviso { margin: 0 0 16px; }
-.checkout-container .card-checkout > form { margin-top: 24px; }
+.checkout-container .checkout-avisos { display: grid; gap: 12px; margin-top: 24px; }
+.checkout-container .checkout-avisos:empty { display: none; }
+.checkout-container .checkout-avisos > .frete-aviso { margin: 0; }
+.checkout-container .checkout-etapa { padding-top: 24px; }
+.checkout-container .checkout-etapa > form > .frete-aviso { margin: 0 0 20px; }
+.checkout-container .checkout-retomada { display: grid; gap: 18px; }
+.checkout-container .checkout-retomada > :is(h2, p) { margin: 0; }
+.checkout-container .checkout-acoes { display: grid; gap: 12px; }
+.checkout-container .checkout-status { display: grid; gap: 12px; padding-top: 4px; }
+.checkout-container .checkout-status p { margin: 0; }
 .checkout-container .checkout-recuperacao { display: grid; gap: 16px; padding-block: 8px; color: #7d4d42; line-height: 1.6; }
 .checkout-container .checkout-recuperacao p { margin: 0; }
 .checkout-container .checkout-trocar { display: grid; gap: 10px; padding-top: 20px; border-top: 1px solid #eadad2; }

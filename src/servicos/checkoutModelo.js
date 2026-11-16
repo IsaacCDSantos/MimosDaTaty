@@ -1,3 +1,10 @@
+export function etapaDoCheckout(pagamento, recuperando, aguardandoEscolha) {
+  if (recuperando) return 'verificando'
+  if (!pagamento) return 'formulario'
+  if (aguardandoEscolha && ['preparado', 'pendente', 'processando'].includes(pagamento.estado)) return 'retomada'
+  return 'pagamento'
+}
+
 export function criarServicoCheckout(cliente) {
   return async (acao, dados = {}) => {
     if (!cliente) throw new Error('O pagamento está indisponível no momento.')

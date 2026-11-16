@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { validarPreparacao, montarOrder, resumirOrder, respostaPublica, ErroCheckout } from '../supabase/functions/checkout/modelo.js'
 import { criarHandlerCheckout } from '../supabase/functions/checkout/handler.js'
 import { assinaturaValida, criarHandlerWebhook } from '../supabase/functions/mercado-pago-webhook/handler.js'
-import { criarServicoCheckout } from '../src/servicos/checkoutModelo.js'
+import { criarServicoCheckout, etapaDoCheckout } from '../src/servicos/checkoutModelo.js'
 
 const id = '07df660c-e4b1-470b-9fef-b30e5ebcb7fe'
 const pedido = { cliente_email_snapshot: 'comprador@example.test', cliente_cpf_snapshot: '12345678909', entrega_uf: 'CE' }
@@ -211,4 +211,19 @@ test('recuperação inclui somente dados de formulário da própria sessão, sem
   const resultado = respostaPublica({ ...sessao, requisicao: { ...dados, token: 'nao-expor', segredo: 'nao-expor' } })
   assert.deepEqual(resultado.formulario, { endereco: dados.endereco, cpf: dados.cpf, telefone: dados.telefone })
   assert.doesNotMatch(JSON.stringify(resultado), /nao-expor|chave/)
+})
+
+test('retorno ao checkout exige escolha explícita antes de abrir Pix ou retomar pagamento', () => {
+  for (const estado of ['preparado', 'pendente', 'processando']) {
+    const pagamento = { ...sessaoPix, estado }
+    assert.equal(etapaDoCheckout(pagamento, true, true), 'verificando')
+    assert.equal(etapaDoCheckout(pagamento, false, true), 'retomada')
+    assert.equal(etapaDoCheckout(pagamento, false, false), 'pagamento')
+  }
+  assert.equal(etapaDoCheckout(null, true, false), 'verificando')
+  assert.equal(etapaDoCheckout(null, false, false), 'formulario')
+})
+
+test('aprovação recebida durante a escolha de retomada mostra confirmação diretamente', () => {
+  assert.equal(etapaDoCheckout({ ...sessaoPix, estado: 'aprovado' }, false, true), 'pagamento')
 })
