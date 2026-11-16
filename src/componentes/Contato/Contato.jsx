@@ -48,7 +48,7 @@ function Contato() {
         <header className="contato-cabecalho">
           <div className="contato-tagline animar-rolagem animar-esquerda">
             <span className="linha-tagline" aria-hidden="true" />
-            <span>MIMOS DA TATY · CONTATO & ENCOMENDAS</span>
+            <span>MIMOS DA TATI · CONTATO & ENCOMENDAS</span>
           </div>
 
           <h2 id="contato-titulo" className="contato-titulo animar-rolagem animar-cima atraso-1">
@@ -174,7 +174,7 @@ function Contato() {
 
         <footer className="contato-rodape animar-rolagem animar-cima atraso-1">
           <p className="contato-copyright">
-            © 2026 Mimos da Taty · Feito à mão com carinho · Todos os direitos reservados.
+            © 2026 Mimos da Tati · Feito à mão com carinho · Todos os direitos reservados.
           </p>
         </footer>
 

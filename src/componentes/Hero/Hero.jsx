@@ -5,16 +5,16 @@ import imagemHero from '../../assets/imagens/banner-principal.png'
 function Hero() {
   return (
     <section className="hero-container" id="inicio">
-      <img src={imagemHero} alt="Mimos da Taty Hero" className="hero-img" />
+      <img src={imagemHero} alt="Mimos da Tati Hero" className="hero-img" />
 
       <div className="hero-overlay" aria-hidden="true" />
       <div className="hero-overlay"></div>
 
       <div className="hero-texto">
-        <h1>Mimos da taty</h1>
+        <h1>Mimos da Tati</h1>
 
         <p>
-          Bem-vindos ao ateliê Mimos da Taty, onde cada ponto é feito com amor. Criamos enxovais de bebê exclusivos em crochê e bordado, incluindo mantas, toalhas, trocadores, fraldas de boca e de passeio, kits de berço e itens de organização, para transformar o quarto do seu pequeno em um lugar ainda mais especial.
+          Bem-vindos ao ateliê Mimos da Tati, onde cada ponto é feito com amor. Criamos enxovais de bebê exclusivos em crochê e bordado, incluindo mantas, toalhas, trocadores, fraldas de boca e de passeio, kits de berço e itens de organização, para transformar o quarto do seu pequeno em um lugar ainda mais especial.
         </p>
 
         <div className="hero-botao-container">

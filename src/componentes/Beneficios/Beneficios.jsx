@@ -13,7 +13,7 @@ const listaBeneficios = [
 
 function Beneficios() {
   return (
-    <section className="beneficios" id="beneficios" aria-label="Diferenciais da Mimos da Taty">
+    <section className="beneficios" id="beneficios" aria-label="Diferenciais da Mimos da Tati">
       <div className="card-beneficios">
         {listaBeneficios.map(({ icone, titulo, descricao }) => (
           <article className="item-beneficio" key={titulo}>

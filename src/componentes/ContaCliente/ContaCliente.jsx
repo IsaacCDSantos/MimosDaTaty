@@ -8,8 +8,8 @@ function CabecalhoConta() {
   return (
     <header className="meu-perfil-header">
       <div className="meu-perfil-header-conteudo">
-        <Link className="meu-perfil-logo" to="/" aria-label="Mimos da Taty — início">
-          <img src={logo} alt="Mimos da Taty" width="38" height="38" />
+        <Link className="meu-perfil-logo" to="/" aria-label="Mimos da Tati — início">
+          <img src={logo} alt="Mimos da Tati" width="38" height="38" />
         </Link>
         <nav className="meu-perfil-header-nav" aria-label="Navegação da loja">
           <Link to="/">Início</Link><Link to="/catalogo">Catálogo</Link>
@@ -38,7 +38,7 @@ export function EstruturaContaCliente({
         <p className="meu-perfil-descricao">{descricao}</p>
         {children}
       </main>
-      <footer className="meu-perfil-footer">Feito à mão, pensado para você. · Mimos da Taty</footer>
+      <footer className="meu-perfil-footer">Feito à mão, pensado para você. · Mimos da Tati</footer>
     </div>
   )
 }

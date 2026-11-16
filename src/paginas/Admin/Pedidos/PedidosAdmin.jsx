@@ -252,7 +252,7 @@ export default function PedidosAdmin({ pedidosIniciais = [] }) {
           <nav className="orders-admin-pagination" aria-label="Paginação dos pedidos"><output aria-live="polite">{filtrados.length ? `Mostrando ${primeiroIndice + 1}–${Math.min(primeiroIndice + POR_PAGINA, filtrados.length)} de ${filtrados.length} ${filtrados.length === 1 ? 'pedido' : 'pedidos'}` : '0 pedidos encontrados'}</output><div><button type="button" aria-label="Página anterior" disabled={paginaAtual <= 1} onClick={() => setPagina(paginaAtual - 1)}><IconePedido nome="esquerda" /> Anterior</button><span>Página {paginaAtual} de {totalPaginas}</span><button type="button" aria-label="Próxima página" disabled={paginaAtual >= totalPaginas} onClick={() => setPagina(paginaAtual + 1)}>Próxima <IconePedido nome="direita" /></button></div></nav>
         </main>
       </div>
-      <footer className="orders-admin-footer"><div className="orders-admin-border" aria-hidden="true" /><p><span aria-hidden="true" />Gestão de pedidos do Ateliê Mimos da Taty</p></footer>
+      <footer className="orders-admin-footer"><div className="orders-admin-border" aria-hidden="true" /><p><span aria-hidden="true" />Gestão de pedidos do Ateliê Mimos da Tati</p></footer>
       <dialog className="orders-admin-dialog" ref={dialogo} aria-labelledby="orders-admin-detail-title" onClose={fecharDetalhes}>{selecionado && <DetalhesPedido key={selecionado.id} pedido={selecionado} aoAlterar={atualizarPedido} aoFechar={() => dialogo.current.close()} />}</dialog>
     </div>
   )

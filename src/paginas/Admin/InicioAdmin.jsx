@@ -71,7 +71,7 @@ export default function InicioAdmin() {
         <header className="admin-home-header">
           <div className="admin-home-brand">
             <img src={logoMimos} alt="" width="64" height="49" />
-            <span><span className="admin-home-wordmark">Mimos da Taty</span><span className="admin-home-brand-caption">GESTÃO DO ATELIÊ</span></span>
+            <span><span className="admin-home-wordmark">Mimos da Tati</span><span className="admin-home-brand-caption">GESTÃO DO ATELIÊ</span></span>
           </div>
           <div className="admin-home-header-actions">
             <span className="admin-home-account"><span className="admin-home-dot" /><IconeAdmin nome="escudo" /> Admin: {nome}</span>
@@ -140,7 +140,7 @@ export default function InicioAdmin() {
           </div>
         </main>
 
-        <footer className="admin-home-footer"><p><span className="admin-home-dot" /> Painel Administrativo Mimos da Taty</p><p>Ateliê Mimos da Taty · Bordados &amp; Crochê</p></footer>
+        <footer className="admin-home-footer"><p><span className="admin-home-dot" /> Painel Administrativo Mimos da Tati</p><p>Ateliê Mimos da Tati · Bordados &amp; Crochê</p></footer>
       </div>
       <dialog ref={dialogoProduto} className="admin-home-product-dialog" aria-labelledby="admin-home-product-title" onClose={() => setProdutoSelecionado(null)}>
         {produtoSelecionado && <><button className="admin-home-dialog-close" type="button" aria-label="Fechar detalhes da peça" onClick={() => dialogoProduto.current.close()} autoFocus><IconeAdmin nome="fechar" /></button><img src={produtoSelecionado.imagem} alt={produtoSelecionado.nome} width="240" height="240" /><div className="admin-home-dialog-copy"><span className="admin-home-kicker">{produtoSelecionado.categoria}</span><h2 id="admin-home-product-title">{produtoSelecionado.nome}</h2><p>{produtoSelecionado.descricao}</p><strong>{formatoMoeda.format(produtoSelecionado.preco)}</strong><dl><div><dt>Categoria</dt><dd>{produtoSelecionado.categoria}</dd></div><div><dt>Prazo de entrega</dt><dd>{produtoSelecionado.prazo}</dd></div><div><dt>Na vitrine</dt><dd>{produtoSelecionado.visivel ? 'Visível' : 'Oculta'}</dd></div></dl></div></>}
