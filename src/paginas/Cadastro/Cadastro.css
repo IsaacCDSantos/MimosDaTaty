@@ -10,7 +10,10 @@
   padding: 44px 28px;
   background: radial-gradient(circle at 50% 25%, #fbe5ce, #f7d7b7 70%);
   color: var(--cadastro-marrom);
-  font-family: "Inter", sans-serif;
+  font-family: var(--familia-corpo);
+  font-size: var(--fonte-corpo);
+  line-height: var(--entrelinha-corpo);
+  font-weight: var(--peso-corpo);
 }
 
 .cadastro-page *,
@@ -38,23 +41,23 @@
   border: 1px solid #f4cbb6;
   border-radius: 999px;
   background: #fdf1e6;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: var(--fonte-etiqueta);
+  font-weight: var(--peso-destaque);
 }
 .cadastro-page h1 {
   margin: 0 0 8px;
   color: var(--cadastro-marrom);
-  font-family: "Great Vibes", cursive;
-  font-size: 58px;
-  font-weight: 400;
-  line-height: 1.15;
+  font-family: var(--familia-destaque);
+  font-size: var(--fonte-titulo-pagina);
+  font-weight: var(--peso-corpo);
+  line-height: var(--entrelinha-titulo);
   text-align: center;
 }
 .cadastro-intro {
   margin: 0 0 24px;
   color: #6e7787;
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: var(--fonte-corpo);
+  line-height: var(--entrelinha-corpo);
   text-align: center;
 }
 .cadastro-form fieldset {
@@ -69,8 +72,8 @@
 .cadastro-campo label {
   display: block;
   margin-bottom: 7px;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--fonte-rotulo);
+  font-weight: var(--peso-destaque);
 }
 .cadastro-campo input {
   width: 100%;
@@ -80,8 +83,8 @@
   border-radius: 24px;
   background: #fdf4eb;
   color: #4a3b34;
-  font: inherit;
-  font-size: 15px;
+  font: var(--peso-corpo) var(--fonte-corpo)/var(--entrelinha-corpo) var(--familia-corpo);
+  font-size: var(--fonte-corpo);
 }
 .cadastro-campo input::placeholder {
   color: #757b87;
@@ -95,14 +98,14 @@
 .cadastro-ajuda {
   margin: 6px 0 0;
   color: #6e7787;
-  font-size: 12px;
+  font-size: var(--fonte-apoio);
 }
 .cadastro-mostrar {
   display: flex;
   align-items: center;
   gap: 8px;
   width: fit-content;
-  font-size: 13px;
+  font-size: var(--fonte-botao);
   cursor: pointer;
 }
 .cadastro-mostrar input {
@@ -124,8 +127,8 @@
   background: var(--cadastro-rosa);
   color: #fff;
   box-shadow: 0 8px 18px #d992946b;
-  font: inherit;
-  font-weight: 600;
+  font: var(--peso-botao) var(--fonte-botao)/var(--entrelinha-corpo) var(--familia-corpo);
+  font-weight: var(--peso-botao);
   text-align: center;
   text-decoration: none;
   cursor: pointer;
@@ -144,19 +147,19 @@
 .cadastro-login {
   margin: 22px 0 0;
   color: #6e7787;
-  font-size: 13.5px;
+  font-size: var(--fonte-corpo);
   text-align: center;
 }
 .cadastro-login a {
   color: var(--cadastro-marrom);
-  font-weight: 600;
+  font-weight: var(--peso-botao);
   text-underline-offset: 3px;
 }
 .cadastro-voltar {
   display: block;
   margin-top: 16px;
   color: var(--cadastro-marrom);
-  font-size: 13px;
+  font-size: var(--fonte-botao);
   text-align: center;
   text-decoration: none;
 }
@@ -173,14 +176,14 @@
   border: 1px solid #f2c4b0;
   border-radius: 14px;
   background: #fdf1e6;
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: var(--fonte-corpo);
+  line-height: var(--entrelinha-corpo);
   text-align: center;
   overflow-wrap: anywhere;
 }
 .cadastro-sucesso h2 {
   margin: 0 0 12px;
-  font-size: 22px;
+  font-size: var(--fonte-titulo-card);
 }
 .cadastro-sucesso p {
   margin: 0;
@@ -214,8 +217,8 @@
   gap: 12px;
   padding: 34px;
   color: #fffaf5;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--fonte-etiqueta);
+  font-weight: var(--peso-destaque);
 }
 .cadastro-marca img {
   width: 52px;
@@ -240,15 +243,15 @@
 }
 .cadastro-mensagem h2 {
   margin: 0 0 8px;
-  font-family: "Great Vibes", cursive;
-  font-size: 38px;
-  font-weight: 400;
-  line-height: 1.15;
+  font-family: var(--familia-destaque);
+  font-size: var(--fonte-titulo-secao);
+  font-weight: var(--peso-corpo);
+  line-height: var(--entrelinha-titulo);
 }
 .cadastro-mensagem p {
   margin: 0;
-  font-size: 13.5px;
-  line-height: 1.55;
+  font-size: var(--fonte-corpo);
+  line-height: var(--entrelinha-corpo);
 }
 .cadastro-sr-only {
   position: absolute;
@@ -269,7 +272,7 @@
   }
   .cadastro-visual {
     grid-row: 1;
-    height: 195px;
+    height: 280px;
     border-radius: 28px 28px 20px 20px;
   }
   .cadastro-marca {
@@ -285,12 +288,6 @@
     left: 20px;
     padding: 12px 16px;
   }
-  .cadastro-mensagem h2 {
-    font-size: 28px;
-  }
-  .cadastro-mensagem p {
-    font-size: 12px;
-  }
 }
 
 @media (max-width: 480px) {
@@ -300,17 +297,13 @@
   .cadastro-conteudo {
     padding: 26px 20px;
   }
-  .cadastro-page h1 {
-    font-size: 52px;
-  }
 }
 
 @media (max-width: 600px) {
   .cadastro-page { padding: 20px 16px; }
   .cadastro-card { min-width: 0; border-radius: 24px; }
   .cadastro-conteudo { min-width: 0; padding: 26px 20px; }
-  .cadastro-page h1 { font-size: clamp(42px, 12vw, 52px); }
-  .cadastro-campo input { min-width: 0; font-size: 16px; }
+  .cadastro-campo input { min-width: 0; }
   .cadastro-mostrar { min-height: 44px; padding-block: 8px; }
   .cadastro-mostrar input { flex: 0 0 20px; width: 20px; height: 20px; }
   .cadastro-login a, .cadastro-voltar { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px 4px; }

@@ -5,6 +5,9 @@
   min-height: 100vh;
   padding: 30px 20px;
   font-family: 'Inter', sans-serif;
+  font-size: var(--fonte-corpo);
+  line-height: var(--entrelinha-corpo);
+  font-weight: var(--peso-corpo);
 }
 
 .checkout-container .checkout-campos,
@@ -56,10 +59,11 @@
   border: none;
   border-radius: 20px;
   padding: 8px 25px;
-  font-weight: 600;
-  font-size: 0.95rem;
+  font-weight: var(--peso-botao);
+  font-size: var(--fonte-menu);
   cursor: pointer;
   box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+  line-height: var(--entrelinha-corpo);
 }
 
 .checkout-content {
@@ -73,15 +77,17 @@
 .script-title {
   font-family: 'Great Vibes', cursive;
   color: #8C5A4F;
-  font-size: 2.8rem;
+  font-size: var(--fonte-titulo-pagina);
   margin: 0 0 5px 0;
-  font-weight: normal;
+  font-weight: var(--peso-corpo);
+  line-height: var(--entrelinha-titulo);
 }
 
 .card-subtitle {
   color: #7A7A7A;
-  font-size: 0.85rem;
+  font-size: var(--fonte-corpo);
   margin-bottom: 25px;
+  line-height: var(--entrelinha-corpo);
 }
 
 /* Card Resumo */
@@ -107,7 +113,8 @@
   display: flex;
   justify-content: space-between;
   color: #7A7A7A;
-  font-size: 0.95rem;
+  font-size: var(--fonte-corpo);
+  line-height: var(--entrelinha-corpo);
 }
 
 .resumo-linha strong {
@@ -122,19 +129,22 @@
 }
 
 .resumo-total span {
-  font-size: 1.2rem;
-  font-weight: bold;
+  font-size: var(--fonte-subtitulo);
+  font-weight: var(--peso-destaque);
   color: #8C5A4F;
+  line-height: var(--entrelinha-corpo);
 }
 
 .resumo-total .valor-total {
-  font-size: 1.5rem;
+  font-size: var(--fonte-total);
+  line-height: var(--entrelinha-corpo);
 }
 
 .total-obs {
-  font-size: 0.75rem;
+  font-size: var(--fonte-apoio);
   color: #A0A0A0;
   margin-bottom: 100px;
+  line-height: var(--entrelinha-corpo);
 }
 
 .btn-editar-carrinho {
@@ -144,9 +154,10 @@
   border-radius: 20px;
   padding: 12px;
   width: 100%;
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: var(--fonte-botao);
+  font-weight: var(--peso-botao);
   cursor: pointer;
+  line-height: var(--entrelinha-corpo);
 }
 
 /* Card Checkout */
@@ -164,9 +175,10 @@
 
 .secao-titulo {
   color: #8C5A4F;
-  font-size: 1.05rem;
-  font-weight: 700;
+  font-size: var(--fonte-subtitulo);
+  font-weight: var(--peso-destaque);
   margin-bottom: 12px;
+  line-height: var(--entrelinha-titulo);
 }
 
 .opcoes-pagamento {
@@ -194,26 +206,30 @@
 .opcao-card strong {
   color: #8C5A4F;
   display: block;
-  font-size: 0.95rem;
+  font-size: var(--fonte-rotulo);
+  line-height: var(--entrelinha-corpo);
 }
 
 .opcao-card p {
   margin: 3px 0 0 0;
-  font-size: 0.75rem;
+  font-size: var(--fonte-apoio);
   color: #7A7A7A;
+  line-height: var(--entrelinha-corpo);
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
   margin-bottom: 12px;
+  min-width: 0;
 }
 
 .form-group label {
-  font-size: 0.8rem;
+  font-size: var(--fonte-rotulo);
   color: #8C5A4F;
-  font-weight: 600;
+  font-weight: var(--peso-destaque);
   margin-bottom: 5px;
+  line-height: var(--entrelinha-corpo);
 }
 
 .form-group input {
@@ -222,8 +238,12 @@
   border-radius: 20px;
   padding: 10px 15px;
   outline: none;
-  font-size: 0.9rem;
+  font-size: var(--fonte-corpo);
   color: #333;
+  line-height: var(--entrelinha-corpo);
+  width: 100%;
+  min-width: 0;
+  font-family: inherit;
 }
 
 .form-row {
@@ -238,10 +258,11 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.8rem;
+  font-size: var(--fonte-rotulo);
   color: #7A7A7A;
   margin-top: 10px;
   cursor: pointer;
+  line-height: var(--entrelinha-corpo);
 }
 
 .checkbox-salvar input {
@@ -253,12 +274,13 @@
   border: 1px solid #E6BFA3;
   border-radius: 20px;
   padding: 12px 18px;
-  font-size: 0.85rem;
+  font-size: var(--fonte-apoio);
   color: #8C5A4F;
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 20px;
+  line-height: var(--entrelinha-corpo);
 }
 
 .checkmark {
@@ -280,16 +302,18 @@
   border-radius: 20px;
   padding: 14px;
   width: 100%;
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: var(--fonte-botao);
+  font-weight: var(--peso-botao);
   cursor: pointer;
+  line-height: var(--entrelinha-corpo);
 }
 
 .rodape-obs {
   text-align: center;
-  font-size: 0.75rem;
+  font-size: var(--fonte-apoio);
   color: #A0A0A0;
   margin-top: 10px;
+  line-height: var(--entrelinha-corpo);
 }
 
 .btn-trocar-tela {
@@ -301,12 +325,13 @@
   border-radius: 12px;
   cursor: pointer;
   width: 100%;
-  font-size: 0.85rem;
+  font-size: var(--fonte-botao);
+  line-height: var(--entrelinha-corpo);
 }
 /* Cotação de envio */
 .checkout-container .checkout-pagamento-previa { border:0; padding:0; margin:0; min-width:0; opacity:.65; }
-.checkout-container .checkout-pagamento-previa > legend { font-size:.85rem; color:#8c5a4f; margin-bottom:12px; }
-.checkout-container .frete-detalhe { font-size:.82rem; line-height:1.6; color:#6e625d; }
+.checkout-container .checkout-pagamento-previa > legend { font-size:var(--fonte-apoio); color:#8c5a4f; margin-bottom:12px; line-height: var(--entrelinha-corpo); }
+.checkout-container .frete-detalhe { font-size:var(--fonte-apoio); line-height:var(--entrelinha-corpo); color:#6e625d; }
 .checkout-container .btn-calcular-frete {
   display: inline-flex;
   align-items: center;
@@ -321,13 +346,13 @@
   background: #ba6a7a;
   color: #fff;
   font-family: inherit;
-  font-size: .9rem;
-  font-weight: 600;
-  line-height: 1.4;
+  font-size: var(--fonte-botao);
+  font-weight: var(--peso-botao);
+  line-height: var(--entrelinha-corpo);
   cursor: pointer;
 }
 .checkout-container .btn-calcular-frete:disabled, .checkout-container .btn-pagar:disabled { opacity:.55; cursor:not-allowed; }
-.checkout-container .frete-aviso { background:#fff3e7; color:#7d4d42; padding:12px; border-radius:12px; font-size:.85rem; line-height:1.6; }
+.checkout-container .frete-aviso { background:#fff3e7; color:#7d4d42; padding:12px; border-radius:12px; font-size:var(--fonte-corpo); line-height:var(--entrelinha-corpo); }
 .checkout-container .frete-opcoes { min-width:0; padding:0; margin:20px 0 0; border:0; }
 .checkout-container .frete-opcoes legend { margin-bottom:10px; color:#8c5a4f; }
 .checkout-container .frete-opcao { display:flex; align-items:center; gap:12px; padding:15px 10px; border-bottom:1px solid #eadad2; cursor:pointer; }
@@ -337,7 +362,7 @@
 .checkout-container .card-resumo, .checkout-container .card-checkout { box-sizing:border-box; min-width:0; }
 .checkout-container button:focus-visible, .checkout-container input:focus-visible, .checkout-container a:focus-visible { outline:2px solid #8c5a4f; outline-offset:3px; }
 @media(max-width:800px) { .checkout-container .checkout-content { flex-direction:column; } .checkout-container .card-resumo, .checkout-container .card-checkout { width:100%; } .checkout-container .checkout-nav { flex-wrap:wrap; gap:8px; } .checkout-container .form-row { flex-wrap:wrap; } .checkout-container .form-group { min-width:110px; } }
-@media(max-width:420px) { .checkout-container { padding:16px 10px; } .checkout-container .card-checkout, .checkout-container .card-resumo { padding:22px 16px; } .checkout-container .frete-opcao { gap:8px; font-size:.85rem; } }
+@media(max-width:420px) { .checkout-container { padding:16px 10px; } .checkout-container .card-checkout, .checkout-container .card-resumo { padding:22px 16px; } .checkout-container .frete-opcao { gap:8px; font-size:var(--fonte-corpo); line-height: var(--entrelinha-corpo); } }
 
 .checkout-container .resumo-total { gap:8px; flex-wrap:wrap; }
 .checkout-container .valor-total { white-space:nowrap; }
@@ -350,41 +375,51 @@
   .checkout-container .card-checkout { width: 100%; padding: 24px; min-width: 0; }
   .checkout-container .checkout-nav { flex-wrap: wrap; gap: 10px; margin-bottom: 22px; }
   .checkout-container .checkout-nav .nav-btn { min-height: 44px; padding: 10px 18px; }
-  .checkout-container .total-obs { margin-bottom: 22px; font-size: 13px; line-height: 1.5; }
-  .checkout-container .card-subtitle { font-size: 14px; line-height: 1.5; margin-bottom: 20px; }
+  .checkout-container .total-obs { margin-bottom: 22px; font-size: var(--fonte-apoio); line-height: var(--entrelinha-corpo); }
+  .checkout-container .card-subtitle { font-size: var(--fonte-corpo); line-height: var(--entrelinha-corpo); margin-bottom: 20px; }
   .checkout-container .form-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 12px; }
   .checkout-container .form-row > .form-group:first-child { grid-column: 1 / -1; }
   .checkout-container .form-group { min-width: 0; }
-  .checkout-container .form-group label { font-size: 14px; }
-  .checkout-container .form-group input { width: 100%; min-width: 0; min-height: 44px; font-size: 16px; padding: 11px 12px; }
+  .checkout-container .form-group label { font-size: var(--fonte-rotulo); line-height: var(--entrelinha-corpo); }
+  .checkout-container .form-group input { width: 100%; min-width: 0; min-height: 44px; font-size: var(--fonte-corpo); padding: 11px 12px; line-height: var(--entrelinha-corpo); }
   .checkout-container :is(.btn-editar-carrinho, .btn-calcular-frete, .btn-pagar) { min-height: 44px; }
-  .checkout-container .checkbox-salvar { min-height: 44px; font-size: 14px; line-height: 1.5; }
+  .checkout-container .checkbox-salvar { min-height: 44px; font-size: var(--fonte-rotulo); line-height: var(--entrelinha-corpo); }
   .checkout-container .checkbox-salvar input { width: 20px; height: 20px; flex-shrink: 0; }
   .checkout-container .opcao-card { min-width: 0; }
   .checkout-container .opcao-card > div { min-width: 0; }
-  .checkout-container .opcao-card p { font-size: 13px; line-height: 1.5; }
+  .checkout-container .opcao-card p { font-size: var(--fonte-apoio); line-height: var(--entrelinha-corpo); }
   .checkout-container .frete-opcao { min-height: 56px; }
   .checkout-container .frete-opcao input { width: 20px; height: 20px; margin: 0; }
   .checkout-container .frete-opcao strong { overflow-wrap: anywhere; }
   .checkout-container .frete-aviso { overflow-wrap: anywhere; }
   .checkout-container .frete-aviso a { display: inline-block; padding-block: 6px; }
-  .checkout-container .banner-seguranca { align-items: flex-start; line-height: 1.5; }
+  .checkout-container .banner-seguranca { align-items: flex-start; line-height: var(--entrelinha-corpo); }
   .checkout-container .checkmark { flex: 0 0 20px; width: 20px; height: 20px; }
 }
 
 @media (max-width: 640px) {
   .checkout-container .checkout-nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .checkout-container .checkout-nav .nav-btn { width: 100%; padding: 10px; font-size: 14px; }
+  .checkout-container .checkout-nav .nav-btn { width: 100%; padding: 10px; font-size: var(--fonte-menu); line-height: var(--entrelinha-corpo); }
   .checkout-container .card-resumo,
   .checkout-container .card-checkout { padding: 22px 18px; }
   .checkout-container .opcoes-pagamento { flex-direction: column; gap: 10px; }
   .checkout-container .opcao-card { padding: 14px; }
   .checkout-container .opcao-card input { width: 20px; height: 20px; flex-shrink: 0; }
-  .checkout-container .btn-calcular-frete { width: 100%; font-size: 16px; }
+  .checkout-container .btn-calcular-frete { width: 100%; font-size: var(--fonte-botao); line-height: var(--entrelinha-corpo); }
   .checkout-container .frete-opcao { display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; gap: 10px; padding: 14px 0; }
-  .checkout-container .frete-opcao > strong { white-space: nowrap; font-size: 14px; }
-  .checkout-container .frete-opcoes legend { max-width: 100%; font-size: 14px; line-height: 1.5; }
-  .checkout-container .resumo-linha { gap: 16px; font-size: 14px; }
+  .checkout-container .frete-opcao > strong { white-space: nowrap; font-size: var(--fonte-preco); line-height: var(--entrelinha-corpo); }
+  .checkout-container .frete-opcoes legend { max-width: 100%; font-size: var(--fonte-rotulo); line-height: var(--entrelinha-corpo); }
+  .checkout-container .resumo-linha { gap: 16px; font-size: var(--fonte-corpo); line-height: var(--entrelinha-corpo); }
   .checkout-container .resumo-linha strong { text-align: right; min-width: 0; }
-  .checkout-container .script-title { font-size: 2.6rem; line-height: 1.2; }
+  .checkout-container .script-title { font-size: var(--fonte-titulo-pagina); line-height: var(--entrelinha-titulo); }
 }
+
+/* O título principal e o resumo têm níveis diferentes na hierarquia. */
+
+.checkout-container .card-resumo .script-title { font-size:var(--fonte-titulo-secao); line-height:var(--entrelinha-titulo); }
+
+.checkout-container .frete-opcao small { font-size:var(--fonte-apoio); line-height:var(--entrelinha-corpo); }
+
+.checkout-container button { font-family:inherit; }
+
+.checkout-container :is(.resumo-linha strong, .opcao-card strong, .frete-opcao strong, .frete-opcoes legend) { font-weight:var(--peso-destaque); }
