@@ -1,26 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import { supabase } from '../../servicos/supabase'
 import { servicoPerfil } from '../../servicos/perfil'
-import ContaHeader from '../../componentes/Header/ContaHeader'
-import logo from '../../assets/imagens/logo-mimos-da-taty.png'
-import './MeuPerfil.css'
+import { EstruturaContaCliente as EstruturaPerfil, MenuContaCliente } from '../../componentes/ContaCliente/ContaCliente'
 
 const UFS = 'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO'.split(' ')
 const camposEndereco = { destinatario: '', cep: '', logradouro: '', numero: '', complemento: '', bairro: '', cidade: '', uf: '' }
 function formatarCep(valor) { const n = String(valor || '').replace(/\D/g, '').slice(0, 8); return n.length > 5 ? n.slice(0, 5) + '-' + n.slice(5) : n }
 function formatarTelefone(valor) { const n = String(valor || '').replace(/\D/g, '').slice(0, 11); if (n.length < 3) return n; const corte = n.length > 10 ? 7 : 6; return '(' + n.slice(0, 2) + ') ' + n.slice(2, corte) + (n.length > corte ? '-' + n.slice(corte) : '') }
-function iniciais(nome) { const partes = nome.trim().split(/\s+/).filter(Boolean); return (partes.length ? partes.slice(0, 2).map(parte => Array.from(parte)[0]).join('') : 'MC').toLocaleUpperCase('pt-BR') }
-function CabecalhoPerfil() {
- const navigate = useNavigate()
- return <header className="meu-perfil-header"><div className="meu-perfil-header-conteudo">
-  <Link className="meu-perfil-logo" to="/" aria-label="Mimos da Taty — início"><img src={logo} alt="Mimos da Taty" width="38" height="38" /></Link>
-  <nav className="meu-perfil-header-nav" aria-label="Navegação da loja"><Link to="/">Início</Link><Link to="/catalogo">Catálogo</Link><Link to="/#sobre">Sobre nós</Link><Link to="/#contato">Contato</Link></nav>
-  <div className="meu-perfil-header-acoes"><ContaHeader onEntrar={() => navigate('/login')} /><Link to="/carrinho">Carrinho</Link></div>
- </div></header>
-}
-function EstruturaPerfil({ children }) { return <div className="meu-perfil-page"><CabecalhoPerfil /><main className="meu-perfil-main"><p className="meu-perfil-eyebrow">MINHA CONTA</p><h1>Meu perfil</h1><p className="meu-perfil-descricao">Seus dados, com todo o cuidado que você merece.</p>{children}</main><footer className="meu-perfil-footer">Feito à mão, pensado para você. · Mimos da Taty</footer></div> }
-
 function ConteudoPerfil({ usuarioId }) {
  const [dados, setDados] = useState(null)
  const [formulario, setFormulario] = useState({ nomeCompleto: '', telefone: '' })
@@ -69,10 +56,9 @@ function ConteudoPerfil({ usuarioId }) {
  }
  if (carregando) return <EstruturaPerfil><div className="meu-perfil-estado" role="status">Carregando seus dados...</div></EstruturaPerfil>
  if (erroCarga || !dados) return <EstruturaPerfil><section className="meu-perfil-estado" role="alert"><p>{erroCarga || 'Seu perfil não está disponível.'}</p><button className="meu-perfil-primario" onClick={recarregar}>Tentar novamente</button><Link to="/login">Entrar na conta</Link></section></EstruturaPerfil>
- const nome = dados.nomeCompleto || 'Minha conta'
  const endereco = dados.endereco
  return <EstruturaPerfil><div className="meu-perfil-conteudo">
-  <aside className="meu-perfil-sidebar" aria-label="Minha conta"><div className="meu-perfil-sidebar-topo"><div className="meu-perfil-iniciais" aria-hidden="true">{iniciais(nome)}</div><div><h2>{dados.nomeCompleto ? 'Olá, ' + dados.nomeCompleto.split(/\s+/)[0] + '!' : 'Olá!'}</h2><p>Seu cantinho no ateliê</p></div></div><nav className="meu-perfil-sidebar-nav" aria-label="Navegação da conta"><Link to="/meu-perfil" aria-current="page">Perfil</Link><button type="button" disabled title="Disponível em breve" aria-label="Meus pedidos — disponível em breve">Meus pedidos</button><Link className="meu-perfil-voltar" to="/">Voltar à loja</Link></nav></aside>
+  <MenuContaCliente nomeCompleto={dados.nomeCompleto} />
   <section className="meu-perfil-card" aria-labelledby="perfil-dados-titulo"><h2 id="perfil-dados-titulo">Dados pessoais</h2>
    <form id="meu-perfil-form" onSubmit={salvarDados}><fieldset className="meu-perfil-campos" disabled={bloqueado}>
     <div className="meu-perfil-campo"><label htmlFor="perfil-nome">Nome completo</label><input id="perfil-nome" name="nomeCompleto" autoComplete="name" minLength={2} maxLength={120} required value={formulario.nomeCompleto} onChange={atualizarCampo} placeholder="Seu nome completo" /></div>

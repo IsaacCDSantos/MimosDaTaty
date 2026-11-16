@@ -94,7 +94,7 @@ function MenuConta({ usuario }) {
           </div>
           <ul aria-label="Opções da conta">
             <li><Link to="/meu-perfil" onClick={() => setAberto(false)}>Perfil</Link></li>
-            <li><button type="button" disabled>Meus pedidos <span>Em breve</span></button></li>
+            <li><Link to="/meus-pedidos" onClick={() => setAberto(false)}>Meus pedidos</Link></li>
             <li><button type="button" className="conta-header-sair" disabled={saindo} onClick={sair}>{saindo ? 'Saindo…' : 'Sair'}</button></li>
           </ul>
           {erro && <p className="conta-header-erro" role="alert">{erro}</p>}
