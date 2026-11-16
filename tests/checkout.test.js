@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { validarPreparacao, montarOrder, resumirOrder, ErroCheckout } from '../supabase/functions/checkout/modelo.js'
+import { validarPreparacao, montarOrder, resumirOrder, respostaPublica, ErroCheckout } from '../supabase/functions/checkout/modelo.js'
 import { criarHandlerCheckout } from '../supabase/functions/checkout/handler.js'
 import { assinaturaValida, criarHandlerWebhook } from '../supabase/functions/mercado-pago-webhook/handler.js'
 import { criarServicoCheckout } from '../src/servicos/checkoutModelo.js'
@@ -111,4 +111,104 @@ test('webhook valida HMAC, recusa segredo incorreto e consulta API em vez de con
 test('cliente não deixa o chamador sobrescrever a ação e esconde mensagens internas do gateway', async () => {
   const servico = criarServicoCheckout({ functions: { invoke: async (nome, { body }) => { assert.equal(nome, 'checkout'); assert.equal(body.acao, 'consultar'); return { data: { estado: 'pendente' } } } } })
   assert.equal((await servico('consultar', { acao: 'pagar' })).estado, 'pendente')
+})
+
+test('troca antes de gerar pagamento cancela só a preparação, sem acessar o provedor', async () => {
+  let cancelamentos = 0
+  const h = criarHandlerCheckout(deps({ buscarSessao: async () => sessao, cancelar: async valor => { assert.equal(valor, id); cancelamentos++ }, consultarOrder: async () => assert.fail() }))
+  const r = await h(req({ acao: 'cancelar', sessaoId: id }))
+  assert.equal(r.status, 200)
+  assert.equal((await r.json()).cancelado, true)
+  assert.equal(cancelamentos, 1)
+})
+
+const sessaoPix = { ...sessao, estado: 'pendente', order_id: order.id }
+function orderNoEstado(estado, detalhe) {
+  return { ...order, status: estado, transactions: { payments: [{ ...order.transactions.payments[0], status: estado, status_detail: detalhe }] } }
+}
+
+test('troca de Pix confirma cancelamento no provedor antes de liberar outro pagamento', async () => {
+  let atual = order
+  const chamadas = []
+  const h = criarHandlerCheckout(deps({
+    buscarSessao: async () => sessaoPix,
+    consultarOrder: async () => { chamadas.push('consultar'); return atual },
+    cancelarOrder: async (orderId, chave) => { assert.equal(orderId, order.id); assert.equal(chave, id + '-cancelar'); chamadas.push('cancelar-provedor'); atual = orderNoEstado('canceled', 'canceled_transaction') },
+    aplicar: async (s, resumo) => { chamadas.push('persistir'); return { ...s, estado: resumo.estado, resposta: resumo } },
+    cancelar: async () => { chamadas.push('encerrar-pedido') },
+  }))
+  const r = await h(req({ acao: 'cancelar', sessaoId: id }))
+  const resultado = await r.json()
+  assert.equal(r.status, 200)
+  assert.equal(resultado.estado, 'cancelado')
+  assert.equal(resultado.cancelado, true)
+  assert.deepEqual(chamadas, ['consultar', 'cancelar-provedor', 'consultar', 'persistir', 'encerrar-pedido'])
+})
+
+test('Pix pago antes ou durante o cancelamento preserva aprovação e bloqueia nova tentativa', async () => {
+  for (const pagoAntes of [true, false]) {
+    let consultas = 0
+    let cancelamentos = 0
+    const h = criarHandlerCheckout(deps({
+      buscarSessao: async () => sessaoPix,
+      consultarOrder: async () => (++consultas > 1 || pagoAntes) ? orderNoEstado('processed', 'accredited') : order,
+      cancelarOrder: async () => { cancelamentos++; throw new Error('Já pago') },
+      cancelar: async () => assert.fail('Pedido aprovado não pode ser cancelado'),
+    }))
+    const r = await h(req({ acao: 'cancelar', sessaoId: id }))
+    const resultado = await r.json()
+    assert.equal(resultado.estado, 'aprovado')
+    assert.equal(resultado.cancelado, false)
+    assert.equal(cancelamentos, pagoAntes ? 0 : 1)
+  }
+})
+
+test('cancelamento com timeout só libera a troca se a consulta confirmar o encerramento', async () => {
+  for (const confirmado of [true, false]) {
+    let consultas = 0
+    let finalizados = 0
+    const h = criarHandlerCheckout(deps({
+      buscarSessao: async () => sessaoPix,
+      consultarOrder: async () => ++consultas > 1 && confirmado ? orderNoEstado('canceled', 'canceled_transaction') : order,
+      cancelarOrder: async () => { throw new Error('Timeout') },
+      cancelar: async () => { finalizados++ },
+    }))
+    const r = await h(req({ acao: 'cancelar', sessaoId: id }))
+    assert.equal(r.status, confirmado ? 200 : 503)
+    assert.equal(finalizados, confirmado ? 1 : 0)
+    if (!confirmado) assert.equal((await r.json()).codigo, 'CANCELAMENTO_PENDENTE')
+  }
+})
+
+test('criação incerta e cartão em processamento não são liberados por cancelamento local', async () => {
+  for (const s of [{ ...sessao, estado: 'processando' }, { ...sessaoPix, metodo: 'cartao_credito' }]) {
+    const h = criarHandlerCheckout(deps({ buscarSessao: async () => s, cancelar: async () => assert.fail(), cancelarOrder: async () => assert.fail() }))
+    assert.equal((await h(req({ acao: 'cancelar', sessaoId: id }))).status, 409)
+  }
+})
+
+test('consulta concluída depois de um webhook aprovado não encerra pedido aprovado', async () => {
+  const h = criarHandlerCheckout(deps({
+    buscarSessao: async () => sessaoPix,
+    consultarOrder: async () => orderNoEstado('canceled', 'canceled_transaction'),
+    aplicar: async s => ({ ...s, estado: 'aprovado', resposta: { estado: 'aprovado' } }),
+    cancelar: async () => assert.fail(),
+  }))
+  const r = await h(req({ acao: 'cancelar', sessaoId: id }))
+  assert.equal((await r.json()).cancelado, false)
+})
+
+test('repetição de cancelamento encerrado é segura e não cancela pagamento aprovado', async () => {
+  for (const estado of ['cancelado', 'aprovado']) {
+    let finalizados = 0
+    const h = criarHandlerCheckout(deps({ buscarSessao: async () => ({ ...sessaoPix, estado }), cancelar: async () => { finalizados++ }, consultarOrder: async () => assert.fail() }))
+    for (let i = 0; i < 2; i++) assert.equal((await (await h(req({ acao: 'cancelar', sessaoId: id }))).json()).cancelado, estado === 'cancelado')
+    assert.equal(finalizados, estado === 'cancelado' ? 2 : 0)
+  }
+})
+
+test('recuperação inclui somente dados de formulário da própria sessão, sem token ou chave', () => {
+  const resultado = respostaPublica({ ...sessao, requisicao: { ...dados, token: 'nao-expor', segredo: 'nao-expor' } })
+  assert.deepEqual(resultado.formulario, { endereco: dados.endereco, cpf: dados.cpf, telefone: dados.telefone })
+  assert.doesNotMatch(JSON.stringify(resultado), /nao-expor|chave/)
 })

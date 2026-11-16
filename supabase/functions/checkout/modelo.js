@@ -71,5 +71,6 @@ export function resumirOrder(order, sessao, sellerId) {
   return { estado, orderId: order.id, statusProvedor: status, detalheProvedor: pagamento.status_detail || order.status_detail || '', pixCopiaCola: sessao.metodo === 'pix' && typeof metodo.qr_code === 'string' ? metodo.qr_code.slice(0, 5000) : null, pixQrBase64: sessao.metodo === 'pix' && typeof metodo.qr_code_base64 === 'string' && /^[A-Za-z0-9+/=]+$/.test(metodo.qr_code_base64) ? metodo.qr_code_base64.slice(0, 200000) : null }
 }
 export function respostaPublica(sessao) {
-  return { sessaoId: sessao.id, pedidoId: sessao.pedido_id, numeroPedido: sessao.numero_pedido, estado: sessao.estado, metodo: sessao.metodo, totalCentavos: sessao.total_centavos, expiraEm: sessao.expira_em, ambiente: sessao.ambiente, ...(sessao.resposta || {}) }
+  const dados = sessao.requisicao
+  return { sessaoId: sessao.id, pedidoId: sessao.pedido_id, numeroPedido: sessao.numero_pedido, estado: sessao.estado, metodo: sessao.metodo, totalCentavos: sessao.total_centavos, expiraEm: sessao.expira_em, ambiente: sessao.ambiente, ...(dados ? { formulario: { endereco: dados.endereco, cpf: dados.cpf, telefone: dados.telefone } } : {}), ...(sessao.resposta || {}) }
 }

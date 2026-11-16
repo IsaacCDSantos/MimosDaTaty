@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom'
 import { useCarrinho } from '../../carrinho/useCarrinho'
-import MiniaturaProduto from '../Catalogo/MiniaturaProduto'
 import './Carrinho.css'
 function Carrinho({ aoNavegar }) {
  const navigate = useNavigate()
@@ -64,11 +63,12 @@ function Carrinho({ aoNavegar }) {
               {itens.map((item) => (
                 <article key={item.id} className="carrinho-item-card">
                   <div className="carrinho-item-imagem-container">
-                    <MiniaturaProduto
+                    <img
                       src={item.imagem}
                       alt={item.nome}
                       className="carrinho-item-imagem"
-                      larguraAlvo={360}
+                      loading="lazy"
+                      decoding="async"
                     />
                   </div>
 

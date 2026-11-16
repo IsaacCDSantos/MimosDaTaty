@@ -21,6 +21,34 @@ export async function lerJson(req, limite = 24000) {
   } catch (erro) { if (erro instanceof ErroCheckout) throw erro; throw new ErroCheckout(400, 'JSON_INVALIDO', 'Não foi possível ler os dados enviados.') }
   finally { leitor.releaseLock() }
 }
+async function cancelarPagamento(deps, sessao) {
+  if (sessao.estado === 'preparado' && !sessao.order_id) {
+    await deps.cancelar(sessao.id)
+    return json({ ...respostaPublica({ ...sessao, estado: 'cancelado' }), cancelado: true })
+  }
+  if (['cancelado', 'recusado', 'expirado', 'estornado'].includes(sessao.estado)) {
+    if (sessao.estado === 'cancelado') await deps.cancelar(sessao.id)
+    return json({ ...respostaPublica(sessao), cancelado: true })
+  }
+  if (sessao.estado === 'aprovado') return json({ ...respostaPublica(sessao), cancelado: false })
+  // Uma criação sem resposta pode já ter cobrado. Nunca liberar outra tentativa nesse caso.
+  if (!sessao.order_id || sessao.metodo !== 'pix') throw new ErroCheckout(409, 'CANCELAMENTO_PENDENTE', 'O pagamento está em verificação. Consulte o resultado antes de trocar a forma de pagamento.')
+  let order = await deps.consultarOrder(sessao.order_id)
+  let resumo = resumirOrder(order, sessao, deps.config.sellerId)
+  if (resumo.estado === 'pendente' && ['action_required', 'created'].includes(order.status)) {
+    let falha
+    try { await deps.cancelarOrder(sessao.order_id, sessao.id + '-cancelar') }
+    catch (erro) { falha = erro }
+    // Mesmo após timeout ou pagamento simultâneo, consultar o resultado autoritativo.
+    order = await deps.consultarOrder(sessao.order_id)
+    resumo = resumirOrder(order, sessao, deps.config.sellerId)
+    if (resumo.estado === 'pendente' && falha) throw new ErroCheckout(503, 'CANCELAMENTO_PENDENTE', 'Não foi possível confirmar o cancelamento do Pix. Tente novamente antes de trocar a forma de pagamento.')
+  }
+  const atualizada = await deps.aplicar(sessao, resumo)
+  const encerrado = ['cancelado', 'recusado', 'expirado', 'estornado'].includes(atualizada.estado)
+  if (atualizada.estado === 'cancelado') await deps.cancelar(sessao.id)
+  return json({ ...respostaPublica(atualizada), cancelado: encerrado })
+}
 export function criarHandlerCheckout(deps) {
   return async req => {
     if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors })
@@ -56,7 +84,7 @@ export function criarHandlerCheckout(deps) {
       if (!uuidValido(body.sessaoId)) throw new ErroCheckout(400, 'SESSAO_INVALIDA', 'A tentativa de pagamento é inválida.')
       const sessao = await deps.buscarSessao(body.sessaoId, usuario.id)
       if (!sessao) throw new ErroCheckout(404, 'NAO_ENCONTRADO', 'Pagamento não encontrado para esta conta.')
-      if (body.acao === 'cancelar') { await deps.cancelar(sessao.id); return json({ cancelado: true }) }
+      if (body.acao === 'cancelar') return await cancelarPagamento(deps, sessao)
       if (body.acao === 'consultar') {
         if (sessao.order_id && !['estornado'].includes(sessao.estado)) {
           const order = await deps.consultarOrder(sessao.order_id)

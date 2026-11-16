@@ -23,10 +23,10 @@ function canonico(valor: unknown): string {
   if (valor && typeof valor === 'object') return '{' + Object.entries(valor).sort(([a], [b]) => a.localeCompare(b)).map(([k,v]) => JSON.stringify(k)+':'+canonico(v)).join(',') + '}'
   return JSON.stringify(valor)
 }
-async function mercadoPago(caminho: string, payload?: unknown, chave?: string) {
+async function mercadoPago(caminho: string, payload?: unknown, chave?: string, metodo = payload ? 'POST' : 'GET') {
   let resposta: Response
   try {
-    resposta = await fetch('https://api.mercadopago.com' + caminho, { method: payload ? 'POST' : 'GET', headers: { Authorization: 'Bearer ' + config.token, 'Content-Type': 'application/json', ...(chave ? { 'X-Idempotency-Key': chave } : {}) }, ...(payload ? { body: JSON.stringify(payload) } : {}), signal: AbortSignal.timeout(15000) })
+    resposta = await fetch('https://api.mercadopago.com' + caminho, { method: metodo, headers: { Authorization: 'Bearer ' + config.token, 'Content-Type': 'application/json', ...(chave ? { 'X-Idempotency-Key': chave } : {}) }, ...(payload ? { body: JSON.stringify(payload) } : {}), signal: AbortSignal.timeout(15000) })
   } catch { throw new ErroCheckout(503, 'CONFIRMACAO_PENDENTE', 'O pagamento está em verificação. Consulte o resultado antes de tentar novamente.') }
   if (!resposta.ok) {
     const definitiva = resposta.status === 400 || resposta.status === 422
@@ -70,4 +70,5 @@ export const dependencias = {
   },
   criarOrder: (payload: unknown, chave: string) => mercadoPago('/v1/orders', payload, chave),
   consultarOrder: (id: string) => mercadoPago('/v1/orders/' + encodeURIComponent(id)),
+  cancelarOrder: (id: string, chave: string) => mercadoPago('/v1/orders/' + encodeURIComponent(id) + '/cancel', undefined, chave, 'POST'),
 }
