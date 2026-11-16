@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { servicoPecas, supabaseConfigurado } from '../../servicos/catalogo';
+import { servicoVisualizacoes } from '../../servicos/destaques';
+import { criarRegistradorAbertura } from './registrarAbertura';
 import './Catalogo.css';
 import { useCarrinho } from '../../carrinho/useCarrinho';
 import DetalhePeca from './DetalhePeca';
@@ -10,6 +12,10 @@ import {
   PRODUTOS_INICIAIS,
   slugDaPeca,
 } from './produtosCatalogo';
+
+const registrarAbertura = criarRegistradorAbertura({
+  registrar: (pecaId, aberturaId) => servicoVisualizacoes.registrarVisualizacao(pecaId, aberturaId),
+});
 
 function produtoDaPeca(peca) {
   const preco = Number(peca.preco);
@@ -41,6 +47,7 @@ function limiteDaPeca(produto) {
 export default function Catalogo() {
   const { pecaSlug } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [produtos, setProdutos] = useState(() =>
     supabaseConfigurado ? [] : PRODUTOS_INICIAIS
@@ -115,6 +122,14 @@ export default function Catalogo() {
   }, [situacao, pecaSlug, produtoSelecionado, navigate]);
 
   const produtoIdSelecionado = produtoSelecionado?.id ?? null;
+
+  useEffect(() => {
+    void registrarAbertura({
+      pecaId: produtoIdSelecionado,
+      navegacao: location.key,
+      habilitado: supabaseConfigurado && situacao === 'pronto',
+    });
+  }, [produtoIdSelecionado, location.key, situacao]);
 
   useEffect(() => {
     if (!produtoIdSelecionado) return;

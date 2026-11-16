@@ -6,6 +6,8 @@ import imagemAtelie from '../../assets/imagens/banner-principal.png'
 import bonequinha from '../../assets/imagens/06-bonequinha.png'
 import { useCatalogoAdmin } from './CatalogoAdmin/useCatalogoAdmin'
 import { calcularIndicadoresCatalogo } from './indicadoresCatalogo'
+import PainelDestaques from './Destaques/PainelDestaques'
+import { useDestaquesCatalogo } from './Destaques/useDestaquesCatalogo'
 import './InicioAdmin.css'
 
 function IconeAdmin({ nome, ...props }) {
@@ -37,7 +39,8 @@ export default function InicioAdmin() {
   const erroIndicadores = catalogo?.erro || (!catalogo ? 'Não foi possível carregar os indicadores do catálogo.' : '')
   const confirmacaoPendente = Boolean(catalogo?.confirmacaoPendente)
   const resumo = !carregandoIndicadores && !erroIndicadores && !confirmacaoPendente ? calcularIndicadoresCatalogo(catalogo.pecas) : null
-  const destaques = []
+  const estadoDestaques = useDestaquesCatalogo({ limite: 3 })
+  const inicio = '/admin'
   const categorias = catalogo?.categorias ? catalogo.categorias.filter(item => item.ativa).map(item => item.nome) : []
 
   async function sairDaConta() {
@@ -130,8 +133,9 @@ export default function InicioAdmin() {
             </section>
 
             <section className="admin-home-panel admin-home-highlights" aria-labelledby="admin-home-highlights-title">
-              <div className="admin-home-section-heading"><div><h2 id="admin-home-highlights-title">Destaques do Catálogo</h2><p>Peças mais procuradas pelas clientes na vitrine</p></div><Link className="admin-home-view-all" to="/catalogo" aria-label="Ver todas as peças na vitrine">Ver todas <IconeAdmin nome="seta" /></Link></div>
-              {destaques.length ? <ul className="admin-home-product-list">{destaques.map(produto => <li key={produto.id}><button className="admin-home-product" type="button" onClick={() => setProdutoSelecionado(produto)} aria-label={`Ver detalhes de ${produto.nome}`}><img src={produto.imagem} alt={produto.nome} width="96" height="96" loading="lazy" decoding="async" /><span className="admin-home-product-info"><strong>{produto.nome}</strong><span className="admin-home-product-description">{produto.descricao}</span><span className="admin-home-product-price">{formatoMoeda.format(produto.preco)}</span></span><span className={`admin-home-badge ${produto.visivel ? 'admin-home-badge--visible' : 'admin-home-badge--hidden'}`}>{produto.visivel ? 'Visível' : 'Oculta'}</span></button></li>)}</ul> : <p className="admin-home-empty">Os destaques aparecerão aqui quando o catálogo estiver disponível.</p>}
+              <div className="admin-home-section-heading"><div><h2 id="admin-home-highlights-title">Destaques do Catálogo</h2><p>Peças mais procuradas pelas clientes na vitrine</p></div><Link className="admin-home-view-all" to={inicio + '/destaques'} state={{ origemDestaques: inicio }} aria-label="Ver todos os produtos mais vistos">Ver todas <IconeAdmin nome="seta" /></Link></div>
+              <button className="admin-home-highlights-refresh" type="button" disabled={estadoDestaques.carregando} onClick={estadoDestaques.recarregar}>Atualizar destaques</button>
+              <PainelDestaques {...estadoDestaques} compacto aoSelecionar={setProdutoSelecionado} />
             </section>
           </div>
         </main>

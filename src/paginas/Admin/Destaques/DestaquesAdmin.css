@@ -1,0 +1,49 @@
+.destaques-admin-page {
+  background: #f6d6b5;
+  color: #8c4d36;
+  font: var(--fonte-corpo, 16px)/1.55 Inter, Arial, sans-serif;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: clamp(20px, 4vw, 56px) 24px;
+}
+.destaques-admin-page *, .destaques-admin-page { box-sizing: border-box; }
+.destaques-admin-main { background: #fff; border-radius: 28px; margin: 0 auto; max-width: 1100px; min-width: 0; padding: clamp(20px, 4vw, 48px); }
+.destaques-admin-topo { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 28px; }
+.destaques-admin-topo > div { min-width: 0; }
+.destaques-admin-topo h1 { font: 400 var(--fonte-titulo-pagina, clamp(42px, 5.6vw, 76px))/1.2 'Great Vibes', cursive; margin: 0 0 12px; overflow-wrap: anywhere; }
+.destaques-admin-topo p { color: #a18677; font-size: var(--fonte-corpo, 16px); margin: 0; }
+.destaques-admin-voltar { align-items: center; background: #faebdf; border: 1px solid #e6c7b8; border-radius: 50%; color: #a34527; cursor: pointer; display: flex; flex: none; justify-content: center; height: 44px; width: 44px; margin-top: 8px; }
+.destaques-admin-voltar svg { height: 24px; width: 24px; }
+.destaques-catalogo-lista { display: grid; gap: 16px; list-style: none; margin: 0; padding: 0; }
+.destaques-catalogo-lista > li { min-width: 0; }
+.destaques-catalogo-card { align-items: center; background: #faebdd; border: 0; border-radius: 20px; color: #8c4d36; display: grid; font-family: Inter, Arial, sans-serif; gap: 16px; grid-template-columns: 32px 96px minmax(0, 1fr) auto; min-width: 0; padding: 20px; text-align: left; width: 100%; }
+.destaques-catalogo-posicao { align-items: center; background: #fff; border-radius: 50%; color: #b9636d; display: flex; font: 600 var(--fonte-apoio, 14px)/1 Inter, Arial, sans-serif; height: 32px; justify-content: center; width: 32px; }
+.destaques-catalogo-imagem { border-radius: 14px; height: 96px; object-fit: cover; width: 96px; }
+.destaques-catalogo-info { min-width: 0; }
+.destaques-catalogo-card .destaques-catalogo-info :is(h2, h3) { font: 400 var(--fonte-titulo-card, 22px)/1.3 Alice, Georgia, serif; margin: 0 0 6px; overflow-wrap: anywhere; }
+.destaques-catalogo-info .destaques-catalogo-descricao { color: #a18677; font: 400 var(--fonte-apoio, 14px)/1.5 Inter, Arial, sans-serif; margin: 0 0 8px; overflow-wrap: anywhere; }
+.destaques-catalogo-preco { font: 600 var(--fonte-corpo, 16px)/1.4 Inter, Arial, sans-serif; margin: 0; }
+.destaques-catalogo-visualizacoes { background: #fff; border-radius: 16px; color: #b9636d; font: 600 var(--fonte-apoio, 14px)/1.5 Inter, Arial, sans-serif; max-width: 100%; overflow-wrap: anywhere; padding: 6px 12px; }
+.destaques-catalogo-card--interativo { cursor: pointer; }
+.destaques-catalogo-card--interativo:hover { background: #f7e1d3; }
+.destaques-catalogo-mensagem { background: #fcf7f1; border-radius: 20px; color: #a18677; font: 400 var(--fonte-corpo, 16px)/1.55 Inter, Arial, sans-serif; margin: 0; overflow-wrap: anywhere; padding: 24px; }
+.destaques-catalogo-mensagem p { margin: 0; }
+.destaques-catalogo-recarregar { background: #fff; border: 1px solid #e6c7b8; border-radius: 12px; color: #a34527; cursor: pointer; font: 600 var(--fonte-botao, 16px)/1.4 Inter, Arial, sans-serif; margin-top: 12px; min-height: 44px; padding: 10px 14px; }
+.destaques-admin-voltar:focus-visible, .destaques-catalogo-card--interativo:focus-visible, .destaques-catalogo-recarregar:focus-visible { outline: 2px solid #a34527; outline-offset: 3px; }
+.destaques-catalogo-lista--compacta .destaques-catalogo-card { gap: 12px; grid-template-columns: 24px 64px minmax(0, 1fr); padding: 16px; }
+.destaques-catalogo-lista--compacta .destaques-catalogo-posicao { height: 24px; width: 24px; }
+.destaques-catalogo-lista--compacta .destaques-catalogo-imagem { height: 64px; width: 64px; }
+.destaques-catalogo-lista--compacta .destaques-catalogo-info :is(h2, h3) { font-size: var(--fonte-corpo, 16px); }
+.destaques-catalogo-lista--compacta .destaques-catalogo-descricao { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+.destaques-catalogo-lista--compacta .destaques-catalogo-visualizacoes { grid-column: 3; justify-self: start; }
+@media (max-width: 640px) {
+  .destaques-admin-page { padding: 16px 12px; }
+  .destaques-admin-main { border-radius: 22px; padding: 20px 16px; }
+  .destaques-admin-topo { gap: 12px; margin-bottom: 24px; }
+  .destaques-admin-topo h1 { font-size: var(--fonte-titulo-pagina, clamp(36px, 10vw, 52px)); }
+  .destaques-catalogo-card { gap: 12px; grid-template-columns: 24px 64px minmax(0, 1fr); padding: 16px; }
+  .destaques-catalogo-posicao { height: 24px; width: 24px; }
+  .destaques-catalogo-imagem { height: 64px; width: 64px; }
+  .destaques-catalogo-visualizacoes { grid-column: 2 / -1; justify-self: start; }
+  .destaques-catalogo-lista--compacta .destaques-catalogo-visualizacoes { grid-column: 2 / -1; }
+}
