@@ -175,6 +175,7 @@ Sistema Web Mimos da Taty/
 
 - **Conventional Commits:** uso de prefixos semânticos (`feat:`, `fix:`, `docs:`, `refactor:`, `style:`).
 - **Branches e Pull Requests:** isolamento de alterações em branches temáticas antes da integração na `main`.
+- **Responsividade mobile:** consulte a matriz e o roteiro de validação em [docs/validacao-mobile.md](docs/validacao-mobile.md).
 
 ---
 

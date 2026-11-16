@@ -7,3 +7,8 @@ body {
   background-color: #f7d7b7;
   overflow-x: hidden;
 }
+
+@media (max-width: 820px) {
+  html { scroll-padding-top:160px; }
+  body { overflow-x:clip; }
+}

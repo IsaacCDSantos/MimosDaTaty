@@ -307,3 +307,50 @@
 
 .checkout-container .resumo-total { gap:8px; flex-wrap:wrap; }
 .checkout-container .valor-total { white-space:nowrap; }
+
+/* O resumo e os formulários usam toda a largura útil em telas estreitas. */
+@media (max-width: 820px) {
+  .checkout-container { padding: 22px 16px 36px; }
+  .checkout-container .checkout-content { flex-direction: column; align-items: stretch; gap: 20px; }
+  .checkout-container .card-resumo,
+  .checkout-container .card-checkout { width: 100%; padding: 24px; min-width: 0; }
+  .checkout-container .checkout-nav { flex-wrap: wrap; gap: 10px; margin-bottom: 22px; }
+  .checkout-container .checkout-nav .nav-btn { min-height: 44px; padding: 10px 18px; }
+  .checkout-container .total-obs { margin-bottom: 22px; font-size: 13px; line-height: 1.5; }
+  .checkout-container .card-subtitle { font-size: 14px; line-height: 1.5; margin-bottom: 20px; }
+  .checkout-container .form-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 12px; }
+  .checkout-container .form-row > .form-group:first-child { grid-column: 1 / -1; }
+  .checkout-container .form-group { min-width: 0; }
+  .checkout-container .form-group label { font-size: 14px; }
+  .checkout-container .form-group input { width: 100%; min-width: 0; min-height: 44px; font-size: 16px; padding: 11px 12px; }
+  .checkout-container :is(.btn-editar-carrinho, .btn-calcular-frete, .btn-pagar) { min-height: 44px; }
+  .checkout-container .checkbox-salvar { min-height: 44px; font-size: 14px; line-height: 1.5; }
+  .checkout-container .checkbox-salvar input { width: 20px; height: 20px; flex-shrink: 0; }
+  .checkout-container .opcao-card { min-width: 0; }
+  .checkout-container .opcao-card > div { min-width: 0; }
+  .checkout-container .opcao-card p { font-size: 13px; line-height: 1.5; }
+  .checkout-container .frete-opcao { min-height: 56px; }
+  .checkout-container .frete-opcao input { width: 20px; height: 20px; margin: 0; }
+  .checkout-container .frete-opcao strong { overflow-wrap: anywhere; }
+  .checkout-container .frete-aviso { overflow-wrap: anywhere; }
+  .checkout-container .frete-aviso a { display: inline-block; padding-block: 6px; }
+  .checkout-container .banner-seguranca { align-items: flex-start; line-height: 1.5; }
+  .checkout-container .checkmark { flex: 0 0 20px; width: 20px; height: 20px; }
+}
+
+@media (max-width: 640px) {
+  .checkout-container .checkout-nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .checkout-container .checkout-nav .nav-btn { width: 100%; padding: 10px; font-size: 14px; }
+  .checkout-container .card-resumo,
+  .checkout-container .card-checkout { padding: 22px 18px; }
+  .checkout-container .opcoes-pagamento { flex-direction: column; gap: 10px; }
+  .checkout-container .opcao-card { padding: 14px; }
+  .checkout-container .opcao-card input { width: 20px; height: 20px; flex-shrink: 0; }
+  .checkout-container .btn-calcular-frete { width: 100%; font-size: 16px; }
+  .checkout-container .frete-opcao { display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; gap: 10px; padding: 14px 0; }
+  .checkout-container .frete-opcao > strong { white-space: nowrap; font-size: 14px; }
+  .checkout-container .frete-opcoes legend { max-width: 100%; font-size: 14px; line-height: 1.5; }
+  .checkout-container .resumo-linha { gap: 16px; font-size: 14px; }
+  .checkout-container .resumo-linha strong { text-align: right; min-width: 0; }
+  .checkout-container .script-title { font-size: 2.6rem; line-height: 1.2; }
+}
