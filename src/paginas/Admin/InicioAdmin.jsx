@@ -4,6 +4,8 @@ import { encerrarSessao } from '../../servicos/autenticacao'
 import logoMimos from '../../assets/imagens/logo-mimos-da-taty.png'
 import imagemAtelie from '../../assets/imagens/banner-principal.png'
 import bonequinha from '../../assets/imagens/06-bonequinha.png'
+import { useCatalogoAdmin } from './CatalogoAdmin/useCatalogoAdmin'
+import { calcularIndicadoresCatalogo } from './indicadoresCatalogo'
 import './InicioAdmin.css'
 
 function IconeAdmin({ nome, ...props }) {
@@ -30,9 +32,13 @@ export default function InicioAdmin({ dados, demonstracao = false }) {
   const [produtoSelecionado, setProdutoSelecionado] = useState(null)
   const dialogoProduto = useRef(null)
   const nome = dados?.administradora || 'Tati'
-  const resumo = dados?.resumo
+  const catalogo = useCatalogoAdmin()
+  const carregandoIndicadores = Boolean(catalogo?.carregando)
+  const erroIndicadores = catalogo?.erro || (!catalogo ? 'Não foi possível carregar os indicadores do catálogo.' : '')
+  const confirmacaoPendente = Boolean(catalogo?.confirmacaoPendente)
+  const resumo = !carregandoIndicadores && !erroIndicadores && !confirmacaoPendente ? calcularIndicadoresCatalogo(catalogo.pecas) : null
   const destaques = dados?.destaques || []
-  const categorias = dados?.categorias || []
+  const categorias = catalogo?.categorias ? catalogo.categorias.filter(item => item.ativa).map(item => item.nome) : dados?.categorias || []
 
   async function sairDaConta() {
     if (saidaEmAndamento.current) return
@@ -74,14 +80,25 @@ export default function InicioAdmin({ dados, demonstracao = false }) {
         <main>
           <section className="admin-home-welcome" aria-labelledby="admin-home-title">
             <div className="admin-home-welcome-copy">
-              <div className="admin-home-eyebrow"><span className="admin-home-kicker">ESPAÇO DA ARTESÃ</span><span>{demonstracao ? 'Prévia com dados de exemplo' : dados ? 'Visão geral do ateliê' : 'Aguardando dados do ateliê'}</span></div>
+              <div className="admin-home-eyebrow"><span className="admin-home-kicker">ESPAÇO DA ARTESÃ</span><span>{demonstracao ? 'Prévia com dados de exemplo' : carregandoIndicadores ? 'Carregando catálogo do ateliê' : erroIndicadores || confirmacaoPendente ? 'Catálogo aguardando atualização' : 'Visão geral do ateliê'}</span></div>
               <h1 id="admin-home-title">Olá, {nome}! Bem-vinda ao seu ateliê</h1>
               <p className="admin-home-welcome-description">Escolha abaixo para onde deseja ir. Gerencie suas peças artesanais, cadastre novas criações ou acompanhe suas encomendas com um clique.</p>
-              <div className="admin-home-summary" aria-label="Resumo do catálogo">
+              <div className="admin-home-summary" role="region" aria-label="Resumo do catálogo" aria-busy={carregandoIndicadores}>
                 <span className="admin-home-summary-icon"><IconeAdmin nome="peca" /></span>
                 <div className="admin-home-summary-content">
-                  <div className="admin-home-summary-line"><strong>{resumo?.total ?? '—'} peças no catálogo</strong><span className="admin-home-badge admin-home-badge--visible">{resumo?.visiveis ?? '—'} visíveis na loja</span><span className="admin-home-badge admin-home-badge--hidden">{resumo?.ocultas ?? '—'} ocultas</span></div>
-                  <p>{categorias.length ? `${categorias.length} categorias ativas: ${categorias.join(', ')}` : 'Peças organizadas por categoria'}</p>
+                  {carregandoIndicadores ? (
+                    <p className="admin-home-summary-feedback" role="status">Carregando indicadores do catálogo…</p>
+                  ) : erroIndicadores || confirmacaoPendente ? (
+                    <div className="admin-home-summary-feedback" role="alert">
+                      <p>{erroIndicadores || 'A última alteração ainda não foi confirmada. Atualize os indicadores para conferir os dados salvos.'}</p>
+                    </div>
+                  ) : (
+                    <div aria-live="polite" aria-atomic="true">
+                      <div className="admin-home-summary-line"><strong>{resumo.total} {resumo.total === 1 ? 'peça' : 'peças'} no catálogo</strong><span className="admin-home-badge admin-home-badge--visible">{resumo.visiveis} {resumo.visiveis === 1 ? 'visível' : 'visíveis'} na loja</span><span className="admin-home-badge admin-home-badge--hidden">{resumo.ocultas} {resumo.ocultas === 1 ? 'oculta' : 'ocultas'}</span></div>
+                      <p className="admin-home-summary-caption">{categorias.length ? `${categorias.length} categorias ativas: ${categorias.join(', ')}` : 'Peças organizadas por categoria'}</p>
+                    </div>
+                  )}
+                  {!demonstracao && catalogo?.recarregar && <button type="button" className="admin-home-summary-refresh" disabled={carregandoIndicadores || catalogo.ocupado} onClick={catalogo.recarregar}>{erroIndicadores || confirmacaoPendente ? 'Tentar novamente' : 'Atualizar indicadores'}</button>}
                 </div>
               </div>
             </div>

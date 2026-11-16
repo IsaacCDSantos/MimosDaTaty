@@ -1226,3 +1226,34 @@
   .admin-home-product-dialog { max-height: calc(100dvh - 24px); width: min(38em, calc(100% - 24px)); }
   .admin-home-dialog-copy :is(h2, p, dt, dd) { min-width: 0; overflow-wrap: anywhere; }
 }
+
+/* O resumo acomoda carregamento, erros e atualização sem encobrir o conteúdo. */
+.admin-home-welcome { height: auto; min-height: 20.8em; }
+.admin-home-summary { height: auto; min-height: 4.4em; max-width: 100%; }
+.admin-home-summary-content { flex: 1; }
+.admin-home-summary-line { flex-wrap: wrap; white-space: normal; }
+.admin-home-summary-caption,
+.admin-home-summary-content .admin-home-summary-feedback {
+  color: var(--admin-muted);
+  font-size: var(--fonte-apoio, 14px);
+  line-height: 1.5;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.admin-home-summary-caption { margin-top: 6px; }
+.admin-home-summary-feedback p { margin: 0; }
+.admin-home-summary-refresh {
+  background: #fff;
+  border: 1px solid #e6c7b8;
+  border-radius: 12px;
+  color: var(--admin-ink);
+  cursor: pointer;
+  font: 600 var(--fonte-botao, 16px)/1.4 Inter, Arial, sans-serif;
+  margin-top: 8px;
+  min-height: 44px;
+  padding: 8px 12px;
+  max-width: 100%;
+}
+.admin-home-summary-refresh:hover:not(:disabled) { background: #faebdf; }
+.admin-home-summary-refresh:focus-visible { outline: 2px solid var(--admin-ink); outline-offset: 3px; }
+.admin-home-summary-refresh:disabled { cursor: wait; opacity: .65; }

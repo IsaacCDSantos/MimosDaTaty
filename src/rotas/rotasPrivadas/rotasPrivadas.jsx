@@ -13,11 +13,11 @@ export const rotasPrivadas = (
     <Route path="/meu-perfil" element={<MeuPerfil />} />
     <Route path="/meus-pedidos" element={<MeusPedidos />} />
     <Route element={<ExigirAdministrador><CatalogoPersistenteProvider /></ExigirAdministrador>}>
+      <Route path="/admin/*" element={<InicioAdmin />} />
       <Route path="/admin/catalogo" element={<CatalogoAdmin />} />
       <Route path="/admin/adicionar-peca" element={<FormularioCatalogoAdmin />} />
       <Route path="/admin/editar-peca" element={<FormularioCatalogoAdmin editar />} />
     </Route>
     <Route path="/admin/pedidos" element={<ExigirAdministrador><PedidosAdmin /></ExigirAdministrador>} />
-    <Route path="/admin/*" element={<ExigirAdministrador><InicioAdmin /></ExigirAdministrador>} />
   </>
 )

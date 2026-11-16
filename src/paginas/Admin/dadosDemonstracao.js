@@ -5,7 +5,6 @@ import trocadorCroche from '../../assets/imagens/trocador_croche_figma.png'
 // Dados fictícios da referência visual; não representam o estoque da loja.
 export const DADOS_ADMIN_DEMONSTRACAO = {
   administradora: 'Tati',
-  resumo: { total: 24, visiveis: 22, ocultas: 2 },
   categorias: ['Maternidade', 'Enxovais', 'Crochê & Bordado', 'Presentes'],
   destaques: [
     { id: 'kit-berco-florido', nome: 'Kit de berço florido', descricao: 'Conjunto com manta, toalha e trocador', preco: 189, imagem: kitBerco, categoria: 'Enxovais', prazo: 'Até 7 dias úteis', visivel: true },
