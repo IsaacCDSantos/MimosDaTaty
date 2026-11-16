@@ -1,4 +1,4 @@
-import { STATUS_PEDIDO } from '../paginas/Admin/Pedidos/pedidosModelo.js'
+import { STATUS_PEDIDO, obterBloqueioPagamento } from '../paginas/Admin/Pedidos/pedidosModelo.js'
 
 const dataLoja = new Intl.DateTimeFormat('en-CA', {
   timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit',
@@ -67,6 +67,7 @@ export function mapearPedidoSupabase(row) {
     id: String(row.numero_pedido ?? row.id.slice(0, 8)),
     data: dataIso,
     status: statusValido,
+    statusPagamento: row.status_pagamento ?? null,
     cliente: {
       nome: row.cliente_nome_snapshot || 'Cliente não informado',
       email: row.cliente_email_snapshot || 'Não informado',
@@ -133,13 +134,21 @@ export async function carregarPedidosAdmin(cliente, signal) {
 
 export async function atualizarPedidoAdmin(cliente, pedido, payload) {
   if (!cliente || !pedido.uuid || !pedido.atualizadoEm) throw new Error('Recarregue os pedidos antes de salvar.')
-  const { data, error } = await cliente.from('pedidos').update(payload)
+  const bloqueio = obterBloqueioPagamento(pedido, payload.status_pedido)
+  if (bloqueio) throw new Error(bloqueio)
+  let consulta = cliente.from('pedidos').update(payload)
     .eq('id', pedido.uuid).eq('status_pedido', pedido.status).eq('atualizado_em', pedido.atualizadoEm)
-    .select('id, status_pedido, atualizado_em, codigo_rastreio, observacao_interna').maybeSingle()
+  // A aprovação pode ter sido revogada por um webhook após a leitura da tela.
+  if (payload.status_pedido !== pedido.status && ['em_producao', 'enviado', 'entregue'].includes(payload.status_pedido)) {
+    consulta = consulta.eq('status_pagamento', 'aprovado')
+  }
+  const { data, error } = await consulta
+    .select('id, status_pedido, status_pagamento, atualizado_em, codigo_rastreio, observacao_interna').maybeSingle()
   if (error) throw new Error(`Não foi possível confirmar a alteração: ${error.message}. Atualize a lista antes de repetir a operação.`)
   if (!data) throw new Error('O pedido não foi alterado. Ele pode ter sido atualizado ou cancelado em outra sessão, ou não estar mais acessível. Feche os detalhes e atualize a lista.')
   return {
     ...pedido, status: data.status_pedido, atualizadoEm: data.atualizado_em,
+    statusPagamento: data.status_pagamento ?? null,
     codigoRastreio: data.codigo_rastreio || '', observacaoInterna: data.observacao_interna || '',
   }
 }

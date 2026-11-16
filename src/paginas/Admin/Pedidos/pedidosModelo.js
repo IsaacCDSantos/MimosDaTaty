@@ -5,6 +5,25 @@ export const STATUS_PEDIDO = [
   { valor: 'entregue', rotulo: 'Entregue' },
 ]
 
+export const STATUS_PAGAMENTO = [
+  { valor: 'pendente', rotulo: 'Aguardando pagamento' },
+  { valor: 'aprovado', rotulo: 'Pagamento aprovado' },
+  { valor: 'recusado', rotulo: 'Pagamento recusado' },
+  { valor: 'cancelado', rotulo: 'Pagamento cancelado' },
+  { valor: 'estornado', rotulo: 'Pagamento estornado' },
+]
+
+export function obterStatusPagamento(status) {
+  return STATUS_PAGAMENTO.find(item => item.valor === status)
+    || { valor: 'nao_informado', rotulo: 'Pagamento não informado' }
+}
+
+export function obterBloqueioPagamento(pedido, destino) {
+  if (destino === pedido.status || !['em_producao', 'enviado', 'entregue'].includes(destino)
+      || pedido.statusPagamento === 'aprovado') return ''
+  return `${obterStatusPagamento(pedido.statusPagamento).rotulo}. É necessário pagamento aprovado para mudar para produção, envio ou entrega. Atualize a lista após a confirmação financeira.`
+}
+
 const moeda = new Intl.NumberFormat('pt-BR', {
   style: 'currency',
   currency: 'BRL',
@@ -130,6 +149,8 @@ export function mudarStatus(pedido, destino, codigoRastreio = pedido?.codigoRast
   if (Math.abs(proximo - origem) !== 1) {
     throw new Error('O status só pode avançar ou voltar uma etapa por vez.')
   }
+  const bloqueio = obterBloqueioPagamento(pedido, destino)
+  if (bloqueio) throw new Error(bloqueio)
   const codigo = normalizarRastreio(codigoRastreio)
   if (destino === 'enviado' && !codigo) {
     throw new Error('Informe o código de rastreio para marcar o pedido como enviado.')

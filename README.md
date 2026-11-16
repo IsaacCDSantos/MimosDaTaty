@@ -64,6 +64,7 @@ A aplicação une a identidade visual acolhedora do artesanato a uma navegação
 - 🧵 **Área Administrativa (`/admin/*`)**:
   - Rotas protegidas por verificação de sessão e perfil `admin`.
   - Gestão persistente do catálogo (cadastro, edição, upload de fotos, visibilidade e arquivamento) e painel de acompanhamento de pedidos.
+  - Andamento e situação do pagamento apresentados separadamente; mudanças para produção, envio ou entrega exigem pagamento aprovado.
   - Até três peças mais vistas no início e ranking completo em `/admin/destaques`, por aberturas dos detalhes na vitrine. Acessos de administradores não entram na contagem; peças ocultas ou arquivadas ficam fora do ranking.
 
 ---
@@ -176,6 +177,8 @@ Sistema Web Mimos da Tati/
    npm run dev
    ```
    Acesse `http://localhost:5173`.
+
+No **Static Site do Render**, configure em **Redirects/Rewrites** a regra de origem `/*`, destino `/index.html` e ação **Rewrite**. Ela permite abrir e recarregar as rotas do React Router sem erro 404; os arquivos estáticos existentes continuam sendo servidos normalmente.
 
 ---
 

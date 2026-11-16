@@ -76,10 +76,10 @@
   bottom: -18px;
   filter: drop-shadow(5px 8px 8px rgba(0, 0, 0, 0.38));
   height: 28px;
-  left: -18px;
+  left: 0;
   pointer-events: none;
   position: absolute;
-  width: calc(100% + 36px);
+  width: 100%;
   z-index: 5;
 }
 
@@ -124,5 +124,4 @@
   .card-beneficios { min-width:0; padding:24px 18px; gap:28px; }
   .item-beneficio { min-width:0; }
   .item-beneficio p { max-width:30ch; font-size:var(--fonte-corpo); line-height:1.5; }
-  .beneficios-borda-croche { left:0; width:100%; }
 }

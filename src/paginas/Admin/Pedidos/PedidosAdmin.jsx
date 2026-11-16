@@ -4,7 +4,7 @@ import { supabase } from '../../../servicos/supabase'
 import { atualizarPedidoAdmin, carregarPedidosAdmin } from '../../../servicos/pedidosAdmin.js'
 import {
   STATUS_PEDIDO, calcularResumo, contarStatus, filtrarPedidos,
-  formatarData, formatarMoeda, mudarStatus, salvarObservacao, salvarRastreio,
+  formatarData, formatarMoeda, mudarStatus, obterBloqueioPagamento, obterStatusPagamento, salvarObservacao, salvarRastreio,
 } from './pedidosModelo'
 import './PedidosAdmin.css'
 
@@ -23,7 +23,12 @@ function SeloStatus({ status }) {
   return <span className={`orders-admin-status orders-admin-status--${status}`}>{rotulo}</span>
 }
 
-function DetalhesPedido({ pedido, aoAlterar, aoFechar }) {
+function SeloPagamento({ status }) {
+  const pagamento = obterStatusPagamento(status)
+  return <span className={`orders-admin-payment-status orders-admin-payment-status--${pagamento.valor}`}>{pagamento.rotulo}</span>
+}
+
+export function DetalhesPedido({ pedido, aoAlterar, aoFechar }) {
   const [codigo, setCodigo] = useState(pedido.codigoRastreio || '')
   const [observacao, setObservacao] = useState(pedido.observacaoInterna || '')
   const [salvando, setSalvando] = useState(false)
@@ -34,6 +39,9 @@ function DetalhesPedido({ pedido, aoAlterar, aoFechar }) {
   const indice = STATUS_PEDIDO.findIndex(item => item.valor === pedido.status)
   const anterior = STATUS_PEDIDO[indice - 1]
   const proximo = STATUS_PEDIDO[indice + 1]
+  const bloqueioProximo = obterBloqueioPagamento(pedido, proximo?.valor)
+  const bloqueioAnterior = obterBloqueioPagamento(pedido, anterior?.valor)
+  const bloqueio = bloqueioProximo || bloqueioAnterior
 
   async function aplicarAlteracao(alteracao, montarPayloadBanco, mensagem, campo) {
     if (envioEmAndamento.current) return
@@ -153,13 +161,14 @@ function DetalhesPedido({ pedido, aoAlterar, aoFechar }) {
           </form>
         </div>
         <div className="orders-admin-detail-aside">
-          <section className="orders-admin-detail-section" aria-labelledby="orders-admin-financial-title"><h3 id="orders-admin-financial-title">Resumo do pedido</h3><dl className="orders-admin-totals"><div><dt>Subtotal</dt><dd>{formatarMoeda(resumo.subtotal)}</dd></div><div><dt>Frete</dt><dd>{formatarMoeda(resumo.frete)}</dd></div><div><dt>Desconto</dt><dd>{formatarMoeda(resumo.desconto)}</dd></div><div className="orders-admin-grand-total"><dt>Total</dt><dd>{formatarMoeda(resumo.total)}</dd></div></dl><p className="orders-admin-payment"><span>Forma de pagamento</span><strong>{pedido.formaPagamento}</strong></p></section>
+          <section className="orders-admin-detail-section" aria-labelledby="orders-admin-financial-title"><h3 id="orders-admin-financial-title">Resumo do pedido</h3><dl className="orders-admin-totals"><div><dt>Subtotal</dt><dd>{formatarMoeda(resumo.subtotal)}</dd></div><div><dt>Frete</dt><dd>{formatarMoeda(resumo.frete)}</dd></div><div><dt>Desconto</dt><dd>{formatarMoeda(resumo.desconto)}</dd></div><div className="orders-admin-grand-total"><dt>Total</dt><dd>{formatarMoeda(resumo.total)}</dd></div></dl><p className="orders-admin-payment"><span>Forma de pagamento</span><strong>{pedido.formaPagamento}</strong></p><div className="orders-admin-financial-status"><span>Status do pagamento</span><SeloPagamento status={pedido.statusPagamento} /></div></section>
           <form className="orders-admin-detail-section orders-admin-progress-form" onSubmit={avancarStatus}>
             <h3>Andamento do pedido</h3>
             <ol className="orders-admin-progress">{STATUS_PEDIDO.map((item, posicao) => <li key={item.valor} className={posicao <= indice ? 'orders-admin-progress-done' : ''} aria-current={item.valor === pedido.status ? 'step' : undefined}><span>{posicao + 1}</span>{item.rotulo}</li>)}</ol>
             {(pedido.status === 'em_producao' || pedido.status === 'enviado') && <div className="orders-admin-tracking-field"><label htmlFor="orders-admin-tracking">Código de rastreio</label><input ref={campoRastreio} id="orders-admin-tracking" onKeyDown={event => { if (event.key === 'Enter' && pedido.status === 'enviado') { event.preventDefault(); salvarCodigoRastreio() } }} value={codigo} onChange={event => { setCodigo(event.target.value); setAviso(null) }} placeholder="Informe o código de envio" autoComplete="off" spellCheck={false} maxLength={80} required={proximo?.valor === 'enviado'} disabled={salvando} /><p>{pedido.status === 'em_producao' ? 'Obrigatório para marcar como enviado.' : 'Código registrado para esta encomenda.'}</p>{pedido.status === 'enviado' && <button className="orders-admin-secondary-button" type="button" disabled={salvando} onClick={salvarCodigoRastreio}>Salvar rastreio</button>}</div>}
             {pedido.status === 'entregue' && <p className="orders-admin-delivered-tracking">Rastreio registrado: <strong>{pedido.codigoRastreio || 'Não informado'}</strong></p>}
-            <div className="orders-admin-status-actions"><button className="orders-admin-secondary-button" type="button" disabled={salvando || !anterior} onClick={voltarStatus}>{anterior ? `Voltar para ${anterior.rotulo}` : 'Etapa anterior'}</button><button className="orders-admin-primary-button" type="submit" disabled={salvando || !proximo}>{proximo ? `Marcar como ${proximo.rotulo.toLowerCase()}` : 'Pedido entregue'}</button></div>
+            {bloqueio && <p className="orders-admin-payment-block" id="orders-admin-payment-block" role="status">{bloqueio}</p>}
+            <div className="orders-admin-status-actions"><button className="orders-admin-secondary-button" type="button" disabled={salvando || !anterior || !!bloqueioAnterior} aria-describedby={bloqueioAnterior ? 'orders-admin-payment-block' : undefined} onClick={voltarStatus}>{anterior ? `Voltar para ${anterior.rotulo}` : 'Etapa anterior'}</button><button className="orders-admin-primary-button" type="submit" disabled={salvando || !proximo || !!bloqueioProximo} aria-describedby={bloqueioProximo ? 'orders-admin-payment-block' : undefined}>{proximo ? `Marcar como ${proximo.rotulo.toLowerCase()}` : 'Pedido entregue'}</button></div>
           </form>
           {aviso && <p className={`orders-admin-detail-feedback${aviso.erro ? ' orders-admin-detail-feedback--error' : ''}`} role={aviso.erro ? 'alert' : 'status'}>{aviso.texto}</p>}
         </div>
@@ -246,9 +255,9 @@ export default function PedidosAdmin({ pedidosIniciais = [] }) {
           {erroCarga && <p className="orders-admin-detail-feedback orders-admin-detail-feedback--error" role="alert">{erroCarga}</p>}
           <div className="orders-admin-summary" aria-label="Resumo de todos os pedidos"><div><span>Novos</span><strong>{contagens.novo}</strong></div><div><span>Em produção</span><strong>{contagens.em_producao}</strong></div><div><span>Enviados</span><strong>{contagens.enviado}</strong></div></div>
           <div className="orders-admin-toolbar"><div className="orders-admin-filters" role="group" aria-label="Filtrar pedidos por status">{FILTROS.map(item => <button key={item.valor} type="button" className={filtro === item.valor ? 'orders-admin-filter-active' : ''} aria-pressed={filtro === item.valor} onClick={() => { setFiltro(item.valor); setPagina(1) }}>{item.rotulo}</button>)}</div><div className="orders-admin-search"><label className="orders-admin-sr-only" htmlFor="orders-admin-search">Buscar cliente ou número do pedido</label><input ref={campoBusca} id="orders-admin-search" type="search" placeholder="Buscar cliente ou nº do pedido" value={busca} onChange={event => { setBusca(event.target.value); setPagina(1) }} autoComplete="off" /></div></div>
-          <div className="orders-admin-table-wrap"><table className="orders-admin-table"><caption className="orders-admin-sr-only">Pedidos da loja, com cliente, data, itens, total e status</caption><colgroup><col className="orders-admin-col-number" /><col className="orders-admin-col-customer" /><col className="orders-admin-col-items" /><col className="orders-admin-col-total" /><col className="orders-admin-col-status" /><col className="orders-admin-col-actions" /></colgroup><thead><tr><th scope="col">Pedido</th><th scope="col">Cliente</th><th scope="col">Itens</th><th scope="col">Total</th><th scope="col">Status</th><th scope="col"><span className="orders-admin-sr-only">Ações</span></th></tr></thead><tbody>{visiveis.map(pedido => <tr key={pedido.id}>
-            <td className="orders-admin-number" data-label="Pedido">#{pedido.id}</td><td className="orders-admin-customer" data-label="Cliente"><span>{pedido.cliente.nome}</span><time dateTime={pedido.data}>{formatarData(pedido.data)}</time></td><td className="orders-admin-items" data-label="Itens">{pedido.resumoItens}</td><td className="orders-admin-total" data-label="Total">{formatarMoeda(calcularResumo(pedido).total)}</td><td className="orders-admin-status-cell" data-label="Status"><SeloStatus status={pedido.status} /></td><td className="orders-admin-actions"><button type="button" aria-label={`Ver detalhes do pedido #${pedido.id} de ${pedido.cliente.nome}`} disabled={carregando || !!erroCarga} onClick={event => abrirDetalhes(pedido.id, event.currentTarget)}>Detalhes</button></td>
-          </tr>)}{!visiveis.length && <tr className="orders-admin-empty"><td colSpan={6}><p>{carregando ? 'Carregando pedidos...' : pedidos.length ? 'Nenhum pedido encontrado para essa busca.' : 'Nenhum pedido disponível.'}</p>{!carregando && pedidos.length > 0 && <button type="button" onClick={limparFiltros}>Limpar filtros</button>}</td></tr>}</tbody></table></div>
+          <div className="orders-admin-table-wrap"><table className="orders-admin-table"><caption className="orders-admin-sr-only">Pedidos da loja, com cliente, data, itens, total, andamento e pagamento</caption><colgroup><col className="orders-admin-col-number" /><col className="orders-admin-col-customer" /><col className="orders-admin-col-items" /><col className="orders-admin-col-total" /><col className="orders-admin-col-status" /><col className="orders-admin-col-payment" /><col className="orders-admin-col-actions" /></colgroup><thead><tr><th scope="col">Pedido</th><th scope="col">Cliente</th><th scope="col">Itens</th><th scope="col">Total</th><th scope="col">Andamento</th><th scope="col">Pagamento</th><th scope="col"><span className="orders-admin-sr-only">Ações</span></th></tr></thead><tbody>{visiveis.map(pedido => <tr key={pedido.id}>
+            <td className="orders-admin-number" data-label="Pedido">#{pedido.id}</td><td className="orders-admin-customer" data-label="Cliente"><span>{pedido.cliente.nome}</span><time dateTime={pedido.data}>{formatarData(pedido.data)}</time></td><td className="orders-admin-items" data-label="Itens">{pedido.resumoItens}</td><td className="orders-admin-total" data-label="Total">{formatarMoeda(calcularResumo(pedido).total)}</td><td className="orders-admin-status-cell" data-label="Andamento"><SeloStatus status={pedido.status} /></td><td className="orders-admin-payment-cell" data-label="Pagamento"><SeloPagamento status={pedido.statusPagamento} /></td><td className="orders-admin-actions"><button type="button" aria-label={`Ver detalhes do pedido #${pedido.id} de ${pedido.cliente.nome}`} disabled={carregando || !!erroCarga} onClick={event => abrirDetalhes(pedido.id, event.currentTarget)}>Detalhes</button></td>
+          </tr>)}{!visiveis.length && <tr className="orders-admin-empty"><td colSpan={7}><p>{carregando ? 'Carregando pedidos...' : pedidos.length ? 'Nenhum pedido encontrado para essa busca.' : 'Nenhum pedido disponível.'}</p>{!carregando && pedidos.length > 0 && <button type="button" onClick={limparFiltros}>Limpar filtros</button>}</td></tr>}</tbody></table></div>
           <nav className="orders-admin-pagination" aria-label="Paginação dos pedidos"><output aria-live="polite">{filtrados.length ? `Mostrando ${primeiroIndice + 1}–${Math.min(primeiroIndice + POR_PAGINA, filtrados.length)} de ${filtrados.length} ${filtrados.length === 1 ? 'pedido' : 'pedidos'}` : '0 pedidos encontrados'}</output><div><button type="button" aria-label="Página anterior" disabled={paginaAtual <= 1} onClick={() => setPagina(paginaAtual - 1)}><IconePedido nome="esquerda" /> Anterior</button><span>Página {paginaAtual} de {totalPaginas}</span><button type="button" aria-label="Próxima página" disabled={paginaAtual >= totalPaginas} onClick={() => setPagina(paginaAtual + 1)}>Próxima <IconePedido nome="direita" /></button></div></nav>
         </main>
       </div>
