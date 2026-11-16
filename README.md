@@ -24,9 +24,11 @@
 - [Sobre o Projeto](#-sobre-o-projeto)
 - [Funcionalidades Principais](#-funcionalidades-principais)
 - [Tecnologias Utilizadas](#-tecnologias-utilizadas)
+- [Arquitetura e Backend](#arquitetura-e-backend)
 - [Estrutura do Projeto](#-estrutura-do-projeto)
 - [Mapeamento de Rotas](#-mapeamento-de-rotas)
 - [Como Executar o Projeto](#-como-executar-o-projeto)
+- [Integração Mercado Pago](#integração-mercado-pago)
 - [Scripts Disponíveis](#-scripts-disponíveis)
 - [Padrões de Desenvolvimento](#-padrões-de-desenvolvimento)
 - [Desenvolvedores](#-desenvolvedores)
@@ -39,6 +41,7 @@
 O **Sistema Web Mimos da Taty** é uma aplicação web desenvolvida para modernizar a presença digital e a operação comercial do ateliê **Mimos da Taty**, fundado em 2006 pela artesã Tati. O ateliê é especializado na criação personalizada de **enxovais de bebê de alto padrão**, englobando peças em crochê e bordado como mantas, fraldas, toalhas, trocadores, kits de berço e itens decorativos.
 
 A aplicação une a identidade visual acolhedora do artesanato a uma navegação responsiva, permitindo aos clientes:
+
 - Conhecer a história, os diferenciais e os canais de atendimento do ateliê;
 - Explorar o catálogo público de peças com filtros por categoria;
 - Criar conta, autenticar-se com separação entre clientes e administradores e recuperar senha;
@@ -56,11 +59,12 @@ A aplicação une a identidade visual acolhedora do artesanato a uma navegação
 - 🧶 **Vitrine & Catálogo (`/catalogo` e `/catalogo/:pecaSlug`)**: exibição de peças visíveis e não arquivadas conectadas ao Supabase (tabelas `categorias`, `pecas` e bucket `pecas` no Storage), filtro reativo por categorias e personalização da peça com detalhes e imagens de referência.
 - 🛒 **Carrinho de Compras (`/carrinho`)**: ajuste de quantidades, remoção de itens, persistência local e integração direta com o checkout.
 - 🛍️ **Checkout, Frete e Pagamento (`/checkout`)**:
-  - Cotação de frete em tempo real por CEP via Edge Function `calcular-frete` (**SuperFrete**, em sandbox), com validação de preços e prazos no servidor.
+  - Cotação de frete em tempo real por CEP via Edge Function `calcular-frete` (**SuperFrete**, em sandbox ou produção conforme configuração), com validação de preços e prazos no servidor.
   - Pagamento em ambiente **Sandbox** via **Mercado Pago (Checkout Transparente / Orders API)** com cartão (MercadoPago.js) e Pix (QR Code e copia e cola), orquestrado pela Edge Function `checkout` e atualizado por `mercado-pago-webhook`.
 - 🧵 **Área Administrativa (`/admin/*`)**:
   - Rotas protegidas por verificação de sessão e perfil `admin`.
   - Gestão persistente do catálogo (cadastro, edição, upload de fotos, visibilidade e arquivamento) e painel de acompanhamento de pedidos.
+  - Até três peças mais vistas no início e ranking completo em `/admin/destaques`, por aberturas dos detalhes na vitrine. Acessos de administradores não entram na contagem; peças ocultas ou arquivadas ficam fora do ranking.
 
 ---
 
@@ -71,9 +75,23 @@ A aplicação une a identidade visual acolhedora do artesanato a uma navegação
 | **[React](https://react.dev/) 19 & [Vite](https://vite.dev/) 8** | Interface declarativa em componentes e build/HMR rápido. |
 | **[React Router DOM](https://reactrouter.com/) v7** | Roteamento SPA com separação entre rotas públicas e privadas. |
 | **[Supabase](https://supabase.com/)** | Autenticação, banco PostgreSQL com RLS, Storage e Edge Functions. |
+| **TypeScript, JavaScript & Deno** | Código das Edge Functions para frete, checkout e webhook de pagamentos. |
+| **SQL & PL/pgSQL** | Migrações, funções, gatilhos e regras de acesso no PostgreSQL. |
 | **[Mercado Pago](https://www.mercadopago.com.br/developers) & [SuperFrete](https://superfrete.com/)** | Processamento de pagamentos (Sandbox) e cálculo de frete por CEP via servidor. |
 | **CSS3 Modular & SVG** | Estilização temática responsiva com paleta pastel/terrosa e ícones vetoriais. |
 | **[ESLint](https://eslint.org/) 10 & `node:test`** | Padronização de código e testes automatizados nativos do Node.js. |
+
+---
+
+## Arquitetura e Backend
+
+O **frontend** é uma aplicação React com Vite. O **backend** roda na infraestrutura do Supabase e reúne autenticação, banco PostgreSQL, armazenamento de imagens e funções próprias para validar operações e integrar as APIs.
+
+- `supabase/functions/`: Edge Functions `calcular-frete` (SuperFrete), `checkout` (Mercado Pago) e `mercado-pago-webhook` (notificações de pagamento), em TypeScript e JavaScript sobre Deno.
+- `supabase/migrations/`: alterações do banco, regras de acesso por linha (RLS), funções e gatilhos para perfis, checkout e visualizações.
+- `src/servicos/`: código do frontend que acessa os serviços do Supabase.
+
+Nos módulos de frete e checkout, `index.ts` inicia o serviço, `handler.js` coordena as requisições e `modelo.js` reúne validações e transformação de dados. No checkout, `runtime.ts` concentra as conexões reais com o banco e o Mercado Pago, também reutilizadas pelo webhook. Essa separação permite testar o fluxo com serviços simulados.
 
 ---
 
@@ -88,7 +106,7 @@ Sistema Web Mimos da Taty/
 │   ├── componentes/            # Componentes reutilizáveis (Header, Hero, Beneficios, Sobre, Contato, RecuperacaoLayout)
 │   ├── paginas/                # Páginas públicas, autenticação, checkout e área administrativa
 │   ├── rotas/                  # Roteamento modular (rotasPublicas, rotasPrivadas e fallback 404)
-│   ├── servicos/               # Integração com Supabase, checkout, frete e recuperação de senha
+│   ├── servicos/               # Acesso do frontend ao Supabase e às Edge Functions
 │   ├── App.jsx / main.jsx      # Raiz da aplicação React
 ├── supabase/
 │   ├── functions/              # Edge Functions (calcular-frete, checkout, mercado-pago-webhook)
@@ -115,6 +133,7 @@ Sistema Web Mimos da Taty/
 | `/meus-pedidos` | Exige login | Histórico, filtros por etapa e detalhes dos pedidos. |
 | `/recuperar-senha`, `/confirmacao`, `/redefinir-senha` | Público (gravação exige sessão do link) | Fluxo de recuperação e alteração de senha. |
 | `/admin`, `/admin/catalogo`, `/admin/pedidos`, `/admin/adicionar-peca`, `/admin/editar-peca` | Restrito (`admin`) | Painel administrativo conectado ao Supabase. |
+| `/admin/destaques` | Restrito (`admin`) | Ranking das peças mais vistas, com contagens e retorno ao início administrativo. |
 | `*` | — | Redireciona rotas inexistentes para `/`. |
 
 ---
@@ -122,6 +141,7 @@ Sistema Web Mimos da Taty/
 ## 🚀 Como Executar o Projeto
 
 ### Pré-requisitos
+
 - [Node.js](https://nodejs.org/) **22.13+** ou **24+**
 - **npm** (incluso no Node.js)
 
@@ -135,7 +155,7 @@ Sistema Web Mimos da Taty/
 
 2. **Instale as dependências:**
    ```bash
-   npm install
+   npm ci
    ```
 
 3. **Configure as variáveis de ambiente:**
@@ -146,8 +166,9 @@ Sistema Web Mimos da Taty/
    ```
 
 4. **Prepare o banco e as Edge Functions no Supabase (opcional para vitrine pública; necessário para auth, catálogo real, frete e checkout):**
-   - Aplique as migrações de `supabase/migrations/` no projeto Supabase.
-   - Configure nos **Secrets** das Edge Functions as variáveis do frete (`SUPERFRETE_TOKEN`, `SUPERFRETE_CONTATO`, `SUPERFRETE_AMBIENTE`, `SUPERFRETE_CEP_ORIGEM`) e do pagamento de teste (`MERCADO_PAGO_ACCESS_TOKEN`, `MERCADO_PAGO_PUBLIC_KEY`, `MERCADO_PAGO_SELLER_ID`, `MERCADO_PAGO_AMBIENTE=sandbox`, `MERCADO_PAGO_WEBHOOK_SECRET`). Tokens privados e assinatura do webhook nunca devem ir em variáveis `VITE_*`. A cotação de frete pode usar `production` enquanto o pagamento usa `sandbox`; cotar não contrata uma entrega.
+   - Use o projeto Supabase existente ou um banco com o esquema base de catálogo e pedidos preparado; as migrações versionadas dependem dessas tabelas. Aplique as migrações de `supabase/migrations/` em ordem.
+   - Publique as funções `calcular-frete`, `checkout` e `mercado-pago-webhook`, respeitando as opções de `supabase/config.toml`.
+   - Configure nos **Secrets** as variáveis listadas em [supabase/functions/.env.example](supabase/functions/.env.example). Tokens privados e assinatura do webhook nunca devem ir em variáveis `VITE_*`. A cotação de frete pode usar `production` enquanto o pagamento usa `sandbox`; cotar não contrata uma entrega.
    - Para promover um usuário a administrador, altere a coluna `perfil` para `'admin'` na tabela `public.perfis`.
 
 5. **Inicie o servidor de desenvolvimento:**
@@ -160,29 +181,17 @@ Sistema Web Mimos da Taty/
 
 ## Integração Mercado Pago
 
-O checkout da loja utiliza **Checkout Transparente / Orders API**, com cartão pelos campos seguros do MercadoPago.js e Pix. As Edge Functions `checkout` e `mercado-pago-webhook` estão publicadas no projeto Supabase `pzzfuroafdulpfdtwdsi`. As cinco variáveis do Mercado Pago, incluindo a assinatura do webhook, estão configuradas no servidor. A integração permanece restrita a **sandbox**; o backend bloqueia pagamentos de produção.
+O checkout utiliza **Checkout Transparente / Orders API**, com cartão pelos campos seguros do MercadoPago.js e Pix. Os pagamentos estão restritos a **sandbox**, com credenciais mantidas nos Secrets do Supabase.
 
-O webhook de teste está cadastrado para eventos `order` no endereço:
+Endpoint do webhook para eventos `order` no projeto Supabase utilizado:
 
 ```text
 https://pzzfuroafdulpfdtwdsi.supabase.co/functions/v1/mercado-pago-webhook?origem=checkout
 ```
 
-Validação concluída em 15/11/2026 (horário de Brasília):
+O checkout permite retomar uma tentativa ativa, consultar seu status e cancelar um Pix pendente antes de trocar a forma de pagamento. O servidor confirma o cancelamento no provedor, preserva pagamentos aprovados e valida a assinatura das notificações.
 
-- Compra pela interface da loja aprovada com cartão de teste: pedido **#1004**, uma Toalha sob encomenda, total **R$ 111,50** com frete PAC. Nenhuma cobrança real ou contratação de envio foi realizada. O pedido contém observação identificando o teste.
-- Resultado recuperado após atualizar a página e pedido conferido no painel administrativo. Um único item e um único pagamento persistidos; estoque da peça preservado.
-- Notificação automática do Mercado Pago recebida com **HTTP 200** às 22:46:42, identificada nos logs por `MercadoPago WebHook v1.0 order` e pela referência do pedido. O erro anterior de geração da assinatura deixou de impedir as notificações.
-- Verificações adicionais: assinatura válida aceita (200), assinatura inválida rejeitada (401) e repetição da notificação aceita sem duplicar o pagamento. O simulador manual do painel retornou 401; o evento automático do pagamento de teste foi recebido com sucesso, mantendo a validação de assinatura ativa.
-- Suíte local: **184 testes aprovados**. ESLint e build também passaram na validação da integração.
-
-O checkout verifica a tentativa anterior antes de exibir o formulário. Um Pix pendente pode ser encerrado pelo botão **Cancelar Pix e trocar forma de pagamento**: o servidor consulta a order, solicita o [cancelamento pela Orders API](https://www.mercadopago.com.br/developers/pt/reference/online-payments/checkout-api/cancel-order/post) e confirma o resultado antes de liberar outra tentativa. Uma aprovação simultânea é preservada; uma falha de rede mantém a tentativa disponível para consulta. Consultas atrasadas não reabrem sessões encerradas. O pedido de teste **#1006** foi gerado com Pix e cancelado pela interface, com o cancelamento confirmado no Mercado Pago e no banco. A navegação de volta ao carrinho e retorno ao checkout também foi conferida, incluindo consulta com atraso simulado.
-
-Ao retornar ao checkout com uma tentativa ativa, a tela oferece **continuar o pagamento** ou **cancelar e escolher outro pagamento**. O QR Code só reaparece após a escolha de continuar o Pix. O botão **Atualizar status do pagamento** consulta o resultado, sem criar outra cobrança; ele aparece apenas em pagamentos pendentes ou em processamento. Os avisos têm intervalo de 12 px e a etapa seguinte começa 24 px abaixo.
-
-Para receber pagamentos reais, ainda é necessário ativar e revisar as credenciais e configurações de produção, homologar os meios de pagamento e ajustar deliberadamente o bloqueio de produção no backend. Os segredos locais ficam no arquivo ignorado `supabase/functions/.env.local`; não devem ser versionados nem enviados pelo chat.
-
-A personalização de peças trazida do catálogo mantém observações e imagens de referência no carrinho local. Esses dados ainda não são enviados pelo checkout nem persistidos no pedido; a gravação e a exibição das referências no administrativo exigem uma etapa própria de integração. A mesclagem preserva o comportamento existente das duas implementações.
+**Limitações atuais:** pagamentos reais exigem homologação e alteração explícita do bloqueio de produção. Observações e imagens de personalização ficam no carrinho local e ainda não são persistidas no pedido.
 
 ---
 
