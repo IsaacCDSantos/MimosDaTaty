@@ -1204,3 +1204,25 @@
     transition: none !important;
   }
 }
+
+/* Mobile: leitura e toque sem alterar a composição de desktop. */
+@media (max-width: 760px) {
+  .admin-home-brand { max-width: 100%; min-width: 0; }
+  .admin-home-wordmark { white-space: normal; overflow-wrap: anywhere; }
+  .admin-home-account { max-width: 100%; overflow-wrap: anywhere; white-space: normal; }
+  .admin-home-header-actions { min-width: 0; }
+  .admin-home-kicker, .admin-home-eyebrow > span:last-child,
+  .admin-home-navigation-label, .admin-home-story-eyebrow { font-size: 11px; }
+  .admin-home-summary-content > p, .admin-home-section-heading p,
+  .admin-home-product-description, .admin-home-footer p { font-size: 12px; line-height: 1.5; }
+  .admin-home-badge, .admin-home-summary .admin-home-badge,
+  .admin-home-product > .admin-home-badge, .admin-home-story-tags span { font-size: 11px; }
+  .admin-home-photo-caption { height: auto; min-height: 30px; max-width: calc(100% - 20px); font-size: 11px; line-height: 1.4; padding: 7px 10px; }
+  .admin-home-shortcut-top :is(button, a), .admin-home-view-all { font-size: 13px; min-width: 44px; }
+  .admin-home-shortcut h3, .admin-home-product-info strong { overflow-wrap: anywhere; }
+  .admin-home-product { flex-wrap: wrap; }
+  .admin-home-product-info { flex-basis: 120px; }
+  .admin-home-product > .admin-home-badge { margin-left: auto; }
+  .admin-home-product-dialog { max-height: calc(100dvh - 24px); width: min(38em, calc(100% - 24px)); }
+  .admin-home-dialog-copy :is(h2, p, dt, dd) { min-width: 0; overflow-wrap: anywhere; }
+}

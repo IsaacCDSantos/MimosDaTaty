@@ -17,3 +17,10 @@
 .admin-editar-peca .catalog-admin-delete-dialog { margin: auto; box-sizing: border-box; max-height: calc(100dvh - 32px); overflow: auto; }
 
 .admin-adicionar-peca a[aria-disabled="true"], .admin-editar-peca a[aria-disabled="true"] { opacity: .5; cursor: not-allowed; }
+
+@media (max-width: 760px) {
+  .admin-editar-peca .catalog-admin-delete-dialog { max-height: calc(100dvh - 24px); max-width: calc(100% - 24px); padding: 20px; }
+  .admin-editar-peca .catalog-admin-delete-dialog :is(h2, p) { overflow-wrap: anywhere; }
+  .admin-editar-peca .catalog-admin-delete-dialog > div { align-items: stretch; }
+  .admin-editar-peca .catalog-admin-delete-dialog button { flex: 1 1 140px; min-width: 0; font-size: 16px; }
+}

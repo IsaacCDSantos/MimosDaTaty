@@ -376,3 +376,20 @@
 @media (prefers-reduced-motion: reduce) {
   .orders-admin-page *, .orders-admin-page *::before, .orders-admin-page *::after { transition: none !important; }
 }
+
+@media (max-width: 760px) {
+  .orders-admin-header nav { min-width: 0; }
+  .orders-admin-search input,
+  .orders-admin-tracking-field input,
+  .orders-admin-note-form textarea { font-size: 16px; min-height: 44px; }
+  .orders-admin-filters button { font-size: 14px; }
+  .orders-admin-summary span { font-size: 12px; }
+  .orders-admin-number, .orders-admin-total { white-space: normal; overflow-wrap: anywhere; }
+  .orders-admin-table td::before { font-size: 12px; }
+  .orders-admin-actions > button { font-size: 14px; }
+  .orders-admin-dialog { max-height: calc(100dvh - 24px); max-width: calc(100% - 24px); }
+  .orders-admin-detail :is(h2, h3, strong, p, dt, dd) { overflow-wrap: anywhere; }
+  .orders-admin-detail .orders-admin-primary-button,
+  .orders-admin-detail .orders-admin-secondary-button { font-size: 14px; max-width: 100%; }
+  .orders-admin-detail-items li > strong { white-space: normal; }
+}

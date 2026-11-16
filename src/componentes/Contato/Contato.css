@@ -608,3 +608,21 @@
     text-align: center;
   }
 }
+@media (max-width: 820px) {
+  .contato-secao { padding:44px 16px 48px; }
+  .contato-titulo { font-size:clamp(42px,12vw,60px); line-height:1.2; }
+  .contato-tagline { max-width:100%; font-size:11px; letter-spacing:.08em; gap:8px; }
+  .contato-tagline .linha-tagline { flex:0 0 24px; }
+  .contato-subtitulo { font-size:18px; }
+  .contato-grid { grid-template-columns:minmax(0,1fr); gap:20px; }
+  .contato-card { min-width:0; padding:24px 20px; }
+  .contato-card-header { gap:12px; flex-wrap:wrap; }
+  .contato-card-texto { font-size:16px; overflow-wrap:anywhere; }
+  .contato-botao { min-height:48px; gap:12px; padding:13px 18px; line-height:1.4; }
+  .contato-info-atendimento { width:100%; min-width:0; padding:16px; align-items:flex-start; gap:10px; }
+  .contato-horario { font-size:14px; line-height:1.55; }
+  .contato-footer p { font-size:12px; line-height:1.6; overflow-wrap:anywhere; }
+  .contato-secao .animar-rolagem,
+  .contato-secao .contato-card.animar-rolagem :is(.contato-icone-container,.contato-badge-status,.contato-card-titulo,.contato-card-texto,.contato-botao) { opacity:1; transform:none; filter:none; transition:none; }
+  .contato-secao .contato-hero-card.animar-rolagem .contato-hero-img { transform:none; transition:none; }
+}
