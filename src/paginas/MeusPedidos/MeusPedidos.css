@@ -67,3 +67,27 @@
  .meus-pedidos-dialogo .meus-pedidos-fechar { width:40px; height:40px; flex:0 0 40px; }
  .meus-pedidos-filtros .meus-pedidos-atualizar { flex-basis:40px; width:40px; }
 }
+
+@media (max-width: 620px) {
+  .meus-pedidos-filtros { gap: 8px; }
+  .meus-pedidos-filtros button { min-width: 0; min-height: 44px; padding: 10px 12px; font-size: 13px; }
+  .meus-pedidos-filtros .meus-pedidos-atualizar { flex: 0 0 44px; width: 44px; height: 44px; }
+  .meus-pedidos-card-topo > div { flex: 1; min-width: 0; }
+  .meus-pedidos-card h2 { font-size: 16px; overflow-wrap: anywhere; }
+  .meus-pedidos-card-topo p { font-size: 12px; }
+  .meus-pedidos-status { flex: 0 1 auto; max-width: 50%; font-size: 12px; text-align: center; overflow-wrap: anywhere; }
+  .meus-pedidos-foto { flex-basis: 64px; width: 64px; height: 64px; }
+  .meus-pedidos-item-resumo h3 { font-size: 15px; }
+  .meus-pedidos-item-resumo p { margin-block: 4px; font-size: 12px; line-height: 1.5; }
+  .meus-pedidos-item-resumo strong { font-size: 13px; }
+  .meus-pedidos-etapas { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+  .meus-pedidos-etapas li { padding-top: 6px; font-size: 12px; }
+  .meus-pedidos-page .meus-pedidos-detalhes { margin-top: 14px; }
+  .meus-pedidos-vazio { padding: 20px; }
+  .meus-pedidos-vazio p { font-size: 14px; }
+  .meus-pedidos-dialogo h2 { overflow-wrap: anywhere; }
+  .meus-pedidos-dialogo-status { flex-wrap: wrap; }
+  .meus-pedidos-dialogo-status p, .meus-pedidos-itens p { font-size: 13px; }
+  .meus-pedidos-dialogo .meus-pedidos-fechar { flex-basis: 44px; width: 44px; height: 44px; }
+  .meus-pedidos-detalhe-secao p, .meus-pedidos-valores { font-size: 14px; }
+}

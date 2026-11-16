@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useCarrinho } from '../../carrinho/useCarrinho'
+import MiniaturaProduto from '../Catalogo/MiniaturaProduto'
 import './Carrinho.css'
 function Carrinho({ aoNavegar }) {
  const navigate = useNavigate()
@@ -63,11 +64,11 @@ function Carrinho({ aoNavegar }) {
               {itens.map((item) => (
                 <article key={item.id} className="carrinho-item-card">
                   <div className="carrinho-item-imagem-container">
-                    <img
+                    <MiniaturaProduto
                       src={item.imagem}
                       alt={item.nome}
                       className="carrinho-item-imagem"
-                      loading="lazy"
+                      larguraAlvo={360}
                     />
                   </div>
 
@@ -80,6 +81,40 @@ function Carrinho({ aoNavegar }) {
                     </div>
 
                     <p className="carrinho-item-descricao">{item.descricao}</p>
+
+                    {(item.observacoes || item.imagensReferencia?.length > 0) && (
+                      <div className="carrinho-item-personalizacao">
+                        {item.observacoes && (
+                          <p className="carrinho-item-observacoes">
+                            <strong>Detalhes:</strong> {item.observacoes}
+                          </p>
+                        )}
+                        {item.imagensReferencia?.length > 0 && (
+                          <div className="carrinho-item-referencias">
+                            <span className="carrinho-item-ref-label">
+                              Referências ({item.imagensReferencia.length}):
+                            </span>
+                            <div className="carrinho-item-ref-thumbs">
+                              {item.imagensReferencia.map((refImg) =>
+                                refImg.dataUrl ? (
+                                  <img
+                                    key={refImg.id}
+                                    src={refImg.dataUrl}
+                                    alt={refImg.nome}
+                                    title={refImg.nome}
+                                    className="carrinho-item-ref-thumb"
+                                  />
+                                ) : (
+                                  <span key={refImg.id} className="carrinho-item-ref-nome">
+                                    {refImg.nome}
+                                  </span>
+                                )
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
 
                     <div className="carrinho-item-rodape">
                       <div className="carrinho-item-qtd-controle">

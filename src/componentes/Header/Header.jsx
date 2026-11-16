@@ -10,6 +10,7 @@ function Header({ onAbrirLogin }) {
   const [isScrolled, setIsScrolled] = useState(false)
   const isScrolledRef = useRef(false)
   const animacaoScrollRef = useRef(null)
+  const cabecalhoRef = useRef(null)
 
   const cancelarAnimacaoScroll = useCallback(() => {
     if (animacaoScrollRef.current !== null) {
@@ -95,7 +96,9 @@ function Header({ onAbrirLogin }) {
       const elemento = document.getElementById(id)
       if (elemento) {
         // Compensa a altura do header fixo para dar respiro visual ao título
-        const compensacaoHeader = isScrolledRef.current ? 88 : 96
+        const compensacaoHeader = window.matchMedia('(max-width: 820px)').matches
+          ? (cabecalhoRef.current?.getBoundingClientRect().height || 140) + 24
+          : isScrolledRef.current ? 88 : 96
         const posicaoDestino = Math.max(0, elemento.getBoundingClientRect().top + window.scrollY - compensacaoHeader)
         const distancia = Math.abs(posicaoDestino - window.scrollY)
         // Duração ampliada para 1400ms - 2000ms para um movimento bem calmo e perceptível
@@ -131,7 +134,7 @@ function Header({ onAbrirLogin }) {
 
   return (
     <div className="site-header-wrapper">
-      <header className={`site-header ${isScrolled ? 'scrolled' : ''}`}>
+      <header ref={cabecalhoRef} className={`site-header ${isScrolled ? 'scrolled' : ''}`}>
         <div className="header-conteudo">
           <div className="marca">
             <a

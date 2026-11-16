@@ -304,3 +304,19 @@
     font-size: 52px;
   }
 }
+
+@media (max-width: 600px) {
+  .cadastro-page { padding: 20px 16px; }
+  .cadastro-card { min-width: 0; border-radius: 24px; }
+  .cadastro-conteudo { min-width: 0; padding: 26px 20px; }
+  .cadastro-page h1 { font-size: clamp(42px, 12vw, 52px); }
+  .cadastro-campo input { min-width: 0; font-size: 16px; }
+  .cadastro-mostrar { min-height: 44px; padding-block: 8px; }
+  .cadastro-mostrar input { flex: 0 0 20px; width: 20px; height: 20px; }
+  .cadastro-login a, .cadastro-voltar { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px 4px; }
+  .cadastro-voltar { width: 100%; }
+  .cadastro-intro, .cadastro-ajuda { overflow-wrap: anywhere; }
+  .cadastro-visual { height: 144px; }
+  .cadastro-marca { gap: 10px; padding: 20px; }
+  .cadastro-mensagem { display: none; }
+}

@@ -53,7 +53,7 @@ A aplicação une a identidade visual acolhedora do artesanato a uma navegação
   - Login unificado com distinção entre **Cliente** e **Administrador** validada em `public.perfis` via Supabase Auth.
   - Cadastro de novos clientes com criação automática de perfil `cliente` via trigger SQL e fluxo completo de recuperação/redefinição de senha.
   - Área da conta autenticada com **Meu perfil** (edição de nome, telefone e endereço de entrega) e **Meus pedidos** (histórico, filtros por etapa e detalhes conectados ao Supabase).
-- 🧶 **Vitrine & Catálogo (`/catalogo`)**: exibição de peças visíveis e não arquivadas conectadas ao Supabase (tabelas `categorias`, `pecas` e bucket `pecas` no Storage).
+- 🧶 **Vitrine & Catálogo (`/catalogo` e `/catalogo/:pecaSlug`)**: exibição de peças visíveis e não arquivadas conectadas ao Supabase (tabelas `categorias`, `pecas` e bucket `pecas` no Storage), filtro reativo por categorias e personalização da peça com detalhes e imagens de referência.
 - 🛒 **Carrinho de Compras (`/carrinho`)**: ajuste de quantidades, remoção de itens, persistência local e integração direta com o checkout.
 - 🛍️ **Checkout, Frete e Pagamento (`/checkout`)**:
   - Cotação de frete em tempo real por CEP via Edge Function `calcular-frete` (**SuperFrete**, em sandbox), com validação de preços e prazos no servidor.
@@ -106,7 +106,7 @@ Sistema Web Mimos da Taty/
 | Rota | Acesso | Descrição |
 | :--- | :--- | :--- |
 | `/` | Público | Landing page institucional do ateliê. |
-| `/catalogo` | Público | Vitrine de peças disponíveis para encomenda. |
+| `/catalogo`, `/catalogo/:pecaSlug` | Público | Vitrine de peças com filtro por categorias e tela de personalização/referências. |
 | `/carrinho` | Público | Visualização e edição dos itens selecionados. |
 | `/checkout` | Público (finalização autenticada) | Endereço, cotação de frete (SuperFrete) e pagamento Sandbox (Mercado Pago). |
 | `/login` | Público | Autenticação de Cliente ou Administrador (`?perfil=admin`). |
@@ -179,6 +179,8 @@ Validação concluída em 15/11/2026 (horário de Brasília):
 
 Para receber pagamentos reais, ainda é necessário ativar e revisar as credenciais e configurações de produção, homologar os meios de pagamento e ajustar deliberadamente o bloqueio de produção no backend. Os segredos locais ficam no arquivo ignorado `supabase/functions/.env.local`; não devem ser versionados nem enviados pelo chat.
 
+A personalização de peças trazida do catálogo mantém observações e imagens de referência no carrinho local. Esses dados ainda não são enviados pelo checkout nem persistidos no pedido; a gravação e a exibição das referências no administrativo exigem uma etapa própria de integração. A mesclagem preserva o comportamento existente das duas implementações.
+
 ---
 
 ## 📜 Scripts Disponíveis
@@ -197,6 +199,7 @@ Para receber pagamentos reais, ainda é necessário ativar e revisar as credenci
 
 - **Conventional Commits:** uso de prefixos semânticos (`feat:`, `fix:`, `docs:`, `refactor:`, `style:`).
 - **Branches e Pull Requests:** isolamento de alterações em branches temáticas antes da integração na `main`.
+- **Responsividade mobile:** consulte a matriz e o roteiro de validação em [docs/validacao-mobile.md](docs/validacao-mobile.md).
 
 ---
 

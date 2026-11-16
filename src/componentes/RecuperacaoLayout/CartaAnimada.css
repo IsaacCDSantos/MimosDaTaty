@@ -14,3 +14,8 @@
   .senha-ilustracao { width: 165px; height: 125px; }
   .senha-ilustracao-canvas { transform: scale(.5); }
 }
+
+@media (max-width: 600px) {
+  .senha-ilustracao { width: 132px; height: 100px; }
+  .senha-ilustracao-canvas { transform: scale(.4); }
+}

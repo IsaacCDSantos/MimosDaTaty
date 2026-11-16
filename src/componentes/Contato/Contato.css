@@ -242,28 +242,31 @@
   border-radius: 36px;
   border: none;
   cursor: pointer;
-  transition: background-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  transition:
+    background-color 0.25s ease,
+    transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.28s ease;
   box-shadow: 0 4px 14px rgba(217, 146, 148, 0.35);
 }
 
 .contato-botao:hover {
-  background-color: #c47d7f;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 18px rgba(196, 125, 127, 0.45);
+  background-color: #c27679;
+  transform: translateY(-5px) scale(1.025);
+  box-shadow: 0 12px 24px rgba(196, 125, 127, 0.48);
 }
 
 .contato-botao:active {
-  transform: translateY(0);
+  transform: translateY(-1px) scale(0.99);
 }
 
 .icone-seta {
   width: 18px;
   height: 18px;
-  transition: transform 0.25s ease;
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .contato-botao:hover .icone-seta {
-  transform: translateX(4px);
+  transform: translateX(7px);
 }
 
 
@@ -483,10 +486,24 @@
 }
 
 .contato-card.animar-rolagem .contato-card-titulo,
-.contato-card.animar-rolagem .contato-card-texto,
-.contato-card.animar-rolagem .contato-botao {
+.contato-card.animar-rolagem .contato-card-texto {
   opacity: 0;
   transform: translateY(26px);
+}
+
+.contato-card.animar-rolagem .contato-botao {
+  opacity: 0;
+}
+
+@keyframes contatoBotaoEntrada {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .contato-card.animar-rolagem .contato-card-titulo {
@@ -501,27 +518,29 @@
     transform 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.34s;
 }
 
-.contato-card.animar-rolagem .contato-botao {
-  transition:
-    opacity 0.7s ease 0.44s,
-    transform 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.44s,
-    background-color 0.25s ease,
-    box-shadow 0.25s ease;
-}
-
 .contato-card.animar-rolagem.visivel .contato-card-titulo,
-.contato-card.animar-rolagem.visivel .contato-card-texto,
-.contato-card.animar-rolagem.visivel .contato-botao {
+.contato-card.animar-rolagem.visivel .contato-card-texto {
   opacity: 1;
   transform: translateY(0);
 }
 
-.contato-card.animar-rolagem.visivel .contato-botao:hover {
-  transform: translateY(-2px);
+.contato-card.animar-rolagem.visivel .contato-botao {
+  opacity: 1;
+  animation: contatoBotaoEntrada 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.44s backwards;
   transition:
     background-color 0.25s ease,
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
+    transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.28s ease;
+}
+
+.contato-card.animar-rolagem.visivel .contato-botao:hover {
+  background-color: #c27679;
+  transform: translateY(-5px) scale(1.025);
+  box-shadow: 0 12px 24px rgba(196, 125, 127, 0.48);
+}
+
+.contato-card.animar-rolagem.visivel .contato-botao:active {
+  transform: translateY(-1px) scale(0.99);
 }
 
 /* Flutuação suave dos corações da bonequinha */
@@ -588,4 +607,22 @@
     font-size: 13px;
     text-align: center;
   }
+}
+@media (max-width: 820px) {
+  .contato-secao { padding:44px 16px 48px; }
+  .contato-titulo { font-size:clamp(42px,12vw,60px); line-height:1.2; }
+  .contato-tagline { max-width:100%; font-size:11px; letter-spacing:.08em; gap:8px; }
+  .contato-tagline .linha-tagline { flex:0 0 24px; }
+  .contato-subtitulo { font-size:18px; }
+  .contato-grid { grid-template-columns:minmax(0,1fr); gap:20px; }
+  .contato-card { min-width:0; padding:24px 20px; }
+  .contato-card-header { gap:12px; flex-wrap:wrap; }
+  .contato-card-texto { font-size:16px; overflow-wrap:anywhere; }
+  .contato-botao { min-height:48px; gap:12px; padding:13px 18px; line-height:1.4; }
+  .contato-info-atendimento { width:100%; min-width:0; padding:16px; align-items:flex-start; gap:10px; }
+  .contato-horario { font-size:14px; line-height:1.55; }
+  .contato-footer p { font-size:12px; line-height:1.6; overflow-wrap:anywhere; }
+  .contato-secao .animar-rolagem,
+  .contato-secao .contato-card.animar-rolagem :is(.contato-icone-container,.contato-badge-status,.contato-card-titulo,.contato-card-texto,.contato-botao) { opacity:1; transform:none; filter:none; transition:none; }
+  .contato-secao .contato-hero-card.animar-rolagem .contato-hero-img { transform:none; transition:none; }
 }
