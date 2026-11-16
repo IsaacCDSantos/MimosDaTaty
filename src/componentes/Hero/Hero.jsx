@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import './Hero.css'
 import imagemHero from '../../assets/imagens/banner-principal.png'
 
@@ -17,7 +18,7 @@ function Hero() {
         </p>
 
         <div className="hero-botao-container">
-          <a className="hero-botao" href="/catalogo">
+          <Link className="hero-botao" to="/catalogo">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="28"
@@ -29,7 +30,7 @@ function Hero() {
             </svg>
 
             Conheça nossas peças
-          </a>
+          </Link>
         </div>
       </div>
     </section>

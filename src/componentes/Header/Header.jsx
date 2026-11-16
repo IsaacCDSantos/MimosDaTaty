@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import './Header.css'
 import logo from '../../assets/imagens/logo-mimos-da-taty.png'
 import ContaHeader from './ContaHeader'
@@ -163,7 +163,7 @@ function Header({ onAbrirLogin }) {
                 </a>
               </li>
               <li>
-                <a href="/catalogo">Catálogo</a>
+                <Link to="/catalogo">Catálogo</Link>
               </li>
               <li>
                 <a
