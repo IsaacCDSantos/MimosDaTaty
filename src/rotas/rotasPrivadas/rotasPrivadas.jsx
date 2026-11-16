@@ -6,10 +6,12 @@ import FormularioCatalogoAdmin from '../../paginas/Admin/CatalogoAdmin/Formulari
 import PedidosAdmin from '../../paginas/Admin/Pedidos/PedidosAdmin'
 import ExigirAdministrador from './ExigirAdministrador'
 import MeuPerfil from '../../paginas/MeuPerfil/MeuPerfil'
+import MeusPedidos from '../../paginas/MeusPedidos/MeusPedidos'
 
 export const rotasPrivadas = (
   <>
     <Route path="/meu-perfil" element={<MeuPerfil />} />
+    <Route path="/meus-pedidos" element={<MeusPedidos />} />
     <Route element={<ExigirAdministrador><CatalogoPersistenteProvider /></ExigirAdministrador>}>
       <Route path="/admin/catalogo" element={<CatalogoAdmin />} />
       <Route path="/admin/adicionar-peca" element={<FormularioCatalogoAdmin />} />

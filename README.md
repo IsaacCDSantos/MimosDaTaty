@@ -65,7 +65,7 @@ A aplicação foi planejada para unir a sensibilidade e o acolhimento do artesan
   - Login por e-mail e senha com verificação do perfil protegido em `public.perfis`, bloqueio de perfil incompatível e mensagens genéricas de credenciais inválidas.
   - Cliente autenticado segue para `/`; administrador autenticado segue para `/admin`. A opção escolhida no formulário precisa corresponder ao perfil armazenado no banco.
   - Rotas `/admin` verificam a conta no Supabase Auth e o perfil no banco antes de exibir as telas; a sessão é acompanhada ao entrar, sair e atualizar a página.
-  - O cabeçalho identifica a conta conectada por foto ou iniciais e oferece Perfil, Meus pedidos (em breve) e Sair (encerra a sessão neste navegador).
+  - O cabeçalho identifica a conta conectada por foto ou iniciais e oferece Perfil, Meus pedidos e Sair (encerra a sessão neste navegador).
 
 - 🎀 **Cadastro de Clientes (`/cadastro`)**:
   - Página responsiva em `src/paginas/Cadastro`, com nome, e-mail, senha e confirmação de senha.
@@ -184,6 +184,7 @@ Sistema Web Mimos da Taty/
 | `/login` | `Login` | **Público** | Página de autenticação para clientes e administradores. |
 | `/cadastro` | `Cadastro` | **Público** | Criação de conta de cliente pelo Supabase Auth. |
 | `/catalogo` | `Catalogo` | **Público** | Vitrine de produtos; não é o gerenciamento administrativo. |
+| `/meus-pedidos` | `MeusPedidos` | **Exige login** | Histórico da própria conta, filtros por etapa e detalhes de peças, valores e entrega. |
 | `/meu-perfil` | `MeuPerfil` | **Exige login** | Dados pessoais da própria conta e cadastro/edição do endereço de entrega no Supabase. |
 | `/carrinho` | `Carrinho` | **Público** | Visualização do carrinho, controle de itens/quantidades e resumo de compras. |
 | `/recuperar-senha` | `RecuperacaoSenha` | **Público** | Solicita o link de recuperação pelo Supabase Auth. |
@@ -303,7 +304,7 @@ Para manter o histórico e a qualidade de engenharia do repositório, recomenda-
 - [x] Migração SQL de perfis versionada e configuração por variáveis de ambiente;
 - [x] Issue sobre o retorno do cadastro com e-mail existente encerrada no GitHub ([issue #7](https://github.com/IsaacCDSantos/MimosDaTaty/issues/7)); os critérios de aceite continuam desmarcados na issue;
 - [x] Tela Meu perfil do cliente, com edição persistente de nome, telefone e endereço de entrega;
-- [ ] Implementar Meus pedidos do cliente ([issue #6](https://github.com/IsaacCDSantos/MimosDaTaty/issues/6)); o protótipo está no Figma;
+- [x] Meus pedidos do cliente, com histórico próprio, filtros, etapas e detalhes conectados ao Supabase ([issue #6](https://github.com/IsaacCDSantos/MimosDaTaty/issues/6));
 - [ ] Revisar pendências identificadas no código de recuperação de senha: validação do retorno e de links inválidos/expirados, reenvio e avisos demonstrativos;
 - [ ] Revisar o botão da vitrine administrativa ([issue #5](https://github.com/IsaacCDSantos/MimosDaTaty/issues/5)), as prévias públicas administrativas ([issue #8](https://github.com/IsaacCDSantos/MimosDaTaty/issues/8)) e a responsividade em celulares ([issue #10](https://github.com/IsaacCDSantos/MimosDaTaty/issues/10));
 - [x] Interface de catálogo administrativo e operações temporárias sobre produtos fictícios;
@@ -317,7 +318,7 @@ Para manter o histórico e a qualidade de engenharia do repositório, recomenda-
 ## 📝 Atualizações Recentes e Pendências
 
 - **Autenticação:** Supabase Auth integrado, separação entre cliente e administrador, proteção das rotas e mensagens genéricas para falhas de credenciais/perfil.
-- **Sessão do cliente:** avatar com foto ou iniciais e menu com Perfil funcional, Meus pedidos em breve e Sair. O nome salvo no perfil atualiza as iniciais do cabeçalho.
+- **Sessão do cliente:** avatar com foto ou iniciais e menu com Perfil, Meus pedidos e Sair funcionais. O nome salvo no perfil atualiza as iniciais do cabeçalho.
 - **Recuperação de senha:** envio do link e alteração da senha integrados ao Supabase; o fluxo principal foi testado manualmente pelo usuário. Reenvio real, validação específica do retorno e correção do aviso demonstrativo permanecem pendentes.
 - **Banco de dados e pagamentos:** o catálogo usa a modelagem existente da loja no Supabase. Pedidos e checkout ainda não estão ligados ao mesmo fluxo persistente; o checkout não processa pagamentos reais.
 - **Configuração:** a ausência de configuração válida do Supabase não derruba as páginas públicas; o README e `.env.example` orientam a configuração antes do build na hospedagem.
@@ -421,6 +422,21 @@ Nome completo e telefone são atualizados em `public.perfis`; o e-mail vem do Su
 
 O serviço confirma a identidade com `auth.getUser()` antes das operações e exige o mesmo usuário que carregou o formulário. Ele grava somente nome/telefone ou os campos de entrega permitidos. As políticas existentes restringem perfis e endereços ao proprietário; o navegador não pode alterar permissões administrativas. Não foi necessário alterar o esquema nem ampliar permissões no Supabase. O ambiente precisa ter as tabelas `perfis` e `enderecos_cliente`, suas políticas RLS e as variáveis públicas do Supabase já utilizadas pelo projeto.
 
-O sucesso é exibido somente após a confirmação da linha pelo banco. Uma falha de conexão com resultado desconhecido bloqueia novas gravações até recarregar os dados. Salvar endereço é independente do botão Salvar alterações dos dados pessoais. Meus pedidos continua indicado como disponível em breve.
+O sucesso é exibido somente após a confirmação da linha pelo banco. Uma falha de conexão com resultado desconhecido bloqueia novas gravações até recarregar os dados. Salvar endereço é independente do botão Salvar alterações dos dados pessoais. Meus pedidos está disponível em `/meus-pedidos`, com navegação entre as duas páginas da conta.
 
 Validação: 19 testes específicos de perfil/endereço e retorno do login, além da suíte geral (136 testes aprovados em 15/11/2026), lint e build. No navegador, foram conferidos o acesso pelo menu, salvar e recarregar nome/telefone, cadastrar endereço, cancelar rascunhos e os layouts de 810 px e 390 px. Os dados fictícios usados no teste foram removidos ao final e a conta de teste foi restaurada. O arquivo `scripts/verificar-permissoes-perfil.sql` verifica edição própria, isolamento entre contas, bloqueio de alteração de perfil e bloqueio de visitantes em uma transação que termina com ROLLBACK; exige a conta de teste indicada no script e uma segunda conta existente. Não altera o esquema nem deixa dados de teste.
+
+
+## Meus pedidos do cliente
+
+O menu da conta e a sidebar de Perfil abrem `/meus-pedidos`. A tela exige login e retorna a esse endereço após autenticar. Cabeçalho, rodapé e navegação da conta são compartilhados com Meu perfil. A troca de conta remonta o conteúdo e cancela consultas anteriores.
+
+O serviço confirma a identidade antes e depois da leitura, consulta `pedidos` com `cliente_id` da própria conta e busca os itens somente desses pedidos. Pedidos e itens usam paginação por ID para não perder registros no limite de linhas da API. As consultas selecionam colunas explícitas, sem CPF/e-mail snapshots ou observações internas. Não há escrita, cancelamento, mudança de status ou cobrança na página do cliente.
+
+Os filtros Todos, Pagamento aprovado, Em produção, Enviado e Entregue representam etapas. Pagamento aprovado mostra pedidos novos cujo pagamento já foi confirmado. Cancelados, pagamentos pendentes/recusados/estornados e estados não reconhecidos continuam em Todos, com rótulos próprios. A linha de etapas só confirma pagamento quando `status_pagamento` é aprovado; datas ausentes não são inventadas. A lista pode ser atualizada pelo botão ao lado dos filtros.
+
+Ver detalhes do pedido abre uma janela com todas as peças e personalizações, subtotal/frete/total registrados, pagamento, endereço de entrega do pedido e rastreio quando disponível. Os dados históricos vêm dos snapshots, sem recalcular usando preços do catálogo ou o endereço atual do perfil. Datas usam o fuso America/Sao_Paulo. Escape e os botões de fechar devolvem o foco ao pedido de origem. A tela trata carregamento, falhas, filtro vazio e conta sem pedidos. Não há substituição por pedidos demonstrativos. O checkout mantém suas limitações atuais: esta entrega consulta pedidos existentes, sem implantar a criação ou o pagamento de novos pedidos.
+
+Validação: 161 testes automatizados aprovados, incluindo 22 de consulta/normalização de pedidos do cliente e 3 de retorno do login; lint e build aprovados. O script `scripts/verificar-permissoes-pedidos-cliente.sql` verifica leitura própria, isolamento de pedidos e itens, bloqueio de escrita por clientes e bloqueio de leitura por visitantes. Ele usa fixtures em transação e termina com ROLLBACK. No navegador foram conferidos menu/sidebar, filtros, detalhes, rastreio, Escape/retorno de foco, atualização, estados vazios e layouts de 810 px e 390 px. Os dois pedidos fictícios da conta reservada usados na verificação visual foram removidos junto com seus itens, sem alterar estoque ou avançar a sequência de números de pedido.
+
+Limitação preexistente relativa ao RF20: o papel `authenticated` tem SELECT na tabela `pedidos` inteira. Esta tela não solicita nem exibe `observacao_interna`, mas um cliente pode consultar essa coluna de seus próprios pedidos diretamente pela API. RLS isola linhas, não colunas. A proteção desse campo no banco exige uma alteração coordenada com a leitura administrativa; esta implementação preserva o esquema e as permissões existentes.

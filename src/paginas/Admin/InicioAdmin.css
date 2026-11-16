@@ -147,7 +147,6 @@
   color: #9c454d;
 }
 
-.admin-home-shop-link,
 .admin-home-account {
   align-items: center;
   border-radius: 1.4em;
@@ -159,19 +158,6 @@
   white-space: nowrap;
 }
 
-.admin-home-shop-link {
-  background: #fff;
-  color: var(--admin-rose) !important;
-  transition: background-color .18s ease, transform .18s ease;
-  width: calc(var(--admin-unit) * 9.3);
-}
-
-.admin-home-shop-link:hover {
-  background: #fff9f4;
-  transform: translateY(-1px);
-}
-
-.admin-home-shop-link svg,
 .admin-home-account svg {
   height: .9em;
   width: .9em;
@@ -875,7 +861,6 @@
     padding: 1.1em 1.2em 1.1em 1.8em;
   }
 
-  .admin-home-shop-link,
   .admin-home-account {
     min-height: 44px;
   }
@@ -1092,7 +1077,6 @@
     flex-basis: 100%;
   }
 
-  .admin-home-shop-link,
   .admin-home-account {
     flex: 1;
     font-size: .8em;
