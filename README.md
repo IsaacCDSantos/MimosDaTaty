@@ -148,7 +148,7 @@ Sistema Web Mimos da Taty/
 
 4. **Prepare o banco e as Edge Functions no Supabase (opcional para vitrine pública; necessário para auth, catálogo real, frete e checkout):**
    - Aplique as migrações de `supabase/migrations/` no projeto Supabase.
-   - Configure nos **Secrets** das Edge Functions os tokens de **Sandbox** (`SUPERFRETE_TOKEN`, `SUPERFRETE_CONTATO`, `SUPERFRETE_AMBIENTE`, `SUPERFRETE_CEP_ORIGEM`, `MERCADO_PAGO_ACCESS_TOKEN`, `MERCADO_PAGO_PUBLIC_KEY`, `MERCADO_PAGO_SELLER_ID`, `MERCADO_PAGO_AMBIENTE`). Tokens privados nunca devem ir em variáveis `VITE_*`.
+   - Configure nos **Secrets** das Edge Functions as variáveis do frete (`SUPERFRETE_TOKEN`, `SUPERFRETE_CONTATO`, `SUPERFRETE_AMBIENTE`, `SUPERFRETE_CEP_ORIGEM`) e do pagamento de teste (`MERCADO_PAGO_ACCESS_TOKEN`, `MERCADO_PAGO_PUBLIC_KEY`, `MERCADO_PAGO_SELLER_ID`, `MERCADO_PAGO_AMBIENTE=sandbox`, `MERCADO_PAGO_WEBHOOK_SECRET`). Tokens privados e assinatura do webhook nunca devem ir em variáveis `VITE_*`. A cotação de frete pode usar `production` enquanto o pagamento usa `sandbox`; cotar não contrata uma entrega.
    - Para promover um usuário a administrador, altere a coluna `perfil` para `'admin'` na tabela `public.perfis`.
 
 5. **Inicie o servidor de desenvolvimento:**
@@ -156,6 +156,28 @@ Sistema Web Mimos da Taty/
    npm run dev
    ```
    Acesse `http://localhost:5173`.
+
+---
+
+## Integração Mercado Pago
+
+O checkout da loja utiliza **Checkout Transparente / Orders API**, com cartão pelos campos seguros do MercadoPago.js e Pix. As Edge Functions `checkout` e `mercado-pago-webhook` estão publicadas no projeto Supabase `pzzfuroafdulpfdtwdsi`. As cinco variáveis do Mercado Pago, incluindo a assinatura do webhook, estão configuradas no servidor. A integração permanece restrita a **sandbox**; o backend bloqueia pagamentos de produção.
+
+O webhook de teste está cadastrado para eventos `order` no endereço:
+
+```text
+https://pzzfuroafdulpfdtwdsi.supabase.co/functions/v1/mercado-pago-webhook?origem=checkout
+```
+
+Validação concluída em 15/11/2026 (horário de Brasília):
+
+- Compra pela interface da loja aprovada com cartão de teste: pedido **#1004**, uma Toalha sob encomenda, total **R$ 111,50** com frete PAC. Nenhuma cobrança real ou contratação de envio foi realizada. O pedido contém observação identificando o teste.
+- Resultado recuperado após atualizar a página e pedido conferido no painel administrativo. Um único item e um único pagamento persistidos; estoque da peça preservado.
+- Notificação automática do Mercado Pago recebida com **HTTP 200** às 22:46:42, identificada nos logs por `MercadoPago WebHook v1.0 order` e pela referência do pedido. O erro anterior de geração da assinatura deixou de impedir as notificações.
+- Verificações adicionais: assinatura válida aceita (200), assinatura inválida rejeitada (401) e repetição da notificação aceita sem duplicar o pagamento. O simulador manual do painel retornou 401; o evento automático do pagamento de teste foi recebido com sucesso, mantendo a validação de assinatura ativa.
+- Suíte local: **174 testes aprovados**. ESLint e build também passaram na validação da integração.
+
+Para receber pagamentos reais, ainda é necessário ativar e revisar as credenciais e configurações de produção, homologar os meios de pagamento e ajustar deliberadamente o bloqueio de produção no backend. Os segredos locais ficam no arquivo ignorado `supabase/functions/.env.local`; não devem ser versionados nem enviados pelo chat.
 
 ---
 

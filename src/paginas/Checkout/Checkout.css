@@ -7,6 +7,20 @@
   font-family: 'Inter', sans-serif;
 }
 
+.checkout-container .checkout-campos,
+.checkout-container .checkout-campos-cartao { border: 0; padding: 0; margin: 0 0 24px; min-width: 0; }
+.checkout-container .opcao-card.ativo { border: 2px solid #b66779; padding: 14px; }
+.checkout-container .opcao-card input { width: auto; }
+.checkout-container .opcao-card small { display: block; margin-top: 5px; color: #756b67; line-height: 1.5; }
+.checkout-container .campo-cartao-seguro { height: 44px; background: #fdf3ea; border: 1px solid #e6bfa3; border-radius: 20px; padding: 12px 15px; box-sizing: border-box; }
+.checkout-container .campo-cartao-seguro iframe { width: 100%; height: 100%; border: 0; }
+.checkout-container .form-group select { min-width: 0; width: 100%; padding: 12px; border: 1px solid #e6bfa3; border-radius: 16px; background: #fdf3ea; color: #333; }
+.checkout-container .form-group input { min-width: 0; width: 100%; box-sizing: border-box; }
+.checkout-container .checkout-pix-qr { display: block; width: min(100%, 260px); margin: 20px auto; }
+.checkout-container .checkout-resultado textarea { display: block; width: 100%; box-sizing: border-box; margin: 12px 0; border: 1px solid #e6bfa3; border-radius: 12px; padding: 12px; resize: vertical; overflow-wrap: anywhere; }
+.checkout-container .checkout-consultar { display: block; width: 100%; margin-top: 16px; }
+@media (prefers-reduced-motion: no-preference) { .checkout-container .btn-pagar { transition: background-color .2s, box-shadow .2s; } .checkout-container .btn-pagar:hover:not(:disabled) { background: #bd7483; box-shadow: 0 4px 12px #8c5a4f26; } }
+
 .checkout-nav {
   display: flex;
   gap: 15px;

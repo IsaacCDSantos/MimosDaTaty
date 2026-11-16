@@ -221,7 +221,7 @@ export default function Catalogo() {
                                             +
                                         </button>
                                         <span className={'prazoEntrega'}>
-                                            {produto.prazo || 'Entrega em até 7 dias úteis'}
+                                            {produto.prazo}
                                         </span>
                                     </div>
 

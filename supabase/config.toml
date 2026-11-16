@@ -1,2 +1,10 @@
 [functions.calcular-frete]
 verify_jwt = false
+
+[functions.checkout]
+# A função valida a sessão com Supabase Auth antes de qualquer operação de pedido/pagamento.
+verify_jwt = false
+
+[functions.mercado-pago-webhook]
+# Notificações são autenticadas por assinatura HMAC do Mercado Pago.
+verify_jwt = false
