@@ -22,7 +22,9 @@ export default function FormularioCatalogoAdmin({ editar = false, demonstracao =
   if (catalogo?.erro) return <main className="catalog-admin-page"><section className="catalog-admin-panel"><p role="alert">{catalogo.erro}</p><button type="button" className="catalog-admin-primary-button" onClick={catalogo.recarregar}>Tentar novamente</button><Link className="catalog-admin-secondary-button" to={destino}>Voltar ao catálogo</Link></section></main>
   if (!catalogo || (editar && !peca)) return <main className="catalog-admin-page"><section className="catalog-admin-panel"><h1>Peça não encontrada</h1><p>Selecione uma peça disponível no catálogo para editar.</p><Link className="catalog-admin-primary-button" to={destino}>Voltar ao catálogo</Link></section></main>
 
-  const categorias = demonstracao ? CATEGORIAS_CATALOGO.map(nome => ({ nome, ativa: true })) : catalogo.categorias.filter(item => item.ativa !== false || item.id === peca?.categoriaId)
+  const categorias = demonstracao
+    ? CATEGORIAS_CATALOGO.map(nome => ({ nome, ativa: true }))
+    : catalogo.categorias.filter(item => (item.ativa !== false && item.nome !== 'Presentes') || item.id === peca?.categoriaId)
   const props = {
     demonstracao,
     voltarPara: destino,

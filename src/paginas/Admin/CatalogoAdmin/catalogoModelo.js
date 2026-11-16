@@ -2,7 +2,6 @@ export const CATEGORIAS_CATALOGO = Object.freeze([
   'Maternidade',
   'Enxovais',
   'Crochê & Bordado',
-  'Presentes',
 ])
 
 const nomesImagensExistentes = [

@@ -34,14 +34,14 @@ function criarLista() {
   ])
 }
 
-test('normaliza formulário sem modificar dados e mantém as quatro categorias', () => {
+test('normaliza formulário sem modificar dados e mantém as três categorias', () => {
   const entrada = congelar({ ...dadosValidos, nome: '  Kit de berço  ', descricao: '  Descrição artesanal.  ', prazo: '  7 dias úteis  ' })
   assert.deepEqual(normalizarPeca(entrada), {
     nome: 'Kit de berço', descricao: 'Descrição artesanal.', preco: 189,
     categoria: 'Maternidade', prazo: '7 dias úteis', estoque: 3, imagem: fotoKit, visivel: true,
   })
   assert.equal(entrada.nome, '  Kit de berço  ')
-  assert.deepEqual(CATEGORIAS_CATALOGO, ['Maternidade', 'Enxovais', 'Crochê & Bordado', 'Presentes'])
+  assert.deepEqual(CATEGORIAS_CATALOGO, ['Maternidade', 'Enxovais', 'Crochê & Bordado'])
 })
 
 test('preço aceita BRL e duas casas, rejeitando zero, negativos, excesso de casas e valores inválidos', () => {
@@ -106,20 +106,21 @@ test('filtros combinam categorias por OR; seleção vazia retorna todas sem modi
   assert.notStrictEqual(todas, lista)
   assert.deepEqual(filtrarPorCategorias(lista, ['Maternidade', 'Enxovais']).map(peca => peca.id), [1, 2])
   assert.deepEqual(filtrarPorCategorias(lista, ['Enxovais', 'Enxovais']).map(peca => peca.id), [2])
-  assert.deepEqual(filtrarPorCategorias(lista, ['Presentes']), [])
+  assert.deepEqual(filtrarPorCategorias(lista.filter(peca => peca.id !== 3), ['Crochê & Bordado']), [])
+  assert.throws(() => filtrarPorCategorias(lista, ['Presentes']), /categorias válidas/)
   assert.throws(() => filtrarPorCategorias(lista, ['Categoria inexistente']), /categorias válidas/)
   assert.equal(lista.length, 3)
 })
 
-test('adicionar usa ID explícito e permite encontrar nova peça na categoria Presentes', () => {
+test('adicionar usa ID explícito e permite encontrar nova peça pela categoria', () => {
   const lista = criarLista()
-  const atualizada = adicionarPeca(lista, { ...dadosValidos, nome: 'Presente artesanal', categoria: 'Presentes', visivel: false }, 4)
+  const atualizada = adicionarPeca(lista, { ...dadosValidos, nome: 'Manta bordada', categoria: 'Crochê & Bordado', visivel: false }, 4)
   assert.equal(lista.length, 3)
   assert.equal(atualizada.length, 4)
   assert.equal(atualizada[3].id, 4)
   assert.equal(atualizada[3].preco, 189)
   assert.equal(atualizada[3].visivel, false)
-  assert.deepEqual(filtrarPorCategorias(atualizada, ['Presentes']).map(peca => peca.id), [4])
+  assert.deepEqual(filtrarPorCategorias(atualizada, ['Crochê & Bordado']).map(peca => peca.id), [3, 4])
   assert.throws(() => adicionarPeca(lista, dadosValidos, 1), /Já existe/)
   assert.throws(() => adicionarPeca(lista, dadosValidos, '1'), /Já existe/)
   assert.throws(() => adicionarPeca(lista, dadosValidos), /identificador/)

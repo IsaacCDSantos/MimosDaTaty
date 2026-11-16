@@ -6,7 +6,7 @@ import trocadorCroche from '../../assets/imagens/trocador_croche_figma.png'
 export const DADOS_ADMIN_DEMONSTRACAO = {
   administradora: 'Tati',
   resumo: { total: 24, visiveis: 22, ocultas: 2 },
-  categorias: ['Maternidade', 'Enxovais', 'Crochê & Bordado', 'Presentes'],
+  categorias: ['Maternidade', 'Enxovais', 'Crochê & Bordado'],
   destaques: [
     { id: 'kit-berco-florido', nome: 'Kit de berço florido', descricao: 'Conjunto com manta, toalha e trocador', preco: 189, imagem: kitBerco, categoria: 'Enxovais', prazo: 'Até 7 dias úteis', visivel: true },
     { id: 'manta-croche-bebe', nome: 'Manta de crochê bebê', descricao: 'Peça macia e leve em linha antialérgica', preco: 129, imagem: mantaCroche, categoria: 'Crochê & Bordado', prazo: 'Até 7 dias úteis', visivel: true },

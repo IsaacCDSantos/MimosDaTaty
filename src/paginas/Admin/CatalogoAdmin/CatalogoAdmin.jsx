@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import MiniaturaProduto from '../../Catalogo/MiniaturaProduto'
 import { CATEGORIAS_CATALOGO, filtrarPorCategorias } from './catalogoModelo'
 import { useCatalogoAdmin } from './useCatalogoAdmin'
 import './CatalogoAdmin.css'
@@ -10,9 +11,24 @@ export default function CatalogoAdmin({ demonstracao = false }) {
   const catalogo = useCatalogoAdmin()
   const [categorias, setCategorias] = useState([])
   const [erroAcao, setErroAcao] = useState('')
+  const [fotoAmpliada, setFotoAmpliada] = useState(null)
   const bloqueado = !catalogo || Boolean(catalogo.carregando || catalogo.erro || catalogo.ocupado || catalogo.confirmacaoPendente)
   const inicio = demonstracao ? '/previa/admin' : '/admin'
-  const categoriasDisponiveis = demonstracao ? CATEGORIAS_CATALOGO : [...new Set([...(catalogo?.categorias || []).map(item => item.nome), ...(catalogo?.pecas || []).map(item => item.categoria)])]
+
+  useEffect(() => {
+    if (!fotoAmpliada) return
+    const aoPressionarEsc = event => {
+      if (event.key === 'Escape') setFotoAmpliada(null)
+    }
+    window.addEventListener('keydown', aoPressionarEsc)
+    return () => window.removeEventListener('keydown', aoPressionarEsc)
+  }, [fotoAmpliada])
+  const categoriasDisponiveis = demonstracao
+    ? CATEGORIAS_CATALOGO
+    : [...new Set([
+        ...(catalogo?.categorias || []).filter(item => item.ativa !== false && item.nome !== 'Presentes').map(item => item.nome),
+        ...(catalogo?.pecas || []).map(item => item.categoria).filter(nome => nome && nome !== 'Presentes'),
+      ])]
   const pecas = filtrarPorCategorias(catalogo?.pecas ?? [], categorias.filter(nome => categoriasDisponiveis.includes(nome)), categoriasDisponiveis)
 
   function selecionarCategoria(categoria) {
@@ -48,15 +64,86 @@ export default function CatalogoAdmin({ demonstracao = false }) {
             <Link className="catalog-admin-primary-button" to={inicio + '/adicionar-peca'} aria-disabled={bloqueado} onClick={event => { if (bloqueado) event.preventDefault() }}>+ Adicionar nova peça</Link>
           </section>
           <section className="catalog-admin-panel" aria-label="Gerenciar peças do catálogo">
-            <div className="catalog-admin-filters" role="group" aria-labelledby="catalog-admin-categories">
-              <span className="catalog-admin-filter-title" id="catalog-admin-categories">Categorias:</span>
-              {categoriasDisponiveis.map(categoria => <label className="catalog-admin-filter" key={categoria}><input type="checkbox" checked={categorias.includes(categoria)} onChange={() => selecionarCategoria(categoria)} />{categoria}</label>)}
-            </div>
+            <section className="catalog-admin-filters" aria-labelledby="catalog-admin-categories">
+              <div className="catalog-admin-filters-header">
+                <span className="catalog-admin-filters-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M4 6h16M7 12h10M10 18h4"
+                      stroke="currentColor"
+                      strokeWidth="2.1"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </span>
+                <span className="catalog-admin-filter-title" id="catalog-admin-categories">Categorias</span>
+              </div>
+
+              <div className="catalog-admin-filters-list" role="group" aria-labelledby="catalog-admin-categories">
+                <button
+                  type="button"
+                  className={'catalog-admin-filter-all' + (categorias.length === 0 ? ' catalog-admin-filter--active' : '')}
+                  onClick={() => setCategorias([])}
+                >
+                  Todas
+                </button>
+
+                {categoriasDisponiveis.map(categoria => {
+                  const selecionada = categorias.includes(categoria)
+                  return (
+                    <label
+                      className={'catalog-admin-filter' + (selecionada ? ' catalog-admin-filter--active' : '')}
+                      key={categoria}
+                    >
+                      <input
+                        type="checkbox"
+                        className="catalog-admin-filter-checkbox"
+                        checked={selecionada}
+                        onChange={() => selecionarCategoria(categoria)}
+                      />
+                      <span className="catalog-admin-filter-indicator" aria-hidden="true">
+                        {selecionada && (
+                          <svg viewBox="0 0 16 16" fill="none">
+                            <path
+                              d="M3.5 8.5L6.5 11.5L12.5 5"
+                              stroke="currentColor"
+                              strokeWidth="2.4"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        )}
+                      </span>
+                      <span>{categoria}</span>
+                    </label>
+                  )
+                })}
+              </div>
+            </section>
             {catalogo?.carregando && <p className="catalog-admin-feedback" role="status">Carregando catálogo...</p>}
             {catalogo?.erro && <div className="catalog-admin-feedback" role="alert"><p>{catalogo.erro}</p><button type="button" className="catalog-admin-secondary-button" onClick={catalogo.recarregar}>Tentar novamente</button></div>}
             <ul className="catalog-admin-products" aria-label="Peças do catálogo">
               {pecas.map(peca => <li className="catalog-admin-product" key={peca.id}>
-                <img className="catalog-admin-product-image" src={peca.imagem} alt={peca.nome} width="76" height="76" loading="lazy" decoding="async" />
+                <button
+                  type="button"
+                  className="catalog-admin-product-thumb"
+                  onClick={() => setFotoAmpliada(peca)}
+                  aria-label={`Visualizar foto ampliada de ${peca.nome}`}
+                  title="Clique para ver a foto ampliada"
+                >
+                  <MiniaturaProduto
+                    src={peca.imagem}
+                    alt={peca.nome}
+                    className="catalog-admin-product-image"
+                    larguraAlvo={480}
+                  />
+                  <span className="catalog-admin-thumb-zoom-icon" aria-hidden="true" title="Ampliar foto">
+                    <svg viewBox="0 0 20 20" fill="none">
+                      <path d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM13 13l4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M9 6.5v5M6.5 9h5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
+                </button>
                 <div className="catalog-admin-product-copy">
                   <h2 className="catalog-admin-product-name">{peca.nome}</h2>
                   <p className="catalog-admin-product-description">{peca.descricao}</p>
@@ -77,6 +164,56 @@ export default function CatalogoAdmin({ demonstracao = false }) {
         </main>
         {demonstracao && <footer className="catalog-admin-footer">Prévia com produtos fictícios · alterações temporárias</footer>}
       </div>
+
+      {fotoAmpliada && (
+        <div
+          className="catalog-admin-modal-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Visualização em alta resolução de ${fotoAmpliada.nome}`}
+          onClick={() => setFotoAmpliada(null)}
+        >
+          <div
+            className="catalog-admin-modal-card"
+            onClick={event => event.stopPropagation()}
+          >
+            <div className="catalog-admin-modal-header">
+              <div className="catalog-admin-modal-info">
+                <h3 className="catalog-admin-modal-title">{fotoAmpliada.nome}</h3>
+                <span className="catalog-admin-category">{fotoAmpliada.categoria}</span>
+              </div>
+              <button
+                type="button"
+                className="catalog-admin-modal-close"
+                onClick={() => setFotoAmpliada(null)}
+                aria-label="Fechar visualização ampliada"
+              >
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            </div>
+            <div className="catalog-admin-modal-body">
+              <img
+                src={fotoAmpliada.imagem}
+                alt={fotoAmpliada.nome}
+                className="catalog-admin-modal-image"
+                decoding="async"
+              />
+            </div>
+            <div className="catalog-admin-modal-footer">
+              <span className="catalog-admin-modal-hint">Foto em resolução original</span>
+              <button
+                type="button"
+                className="catalog-admin-secondary-button catalog-admin-modal-btn-fechar"
+                onClick={() => setFotoAmpliada(null)}
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

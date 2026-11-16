@@ -121,13 +121,11 @@ export default function MiniaturaProduto({
 
   const srcExibido = otimizada.origem === src ? otimizada.url : src;
   const pronta = carregadaPara === src || carregadaPara === srcExibido;
-  const usarCors = /^https?:\/\//i.test(srcExibido);
 
   return (
     <img
       src={srcExibido}
       alt={alt}
-      crossOrigin={usarCors ? 'anonymous' : undefined}
       className={`${className || ''} ${pronta ? 'miniaturaPronta' : ''}`.trim()}
       decoding="async"
       onLoad={() => setCarregadaPara(srcExibido)}
