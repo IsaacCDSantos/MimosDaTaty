@@ -1285,3 +1285,17 @@
 .admin-home-summary-refresh:hover:not(:disabled) { background: #faebdf; }
 .admin-home-summary-refresh:focus-visible { outline: 2px solid var(--admin-ink); outline-offset: 3px; }
 .admin-home-summary-refresh:disabled { cursor: wait; opacity: .65; }
+
+.admin-home-highlights-refresh {
+  background: #fff;
+  border: 1px solid #e6c7b8;
+  border-radius: 12px;
+  color: var(--admin-ink);
+  cursor: pointer;
+  font: 600 var(--fonte-botao, 16px)/1.4 Inter, Arial, sans-serif;
+  margin: 0 0 16px;
+  min-height: 44px;
+  padding: 8px 12px;
+}
+.admin-home-highlights-refresh:focus-visible { outline: 2px solid var(--admin-ink); outline-offset: 3px; }
+.admin-home-highlights-refresh:disabled { cursor: wait; opacity: .65; }
