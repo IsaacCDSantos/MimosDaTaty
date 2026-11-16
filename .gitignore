@@ -31,3 +31,6 @@ dist-ssr
 .env
 .env.*
 !.env.example
+
+# Cache local da CLI do Supabase
+/supabase/.temp/
