@@ -141,6 +141,7 @@ export default function Login({ recovery = false, onNavigate }) {
     const isPaneActive = recovery ? paneProfile === 'cliente' : profile === paneProfile;
     const isPaneAdmin = paneProfile === 'admin';
     const prefix = `auth-${paneProfile}`;
+    const TituloPane = isPaneActive ? 'h1' : 'p';
 
     return (
       <div
@@ -153,9 +154,10 @@ export default function Login({ recovery = false, onNavigate }) {
             {isPaneAdmin ? 'Gestão do Ateliê' : 'Espaço do Cliente'}
           </span>
 
-          <h1 id={!isPaneAdmin ? 'auth-title' : undefined} className="auth-title">
+          {/* Só o painel visível tem o título principal (h1) da página. */}
+          <TituloPane id={!isPaneAdmin ? 'auth-title' : undefined} className="auth-title">
             {recovery ? 'Recuperação' : 'Entrar'}
-          </h1>
+          </TituloPane>
 
           {recovery ? (
             <div className="auth-intro">
