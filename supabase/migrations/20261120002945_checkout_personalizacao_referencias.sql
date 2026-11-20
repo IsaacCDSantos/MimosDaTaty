@@ -135,7 +135,7 @@ begin
        or (v_obj.metadata->>'size') !~ '^[0-9]{1,6}$' then raise exception 'REFERENCIAS_INVALIDAS'; end if;
     if (v_obj.metadata->>'size')::integer not between 1 and 350000
        or (v_obj.metadata->>'mimetype') is distinct from
-          case split_part(v_caminho,'.',2) when 'jpg' then 'image/jpeg' when 'png' then 'image/png' when 'webp' then 'image/webp' end then raise exception 'REFERENCIAS_INVALIDAS'; end if;
+          (case split_part(v_caminho,'.',2) when 'jpg' then 'image/jpeg' when 'png' then 'image/png' when 'webp' then 'image/webp' end) then raise exception 'REFERENCIAS_INVALIDAS'; end if;
   end loop;
   for v_item in select x from jsonb_array_elements(p_dados->'itens') x loop
     select * into v_peca from public.pecas where id = (v_item->>'pecaId')::uuid;
