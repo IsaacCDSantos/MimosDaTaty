@@ -89,7 +89,7 @@ test('configuração pública não expõe Access Token e produção permanece bl
 test('JSON malformado e corpo sem content-length acima do limite são recusados', async () => {
   const h = criarHandlerCheckout(deps())
   assert.equal((await h(req('{'))).status, 400)
-  assert.equal((await h(req(JSON.stringify({ texto: 'x'.repeat(25000) })))).status, 413)
+  assert.equal((await h(req(JSON.stringify({ texto: 'x'.repeat(512000) })))).status, 413)
 })
 async function notificado(secret = config.webhookSecret, idOrder = order.id) {
   const ts = String(Date.now())

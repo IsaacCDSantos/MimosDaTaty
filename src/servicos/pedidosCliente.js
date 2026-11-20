@@ -1,3 +1,5 @@
+import { normalizarReferenciasPedido } from './referenciasPedidoModelo.js'
+
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const LIMITE_INTEIRO = 2147483647
 const COLUNAS_PEDIDOS = [
@@ -7,7 +9,7 @@ const COLUNAS_PEDIDOS = [
   'entrega_bairro', 'entrega_cidade', 'entrega_uf', 'entrega_ponto_referencia', 'observacao_cliente',
   'codigo_rastreio', 'criado_em', 'pago_em', 'enviado_em', 'entregue_em', 'cancelado_em',
 ].join(',')
-const COLUNAS_ITENS = 'id,pedido_id,nome_peca_snapshot,imagem_url_snapshot,preco_unitario_centavos,quantidade,prazo_producao_dias_snapshot,personalizacao'
+const COLUNAS_ITENS = 'id,pedido_id,nome_peca_snapshot,imagem_url_snapshot,preco_unitario_centavos,quantidade,prazo_producao_dias_snapshot,personalizacao,referencias'
 const ROTULOS_PAGAMENTO = {
   pendente: 'Aguardando pagamento', aprovado: 'Pagamento aprovado', recusado: 'Pagamento recusado',
   cancelado: 'Pagamento cancelado', estornado: 'Pagamento estornado',
@@ -94,7 +96,7 @@ function mapearItem(item, urlSupabase) {
   return {
     id: uuid(item.id), nome: texto(item.nome_peca_snapshot, 'Peça artesanal') || 'Peça artesanal',
     imagem: imagemPedidoCliente(item.imagem_url_snapshot, urlSupabase), quantidade,
-    personalizacao: texto(item.personalizacao), precoUnitarioCentavos: preco,
+    personalizacao: texto(item.personalizacao), referencias: normalizarReferenciasPedido(item.referencias), precoUnitarioCentavos: preco,
     prazoProducaoDias: item.prazo_producao_dias_snapshot == null ? null : inteiro(item.prazo_producao_dias_snapshot),
   }
 }

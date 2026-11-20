@@ -1,4 +1,5 @@
 import { STATUS_PEDIDO, obterBloqueioPagamento } from '../paginas/Admin/Pedidos/pedidosModelo.js'
+import { normalizarReferenciasPedido } from './referenciasPedidoModelo.js'
 
 const dataLoja = new Intl.DateTimeFormat('en-CA', {
   timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit',
@@ -28,13 +29,12 @@ export function mapearPedidoSupabase(row) {
   const itens = Array.isArray(row.itens_pedido)
     ? row.itens_pedido.map((item) => {
         const nomeBase = item.nome_peca_snapshot || 'Peça'
-        const nome = item.personalizacao
-          ? `${nomeBase} (${item.personalizacao})`
-          : nomeBase
 
         return {
           id: item.id,
-          nome,
+          nome: nomeBase,
+          personalizacao: typeof item.personalizacao === 'string' ? item.personalizacao.trim() : '',
+          referencias: normalizarReferenciasPedido(item.referencias),
           imagem: item.imagem_url_snapshot || null,
           quantidade: Number(item.quantidade) || 1,
           precoUnitario: typeof item.preco_unitario_centavos === 'number'

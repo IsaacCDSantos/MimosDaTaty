@@ -128,7 +128,7 @@ test('mapeamento conserva snapshots, centavos, pagamento e endereço sem usar ca
   assert.equal(p.descontoCentavos, 0)
   assert.equal(p.formaPagamento, 'Pix')
   assert.equal(p.pagamentoRotulo, 'Pagamento aprovado')
-  assert.deepEqual(p.itens[0], { id: idItem(1), nome: 'Kit de berço', imagem: FOTO, quantidade: 1, personalizacao: 'Nome Clara', precoUnitarioCentavos: 18900, prazoProducaoDias: 5 })
+  assert.deepEqual(p.itens[0], { id: idItem(1), nome: 'Kit de berço', imagem: FOTO, quantidade: 1, personalizacao: 'Nome Clara', referencias: [], precoUnitarioCentavos: 18900, prazoProducaoDias: 5 })
   assert.deepEqual(p.endereco, { destinatario: 'Pessoa de teste', cep: '61940005', logradouro: 'Rua de Teste', numero: '120', complemento: '', bairro: 'Centro', cidade: 'Maranguape', uf: 'CE', referencia: 'Referência da entrega' })
   assert.deepEqual(p.datas, { pagoEm: null, enviadoEm: null, entregueEm: null, canceladoEm: null })
   assert.deepEqual(new Set(cliente.chamadas.map(c => c.tabela)), new Set(['pedidos', 'itens_pedido']))
