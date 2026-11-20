@@ -151,7 +151,7 @@ export const AdminAdicionarPeca = ({ pecaInicial = null, aoSalvar, voltarPara, c
             {/* O ateliê só trabalha sob encomenda: não há estoque nem disponibilidade para escolher. */}
             <div className="campo">
               <label htmlFor="adicionar-peca-prazo">Prazo de entrega</label>
-              <input id="adicionar-peca-prazo" type="text" name="prazo" value={peca.prazo} onChange={handleChange}  disabled={edicaoBloqueada} />
+              <input id="adicionar-peca-prazo" type="text" name="prazo" value={peca.prazo} onChange={handleChange} placeholder="Ex: 15 dias úteis" disabled={edicaoBloqueada} />
             </div>
 
             <div className="campo-toggle">

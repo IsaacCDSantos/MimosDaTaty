@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { servicoPecas, supabaseConfigurado } from '../../servicos/catalogo';
 import { servicoVisualizacoes } from '../../servicos/destaques';
 import { criarRegistradorAbertura } from './registrarAbertura';
@@ -7,6 +7,7 @@ import './Catalogo.css';
 import { useCarrinho } from '../../carrinho/useCarrinho';
 import { LIMITE_POR_PECA } from '../../carrinho/modelo';
 import DetalhePeca from './DetalhePeca';
+import Header from '../../componentes/Header/Header';
 import MiniaturaProduto from './MiniaturaProduto';
 import {
   CATEGORIAS_CATALOGO,
@@ -57,7 +58,6 @@ export default function Catalogo() {
   const [faseTransicao, setFaseTransicao] = useState('ocioso'); // 'ocioso' | 'saindo-lista' | 'saindo-detalhe'
 
   const carrinho = useCarrinho();
-  const totalCarrinho = carrinho.subtotalCentavos / 100;
   const [avisoCarrinho, setAvisoCarrinho] = useState('');
 
   const timerTransicaoRef = useRef(null);
@@ -244,54 +244,9 @@ export default function Catalogo() {
   };
 
   return (
+    <>
+    <Header />
     <div className={'catalogoContainer'}>
-      {/* Header com Navegação usando React Router DOM */}
-      <header className={'catalogoHeader'}>
-        <nav className={'catalogoNav'} aria-label="Navegação do catálogo">
-          <Link to="/" className={'navBtn'}>
-            Início
-          </Link>
-          <Link
-            to="/catalogo"
-            className={'navBtn'}
-            onClick={(e) => {
-              if (produtoSelecionado) {
-                e.preventDefault();
-                voltarParaCatalogo();
-              }
-            }}
-          >
-            Catálogo
-          </Link>
-          <Link to="/#sobre" className={'navBtn'}>
-            Sobre Nós
-          </Link>
-          <Link to="/#contato" className={'navBtn'}>
-            Contato
-          </Link>
-        </nav>
-
-        {/* Botão do Carrinho de Compras */}
-        <Link
-          to="/carrinho"
-          className={'botaoCarrinho'}
-          aria-label="Ir para o carrinho"
-        >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path
-              d="M1 2h4l2.68 12.39A2 2 0 0 0 9.68 16H19.4a2 2 0 0 0 2-1.61L23 6H6"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <circle cx="9" cy="21" r="1" fill="currentColor" />
-            <circle cx="20" cy="21" r="1" fill="currentColor" />
-          </svg>
-          <span>R${totalCarrinho.toFixed(2).replace('.', ',')}</span>
-        </Link>
-      </header>
-
       {/* Palco com transição dinâmica entre a lista do catálogo e a tela da peça */}
       <div className={'catalogoPalco'}>
         {produtoSelecionado ? (
@@ -518,5 +473,6 @@ export default function Catalogo() {
         )}
       </div>
     </div>
+    </>
   );
 }
