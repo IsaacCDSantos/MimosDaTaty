@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import { supabase } from '../../servicos/supabase'
+import ReferenciasPedido from '../../componentes/ReferenciasPedido/ReferenciasPedido'
 import { carregarPedidosCliente, FILTROS_PEDIDOS_CLIENTE } from '../../servicos/pedidosCliente'
 import { EstruturaContaCliente, MenuContaCliente } from '../../componentes/ContaCliente/ContaCliente'
 import './MeusPedidos.css'
@@ -64,7 +65,7 @@ function CartaoPedido({ pedido, onDetalhes }) {
           <FotoPedido key={principal.imagem || principal.id} item={principal} />
           <div>
             <h3>{principal.nome}</h3>
-            <p>{principal.quantidade} {principal.quantidade === 1 ? 'unidade' : 'unidades'}{principal.personalizacao ? ' · ' + principal.personalizacao : ''}</p>
+            <p>{principal.quantidade} {principal.quantidade === 1 ? 'unidade' : 'unidades'}</p>
             {pedido.itens.length > 1 && <p>+ {pedido.itens.length - 1} {pedido.itens.length === 2 ? 'outra peça' : 'outras peças'}</p>}
             <strong>Total do pedido&nbsp; {valorEmReais(pedido.totalCentavos)}</strong>
           </div>
@@ -75,7 +76,7 @@ function CartaoPedido({ pedido, onDetalhes }) {
     </article>
   )
 }
-function DetalhesPedido({ pedido, onFechar }) {
+export function DetalhesPedido({ pedido, onFechar }) {
   const endereco = pedido.endereco
   const temEndereco = endereco?.logradouro && endereco?.cidade
   return (
@@ -92,7 +93,7 @@ function DetalhesPedido({ pedido, onFechar }) {
         <ul className="meus-pedidos-itens">
           {pedido.itens.map(item => <li key={item.id}>
             <FotoPedido key={item.imagem || item.id} item={item} />
-            <div><h4>{item.nome}</h4><p>{item.quantidade} {item.quantidade === 1 ? 'unidade' : 'unidades'} · {valorEmReais(item.precoUnitarioCentavos)} cada</p>{item.personalizacao && <p>Personalização: {item.personalizacao}</p>}</div>
+            <div className="meus-pedidos-item-conteudo"><h4>{item.nome}</h4><p>{item.quantidade} {item.quantidade === 1 ? 'unidade' : 'unidades'} · {valorEmReais(item.precoUnitarioCentavos)} cada</p>{item.personalizacao && <p className="meus-pedidos-item-personalizacao">Personalização: {item.personalizacao}</p>}<ReferenciasPedido referencias={item.referencias} /></div>
           </li>)}
         </ul>
       </section>

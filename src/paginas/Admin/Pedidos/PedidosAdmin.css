@@ -407,3 +407,6 @@
 .orders-admin-actions > button { max-width:100%; width:100%; }
 .orders-admin-pagination { position:static; height:auto; min-height:44px; flex-wrap:wrap; margin-top:24px; }
 @media (max-width:1100px) { .orders-admin-total, .orders-admin-number { white-space:normal; } }
+
+.orders-admin-item-content { min-width: 0; }
+.orders-admin-detail-items .orders-admin-item-personalizacao { color: #72594d; white-space: pre-wrap; overflow-wrap: anywhere; }

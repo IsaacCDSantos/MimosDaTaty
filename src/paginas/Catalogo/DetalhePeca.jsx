@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
+import { otimizarImagemReferencia } from '../../componentes/ReferenciasPedido/imagensCarrinho.js';
 import './DetalhePeca.css';
 
 const MAX_IMAGENS = 6;
 const MAX_TAMANHO_MB = 10;
-const MAX_LARGURA_MINIATURA = 360;
 
 const SUGESTOES_DETALHES = [
   'Paleta de cores: ',
@@ -23,31 +23,6 @@ function formatarTamanhoArquivo(bytes) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-function gerarMiniaturaDataUrl(previewUrl) {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.onload = () => {
-      try {
-        const escala = Math.min(1, MAX_LARGURA_MINIATURA / Math.max(img.naturalWidth || 1, img.naturalHeight || 1));
-        const canvas = document.createElement('canvas');
-        canvas.width = Math.max(1, Math.round((img.naturalWidth || 1) * escala));
-        canvas.height = Math.max(1, Math.round((img.naturalHeight || 1) * escala));
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          resolve('');
-          return;
-        }
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        resolve(canvas.toDataURL('image/jpeg', 0.72));
-      } catch {
-        resolve('');
-      }
-    };
-    img.onerror = () => resolve('');
-    img.src = previewUrl;
-  });
-}
-
 export default function DetalhePeca({
   produto,
   limiteMaximo = Infinity,
@@ -61,6 +36,8 @@ export default function DetalhePeca({
 }) {
   const inputArquivoRef = useRef(null);
   const textareaRef = useRef(null);
+  const processandoArquivos = useRef(false);
+  const [processandoImagens, setProcessandoImagens] = useState(false);
   const [arrastando, setArrastando] = useState(false);
   const [erroAnexo, setErroAnexo] = useState('');
   const [erroCarrinho, setErroCarrinho] = useState('');
@@ -92,6 +69,7 @@ export default function DetalhePeca({
   const processarArquivos = async (fileList) => {
     const arquivos = Array.from(fileList || []);
     if (arquivos.length === 0) return;
+    if (processandoArquivos.current) return;
 
     setErroAnexo('');
     const espacoRestante = MAX_IMAGENS - imagens.length;
@@ -102,31 +80,44 @@ export default function DetalhePeca({
 
     const novasImagens = [];
     const avisos = [];
+    processandoArquivos.current = true;
+    setProcessandoImagens(true);
 
-    for (const arquivo of arquivos) {
-      if (!arquivo.type.startsWith('image/')) {
-        avisos.push(`"${arquivo.name}" não é uma imagem válida.`);
-        continue;
-      }
-      if (arquivo.size > MAX_TAMANHO_MB * 1024 * 1024) {
-        avisos.push(`"${arquivo.name}" excede o limite de ${MAX_TAMANHO_MB} MB.`);
-        continue;
-      }
-      if (novasImagens.length >= espacoRestante) {
-        avisos.push(`Limite de ${MAX_IMAGENS} imagens atingido; alguns arquivos extras não foram incluídos.`);
-        break;
-      }
+    try {
+      for (const arquivo of arquivos) {
+        if (!['image/jpeg', 'image/png', 'image/webp'].includes(arquivo.type)) {
+          avisos.push(`"${arquivo.name}" não é uma imagem válida.`);
+          continue;
+        }
+        if (arquivo.size > MAX_TAMANHO_MB * 1024 * 1024) {
+          avisos.push(`"${arquivo.name}" excede o limite de ${MAX_TAMANHO_MB} MB.`);
+          continue;
+        }
+        if (novasImagens.length >= espacoRestante) {
+          avisos.push(`Limite de ${MAX_IMAGENS} imagens atingido; alguns arquivos extras não foram incluídos.`);
+          break;
+        }
 
-      const previewUrl = URL.createObjectURL(arquivo);
-      const dataUrl = await gerarMiniaturaDataUrl(previewUrl);
-
-      novasImagens.push({
-        id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-        nome: arquivo.name,
-        tamanho: arquivo.size,
-        previewUrl,
-        dataUrl,
-      });
+        let previewUrl;
+        try {
+          previewUrl = URL.createObjectURL(arquivo);
+          const dataUrl = await otimizarImagemReferencia(previewUrl);
+          if (!dataUrl) throw new Error('Imagem não otimizada');
+          novasImagens.push({
+            id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            nome: arquivo.name.slice(0, 120),
+            tamanho: arquivo.size,
+            previewUrl,
+            dataUrl,
+          });
+        } catch {
+          if (previewUrl) URL.revokeObjectURL(previewUrl);
+          avisos.push(`Não foi possível preparar "${arquivo.name}". Escolha outra imagem JPG, PNG ou WEBP; esta foto não foi anexada.`);
+        }
+      }
+    } finally {
+      processandoArquivos.current = false;
+      setProcessandoImagens(false);
     }
 
     if (avisos.length > 0) {
@@ -186,7 +177,7 @@ export default function DetalhePeca({
   };
 
   const handleAdicionar = () => {
-    if (semEstoque) return;
+    if (semEstoque || processandoArquivos.current) return;
     setErroCarrinho('');
     const resultado = aoAdicionarAoCarrinho(produto, { observacoes, imagens });
     if (resultado && resultado.ok === false) {
@@ -344,7 +335,8 @@ export default function DetalhePeca({
               <input
                 ref={inputArquivoRef}
                 type="file"
-                accept="image/*"
+                accept="image/jpeg,image/png,image/webp"
+                disabled={processandoImagens}
                 multiple
                 className="detalheInputArquivoOculto"
                 onChange={handleSelecionarArquivos}
@@ -379,6 +371,7 @@ export default function DetalhePeca({
                 {erroAnexo}
               </p>
             )}
+            {processandoImagens && <p role="status">Preparando fotos de referência…</p>}
 
             {imagens.length > 0 && (
               <div className="detalheGaleriaAnexos" aria-label="Imagens de referência anexadas">
@@ -444,7 +437,7 @@ export default function DetalhePeca({
             <button
               type="button"
               className="btnAdicionarPersonalizado"
-              disabled={semEstoque}
+              disabled={semEstoque || processandoImagens}
               onClick={handleAdicionar}
             >
               <span>{semEstoque ? 'Sem estoque' : 'Adicionar ao carrinho'}</span>
@@ -464,7 +457,7 @@ export default function DetalhePeca({
                 <strong>Peça adicionada ao carrinho!</strong>
                 <span>
                   {imagens.length > 0 || observacoes.trim()
-                    ? `Suas preferências (${imagens.length} imagem(ns) e detalhes) foram registradas no pedido.`
+                    ? `Suas preferências (${imagens.length} imagem(ns) e detalhes) foram guardadas no carrinho para a conferência do pedido.`
                     : 'Você pode continuar explorando o catálogo ou ir para o carrinho.'}
                 </span>
               </div>

@@ -9,6 +9,9 @@ export const config = { token: Deno.env.get('MERCADO_PAGO_ACCESS_TOKEN')?.trim()
 
 function erroBanco(erro: { message?: string } | null) {
   if (!erro) return
+  const invalidos: Record<string, string> = { PERSONALIZACAO_INVALIDA: 'Confira a observação de cada peça (até 1000 caracteres).', REFERENCIAS_INVALIDAS: 'Confira as fotos de referência de cada peça.', ITEM_DUPLICADO: 'Mantenha uma única entrada para cada peça personalizada.', ITENS_INVALIDOS: 'Confira os itens do carrinho.' }
+  const invalido = Object.keys(invalidos).find(c => erro.message?.includes(c))
+  if (invalido) throw new ErroCheckout(400, invalido, invalidos[invalido])
   const codigos: Record<string, string> = { TENTATIVA_DIFERENTE: 'Consulte o pagamento existente antes de iniciar outra tentativa.', LIMITE_TENTATIVAS: 'Você já possui tentativas em andamento. Consulte seus pagamentos antes de continuar.', PECA_INDISPONIVEL: 'Uma peça não está mais disponível. Atualize o carrinho.', ESTOQUE_INSUFICIENTE: 'Uma peça está reservada ou sem estoque suficiente. Atualize o carrinho.', VALOR_ALTERADO: 'Os valores foram atualizados. Calcule o frete novamente.', SESSAO_EXPIRADA: 'O tempo para iniciar este pagamento expirou. Prepare uma nova tentativa.' }
   const codigo = Object.keys(codigos).find(c => erro.message?.includes(c))
   throw new ErroCheckout(codigo ? 409 : 503, codigo || 'BANCO_INDISPONIVEL', codigo ? codigos[codigo] : 'Não foi possível registrar o pagamento agora.')
