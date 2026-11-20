@@ -1,4 +1,6 @@
 export const CHAVE_CARRINHO = 'mimos-carrinho-v1'
+// O ateliê trabalha só sob encomenda (não há estoque): o limite é o mesmo para toda peça.
+export const LIMITE_POR_PECA = 50
 
 function normalizarImagensReferencia(lista) {
   if (!Array.isArray(lista)) return []
@@ -50,7 +52,7 @@ export function normalizarItens(valor) {
         precoCentavos,
         preco: precoCentavos / 100,
         quantidade: item.quantidade,
-        limite: Number.isInteger(item.limite) && item.limite >= 0 ? Math.min(50, item.limite) : 50,
+        limite: LIMITE_POR_PECA,
         ...(observacoes ? { observacoes } : {}),
         ...(imagensReferencia.length > 0 ? { imagensReferencia } : {}),
       },
@@ -70,11 +72,11 @@ export function chaveDoCarrinho(itens) {
 }
 
 export function adicionarItem(itens, produto) {
-  const limite = produto.tipoDisponibilidade === 'pronta_entrega' ? Math.min(50, Number(produto.estoque)) : 50
+  const limite = LIMITE_POR_PECA
   const atual = itens.find((i) => i.id === String(produto.id))
   const quantidade = Number(produto.quantidade) + (atual?.quantidade || 0)
-  if (!Number.isInteger(limite) || limite < 1 || !Number.isInteger(quantidade) || quantidade < 1 || quantidade > limite) {
-    throw new Error('A quantidade ultrapassa o estoque disponível ou o limite de 50 unidades.')
+  if (!Number.isInteger(quantidade) || quantidade < 1 || quantidade > limite) {
+    throw new Error(`Cada peça aceita até ${LIMITE_POR_PECA} unidades por pedido.`)
   }
   if (!atual && itens.length >= 30) throw new Error('O carrinho aceita até 30 peças diferentes.')
 
@@ -122,6 +124,6 @@ export function mudarQuantidade(itens, id, delta) {
     if (i.id !== id) return [i]
     const quantidade = i.quantidade + delta
     if (quantidade <= 0) return []
-    return [{ ...i, quantidade: Math.min(quantidade, Math.max(i.limite, i.quantidade), 50) }]
+    return [{ ...i, quantidade: Math.min(quantidade, LIMITE_POR_PECA) }]
   })
 }

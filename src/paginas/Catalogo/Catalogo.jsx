@@ -5,6 +5,7 @@ import { servicoVisualizacoes } from '../../servicos/destaques';
 import { criarRegistradorAbertura } from './registrarAbertura';
 import './Catalogo.css';
 import { useCarrinho } from '../../carrinho/useCarrinho';
+import { LIMITE_POR_PECA } from '../../carrinho/modelo';
 import DetalhePeca from './DetalhePeca';
 import MiniaturaProduto from './MiniaturaProduto';
 import {
@@ -19,15 +20,13 @@ const registrarAbertura = criarRegistradorAbertura({
 
 function produtoDaPeca(peca) {
   const preco = Number(peca.preco);
-  const estoque = Number(peca.estoque);
-  if (!Number.isFinite(preco) || preco <= 0 || !Number.isSafeInteger(estoque) || estoque < 0) {
+  if (!Number.isFinite(preco) || preco <= 0) {
     throw new Error('Os dados da peça são inválidos.');
   }
   const prazo = typeof peca.prazo === 'string' ? peca.prazo.trim() : '';
   return {
     ...peca,
     preco,
-    estoque,
     imagem: peca.imagem,
     prazo: prazo
       ? /^entrega\b/i.test(prazo)
@@ -38,10 +37,9 @@ function produtoDaPeca(peca) {
   };
 }
 
-function limiteDaPeca(produto) {
-  return supabaseConfigurado && produto.tipoDisponibilidade === 'pronta_entrega'
-    ? produto.estoque
-    : Infinity;
+// Todas as peças são sob encomenda: o estoque não limita a quantidade.
+function limiteDaPeca() {
+  return LIMITE_POR_PECA;
 }
 
 export default function Catalogo() {
@@ -181,9 +179,7 @@ export default function Catalogo() {
     setProdutos((produtosAnteriores) =>
       produtosAnteriores.map((item) => {
         if (item.id === id) {
-          const limite = limiteDaPeca(item);
-          if (limite === 0) return item;
-          const novaQtd = Math.min(limite, Math.max(1, item.quantidade + delta));
+          const novaQtd = Math.min(limiteDaPeca(), Math.max(1, item.quantidade + delta));
           return { ...item, quantidade: novaQtd };
         }
         return item;
@@ -212,8 +208,8 @@ export default function Catalogo() {
   };
 
   const adicionarAoCarrinho = (produto, personalizacaoExtra) => {
-    if (produto.quantidade > limiteDaPeca(produto)) {
-      return { ok: false, mensagem: 'Quantidade acima do estoque disponível.' };
+    if (produto.quantidade > limiteDaPeca()) {
+      return { ok: false, mensagem: `Cada peça aceita até ${LIMITE_POR_PECA} unidades por pedido.` };
     }
     const pers = personalizacaoExtra || obterPersonalizacao(produto);
     const imagensReferencia = (pers?.imagens || []).map((img) => ({
@@ -302,7 +298,7 @@ export default function Catalogo() {
           <DetalhePeca
             key={produtoSelecionado.id}
             produto={produtoSelecionado}
-            limiteMaximo={limiteDaPeca(produtoSelecionado)}
+            limiteMaximo={limiteDaPeca()}
             personalizacaoInicial={obterPersonalizacao(produtoSelecionado)}
             saindo={faseTransicao === 'saindo-detalhe'}
             aoAtualizarPersonalizacao={atualizarPersonalizacao}
@@ -486,7 +482,7 @@ export default function Catalogo() {
                               type="button"
                               className={'btnQtd'}
                               aria-label={'Aumentar quantidade de ' + produto.nome}
-                              disabled={produto.quantidade >= limiteDaPeca(produto)}
+                              disabled={produto.quantidade >= limiteDaPeca()}
                               onClick={() => alterarQuantidade(produto.id, 1)}
                             >
                               +
@@ -507,12 +503,9 @@ export default function Catalogo() {
                             <button
                               type="button"
                               className={'btnAdicionarCarrinho'}
-                              disabled={limiteDaPeca(produto) === 0}
                               onClick={() => adicionarAoCarrinho(produto)}
                             >
-                              {limiteDaPeca(produto) === 0
-                                ? 'Sem estoque'
-                                : 'Adicionar ao carrinho'}
+                              Adicionar ao carrinho
                             </button>
                           </div>
                         </div>

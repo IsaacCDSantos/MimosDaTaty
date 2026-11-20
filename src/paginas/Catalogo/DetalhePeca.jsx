@@ -46,7 +46,6 @@ export default function DetalhePeca({
 
   const observacoes = personalizacaoInicial?.observacoes ?? '';
   const imagens = personalizacaoInicial?.imagens ?? [];
-  const semEstoque = limiteMaximo === 0;
 
   useEffect(() => {
     if (!imagemAmpliada) return;
@@ -177,7 +176,7 @@ export default function DetalhePeca({
   };
 
   const handleAdicionar = () => {
-    if (semEstoque || processandoArquivos.current) return;
+    if (processandoArquivos.current) return;
     setErroCarrinho('');
     const resultado = aoAdicionarAoCarrinho(produto, { observacoes, imagens });
     if (resultado && resultado.ok === false) {
@@ -437,11 +436,11 @@ export default function DetalhePeca({
             <button
               type="button"
               className="btnAdicionarPersonalizado"
-              disabled={semEstoque || processandoImagens}
+              disabled={processandoImagens}
               onClick={handleAdicionar}
             >
-              <span>{semEstoque ? 'Sem estoque' : 'Adicionar ao carrinho'}</span>
-              {!semEstoque && <strong>{formatarMoeda(subtotalPeca)}</strong>}
+              <span>Adicionar ao carrinho</span>
+              <strong>{formatarMoeda(subtotalPeca)}</strong>
             </button>
           </div>
 

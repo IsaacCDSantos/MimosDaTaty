@@ -22,6 +22,28 @@ export function lerTentativa(valor) {
   return { sessaoId: valor, itens: null }
 }
 
+// Uma tentativa aberta em outro aparelho só é retomada enquanto ainda puder ser paga.
+export function tentativaRetomavel(dados, agora = Date.now()) {
+  if (!dados || !['preparado', 'pendente', 'processando'].includes(dados.estado)) return false
+  if (dados.estado === 'processando') return true
+  const expira = Date.parse(dados.expiraEm)
+  return !Number.isFinite(expira) || expira > agora
+}
+
+// O pedido e a tentativa de checkout compartilham o mesmo ID; um pedido novo com
+// pagamento pendente das últimas 24 h é o candidato a retomar em outro aparelho.
+export function criarBuscaTentativaAberta(cliente) {
+  return async (clienteId, agora = Date.now()) => {
+    if (!cliente || !clienteId) return null
+    const desde = new Date(agora - 24 * 60 * 60 * 1000).toISOString()
+    const { data, error } = await cliente.from('pedidos').select('id')
+      .eq('cliente_id', clienteId).eq('status_pedido', 'novo').eq('status_pagamento', 'pendente')
+      .gte('criado_em', desde).order('criado_em', { ascending: false }).limit(1)
+    if (error) throw error
+    return data?.[0]?.id ?? null
+  }
+}
+
 export function criarServicoCheckout(cliente) {
   return async (acao, dados = {}) => {
     if (!cliente) throw new Error('O pagamento está indisponível no momento.')

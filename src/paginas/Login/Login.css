@@ -49,11 +49,15 @@
   left: -42px;
 }
 
+/* Mesmo recorte visual de antes (círculo de 150px saindo 24px à direita e 30px acima),
+   mas desenhado dentro da página, sem a caixa passar da borda direita. */
 .auth-corner--right {
-  top: -30px;
-  right: -24px;
-  width: 150px;
-  height: 150px;
+  top: 0;
+  right: 0;
+  width: 126px;
+  height: 120px;
+  border-radius: 0;
+  background: radial-gradient(circle 75px at 75px 45px, #eec4af 98%, transparent 100%);
 }
 
 .auth-border {

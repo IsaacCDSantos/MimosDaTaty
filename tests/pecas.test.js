@@ -172,12 +172,12 @@ test('inserção usa ID estável, preço em centavos, campos do esquema e confir
   assert.equal(estado.uploads.length, 0)
 })
 
-test('edição preserva ID, tipo pronta entrega e foto existente sem remover arquivos', async () => {
+test('edição preserva ID e foto existente e grava a peça sempre sob encomenda', async () => {
   const { servico, estado } = preparar()
   const atualizada = await servico.salvarPeca({ ...formulario, nome: 'Kit atualizado', tipoDisponibilidade: 'pronta_entrega' }, { id: PECA_ID })
   assert.equal(atualizada.id, PECA_ID)
   assert.equal(atualizada.nome, 'Kit atualizado')
-  assert.equal(atualizada.tipoDisponibilidade, 'pronta_entrega')
+  assert.equal(atualizada.tipoDisponibilidade, 'sob_encomenda')
   assert.equal(atualizada.imagem, FOTO_ANTIGA)
   const escrita = estado.consultas.find(item => item.acao === 'update')
   assert.deepEqual(escrita.filtros, [['id', PECA_ID], ['arquivada', false], ['atualizado_em', 'versao-1']])
@@ -308,11 +308,12 @@ test('falha na limpeza não esconde a falha original nem inventa rollback da fot
   assert.equal(estado.remocoes.length, 1)
 })
 
-test('serviço sem configuração falha de forma útil quando chamado e edição não inventa disponibilidade', async () => {
+test('serviço sem configuração falha de forma útil quando chamado e edição sem disponibilidade fica sob encomenda', async () => {
   const ausente = criarServicoPecas()
   await assert.rejects(ausente.listarPecas(), /não está configurado/)
   const { servico } = preparar()
-  await assert.rejects(servico.salvarPeca({ ...formulario, tipoDisponibilidade: undefined }, { id: PECA_ID }), /encomenda|pronta entrega/)
+  const atualizada = await servico.salvarPeca({ ...formulario, tipoDisponibilidade: undefined }, { id: PECA_ID })
+  assert.equal(atualizada.tipoDisponibilidade, 'sob_encomenda')
 })
 
 test('paginação inclui todas as peças e categorias mesmo com limite da API menor que o lote', async () => {
