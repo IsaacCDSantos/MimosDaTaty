@@ -347,3 +347,9 @@
   .header-acoes > a span { display:none; }
   .borda-croche { height:18px; bottom:-17px; }
 }
+
+/* Páginas internas que usam este cabeçalho: respiro abaixo da borda de crochê. */
+.site-header-wrapper + :is(.catalogoContainer, .carrinho-container, .checkout-container) { padding-top: 60px; }
+@media (max-width: 820px) {
+  .site-header-wrapper + :is(.catalogoContainer, .carrinho-container, .checkout-container) { padding-top: 36px; }
+}

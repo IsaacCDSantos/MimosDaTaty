@@ -184,7 +184,7 @@ function Header({ onAbrirLogin }) {
           <div className="header-acoes">
             <ContaHeader onEntrar={() => {
                 if (onAbrirLogin) onAbrirLogin()
-                else navigate('/login')
+                else navigate('/login', { state: { origem: location.pathname } })
             }} />
             <Link
               to="/carrinho"

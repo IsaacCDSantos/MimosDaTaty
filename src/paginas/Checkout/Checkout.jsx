@@ -9,6 +9,7 @@ import { servicoReferenciasPedido } from '../../servicos/referenciasPedido'
 import { prepararCheckoutComReferencias } from '../../servicos/referenciasPedidoModelo'
 import { etapaDoCheckout, lerTentativa, serializarTentativa, tentativaRetomavel } from '../../servicos/checkoutModelo'
 import CartaoMercadoPago from './CartaoMercadoPago'
+import Header from '../../componentes/Header/Header'
 import './Checkout.css'
 
 const moeda = centavos => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(centavos / 100)
@@ -196,8 +197,7 @@ export default function Checkout({ aoNavegar }) {
   const alterar = campo => evento => setEndereco(anterior => ({ ...anterior, [campo]: evento.target.value }))
   const campo = (nome, titulo, extra = {}) => <div className="form-group flex-1"><label htmlFor={'checkout-' + nome}>{titulo}</label><input id={'checkout-' + nome} value={endereco[nome]} onChange={alterar(nome)} required maxLength={150} {...extra} /></div>
 
-  return <div className="checkout-container">
-    <nav className="checkout-nav" aria-label="Navegação do checkout">{[['/', 'Início'], ['/catalogo', 'Catálogo'], ['/#sobre', 'Sobre Nós'], ['/#contato', 'Contato']].map(([destino, texto]) => <button key={destino} type="button" className="nav-btn" onClick={() => navegar(destino)}>{texto}</button>)}</nav>
+  return <><Header /><div className="checkout-container">
     <div className="checkout-content">
       <ResumoCheckout atual={atual} subtotal={subtotal} selecionada={frete.selecionada} total={total} aoEditarCarrinho={() => navegar('/carrinho')} />
       <section className="card-checkout" aria-busy={ocupado || recuperando}>
@@ -256,5 +256,5 @@ export default function Checkout({ aoNavegar }) {
         </div>
       </section>
     </div>
-  </div>
+  </div></>
 }

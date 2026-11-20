@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useCarrinho } from '../../carrinho/useCarrinho'
+import Header from '../../componentes/Header/Header'
 import './Carrinho.css'
 function Carrinho({ aoNavegar }) {
  const navigate = useNavigate()
@@ -10,23 +11,9 @@ function Carrinho({ aoNavegar }) {
  const navegar = destino => typeof aoNavegar === 'function' ? aoNavegar(destino) : navigate(destino)
  const formatarMoeda = valor => valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
   return (
+    <>
+    <Header />
     <div className="carrinho-container">
-      {/* Menu Superior no padrão das telas internas */}
-      <nav className="carrinho-nav" aria-label="Navegação secundária">
-        <button type="button" className="nav-btn" onClick={() => navegar('/')}>
-          Home
-        </button>
-        <button type="button" className="nav-btn" onClick={() => navegar('/catalogo')}>
-          Catálogo
-        </button>
-        <button type="button" className="nav-btn" onClick={() => navegar('/#sobre')}>
-          Sobre Nós
-        </button>
-        <button type="button" className="nav-btn" onClick={() => navegar('/#contato')}>
-          Contato
-        </button>
-      </nav>
-
       <div className="carrinho-content">
         {/* Painel Esquerdo - Lista de Itens */}
         <section className="card-carrinho-lista" aria-labelledby="titulo-carrinho">
@@ -212,6 +199,7 @@ function Carrinho({ aoNavegar }) {
         </aside>
       </div>
     </div>
+    </>
   )
 }
 
