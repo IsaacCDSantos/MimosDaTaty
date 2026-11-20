@@ -102,6 +102,21 @@ export function adicionarItem(itens, produto) {
   return atual ? itens.map((i) => (i.id === item.id ? item : i)) : [...itens, item]
 }
 
+// Retira só o que foi pago: peças adicionadas depois da preparação continuam no carrinho.
+export function descontarItensPagos(itens, pagos) {
+  const restante = new Map()
+  for (const pago of Array.isArray(pagos) ? pagos : []) {
+    const quantidade = Number(pago?.quantidade)
+    if (typeof pago?.pecaId === 'string' && Number.isInteger(quantidade) && quantidade > 0) {
+      restante.set(pago.pecaId, (restante.get(pago.pecaId) || 0) + quantidade)
+    }
+  }
+  return itens.flatMap((i) => {
+    const quantidade = i.quantidade - (restante.get(i.id) || 0)
+    return quantidade > 0 ? [{ ...i, quantidade }] : []
+  })
+}
+
 export function mudarQuantidade(itens, id, delta) {
   return itens.flatMap((i) => {
     if (i.id !== id) return [i]
