@@ -162,23 +162,10 @@ export const AdminEditarPeca = ({ pecaInicial = null, aoSalvar, aoExcluir, volta
               </div>
             </div>
 
-            <div className="linha-dupla">
-              <div className="campo">
-                <label htmlFor="editar-peca-prazo">Prazo de entrega</label>
-                <input id="editar-peca-prazo" type="text" name="prazo" value={peca.prazo} onChange={handleChange}  disabled={edicaoBloqueada} />
-              </div>
-              <div className="campo">
-                <label htmlFor="editar-peca-estoque">Estoque</label>
-                <input id="editar-peca-estoque" type="text" inputMode="numeric" name="estoque" value={peca.estoque} onChange={handleChange}  disabled={edicaoBloqueada} />
-              </div>
-            </div>
-
+            {/* O ateliê só trabalha sob encomenda: não há estoque nem disponibilidade para escolher. */}
             <div className="campo">
-              <label htmlFor="editar-peca-disponibilidade">Disponibilidade</label>
-              <select id="editar-peca-disponibilidade" name="tipoDisponibilidade" value={peca.tipoDisponibilidade || 'sob_encomenda'} onChange={handleChange} disabled={edicaoBloqueada}>
-                <option value="sob_encomenda">Sob encomenda</option>
-                <option value="pronta_entrega">Pronta entrega</option>
-              </select>
+              <label htmlFor="editar-peca-prazo">Prazo de entrega</label>
+              <input id="editar-peca-prazo" type="text" name="prazo" value={peca.prazo} onChange={handleChange}  disabled={edicaoBloqueada} />
             </div>
 
             <div className="campo-toggle">

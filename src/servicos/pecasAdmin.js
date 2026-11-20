@@ -26,7 +26,7 @@ export function validarDadosPeca(peca, categorias = []) {
     nome: peca.nome.trim(), descricao: peca.descricao.trim() || null,
     preco_centavos: centavos, categoria_id: peca.categoria_id,
     estoque_atual: estoque, prazo_producao_dias: prazo,
-    tipo_disponibilidade: estoque > 0 ? 'pronta_entrega' : 'sob_encomenda', visivel: peca.visivel,
+    tipo_disponibilidade: 'sob_encomenda', visivel: peca.visivel,
   }
 }
 

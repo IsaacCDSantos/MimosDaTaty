@@ -4,10 +4,10 @@ import { useCarrinho } from '../../carrinho/useCarrinho'
 import { useCotacaoFrete } from '../../carrinho/useCotacaoFrete'
 import { cepValido } from '../../servicos/freteModelo'
 import { supabase } from '../../servicos/supabase'
-import { operarCheckout } from '../../servicos/checkout'
+import { buscarTentativaAberta, operarCheckout } from '../../servicos/checkout'
 import { servicoReferenciasPedido } from '../../servicos/referenciasPedido'
 import { prepararCheckoutComReferencias } from '../../servicos/referenciasPedidoModelo'
-import { etapaDoCheckout, lerTentativa, serializarTentativa } from '../../servicos/checkoutModelo'
+import { etapaDoCheckout, lerTentativa, serializarTentativa, tentativaRetomavel } from '../../servicos/checkoutModelo'
 import CartaoMercadoPago from './CartaoMercadoPago'
 import './Checkout.css'
 
@@ -98,7 +98,19 @@ export default function Checkout({ aoNavegar }) {
         setRecuperacaoVerificada(conta.id)
       } else setMensagem('Não foi possível verificar a tentativa anterior. Tente novamente para continuar com segurança.')
     })
-    else Promise.resolve().then(() => { if (ativo) setRecuperacaoVerificada(conta.id) })
+    // Sem tentativa nesta aba: procura uma aberta pela conta (outro aparelho ou aba fechada).
+    // Uma falha na busca não bloqueia a compra; o servidor já reaproveita a mesma tentativa.
+    else buscarTentativaAberta(conta.id).then(id => id ? operarCheckout('consultar', { sessaoId: id }) : null).then(dados => {
+      if (!ativo) return
+      if (tentativaRetomavel(dados)) {
+        tentativa.current = { sessaoId: dados.sessaoId, itens: null }
+        try { sessionStorage.setItem(armazenamento, serializarTentativa(dados.sessaoId, null)) } catch { /* Não bloquear a interface. */ }
+        if (dados.formulario) { setEndereco({ ...dados.formulario.endereco, cep: formatarCep(dados.formulario.endereco.cep) }); setCpf(dados.formulario.cpf); setTelefone(dados.formulario.telefone) }
+        setPagamento({ ...dados, dono: conta.id })
+        setRetomada({ sessaoId: dados.sessaoId, dono: conta.id })
+      }
+      setRecuperacaoVerificada(conta.id)
+    }).catch(() => { if (ativo) setRecuperacaoVerificada(conta.id) })
     return () => { ativo = false }
   }, [armazenamento, conta?.id, tentativaRecuperacao])
   useEffect(() => {

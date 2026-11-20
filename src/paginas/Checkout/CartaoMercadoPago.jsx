@@ -30,7 +30,9 @@ export default function CartaoMercadoPago({ publicKey, totalCentavos, controle, 
         try {
           const { results } = await instancia.getPaymentMethods({ bin })
           const cartao = results?.find(item => item.payment_type_id === 'credit_card')
-          if (!cartao) throw new Error('Selecione um cartão de crédito ou pague com Pix.')
+          if (!cartao) throw new Error(results?.length
+            ? 'Este cartão não é de crédito. Use um cartão de crédito ou pague com Pix.'
+            : 'Não reconhecemos este cartão. Confira o número digitado ou pague com Pix.')
           const dados = await instancia.getInstallments({ amount: (totalCentavos / 100).toFixed(2), bin, paymentTypeId: 'credit_card' })
           const custos = dados?.find(item => item.payment_method_id === cartao.id)?.payer_costs || dados?.[0]?.payer_costs || []
           const validas = custos.filter(item => item.installments >= 1 && item.installments <= 12)

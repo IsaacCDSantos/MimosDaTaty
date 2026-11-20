@@ -1,3 +1,4 @@
 import { supabase } from './supabase'
-import { criarServicoCheckout } from './checkoutModelo'
+import { criarBuscaTentativaAberta, criarServicoCheckout } from './checkoutModelo'
 export const operarCheckout = criarServicoCheckout(supabase)
+export const buscarTentativaAberta = criarBuscaTentativaAberta(supabase)

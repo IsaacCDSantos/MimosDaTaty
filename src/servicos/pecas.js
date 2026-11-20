@@ -202,10 +202,8 @@ export function criarServicoPecas({ cliente, urlSupabase, gerarId } = {}) {
     const identificador = id == null ? uuidValido(idNovaPeca ?? novoId()) : uuidValido(id)
     if (!dados || typeof dados !== 'object' || Array.isArray(dados)) throw new Error('Os dados da peça são inválidos.')
     const dias = prazoEmDias(dados.prazo ?? dados.prazoDias)
-    const tipo = dados.tipoDisponibilidade ?? (id == null ? 'sob_encomenda' : null)
-    if (!['sob_encomenda', 'pronta_entrega'].includes(tipo)) {
-      throw new Error('Informe se a peça é sob encomenda ou para pronta entrega.')
-    }
+    // O ateliê só trabalha sob encomenda: toda peça salva fica assim, sem trava de estoque.
+    const tipo = 'sob_encomenda'
     const categoriaId = uuidValido(dados.categoriaId, 'a categoria')
     if (id != null) exigirVersao(dados.atualizadoEm)
     const temArquivo = dados.fotoArquivo != null
