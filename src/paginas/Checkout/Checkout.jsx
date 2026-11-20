@@ -5,7 +5,7 @@ import { useCotacaoFrete } from '../../carrinho/useCotacaoFrete'
 import { cepValido } from '../../servicos/freteModelo'
 import { supabase } from '../../servicos/supabase'
 import { operarCheckout } from '../../servicos/checkout'
-import { etapaDoCheckout } from '../../servicos/checkoutModelo'
+import { etapaDoCheckout, lerTentativa, serializarTentativa } from '../../servicos/checkoutModelo'
 import CartaoMercadoPago from './CartaoMercadoPago'
 import './Checkout.css'
 
@@ -30,7 +30,7 @@ export function ResumoCheckout({ atual, subtotal, selecionada, total, aoEditarCa
 
 export default function Checkout({ aoNavegar }) {
   const navigate = useNavigate()
-  const { itens, subtotalCentavos } = useCarrinho()
+  const { itens, subtotalCentavos, descontarPagos } = useCarrinho()
   const [conta, setConta] = useState(null)
   const [authVerificada, setAuthVerificada] = useState(false)
   const [config, setConfig] = useState(null)
@@ -48,6 +48,7 @@ export default function Checkout({ aoNavegar }) {
   const bloqueio = useRef(false)
   const versaoPagamento = useRef(0)
   const chave = useRef(null)
+  const tentativa = useRef(null)
   const cartao = useRef(null)
   const token = useRef(null)
   const formulario = useRef(null)
@@ -74,9 +75,10 @@ export default function Checkout({ aoNavegar }) {
   useEffect(() => {
     if (!armazenamento || !conta?.id) return
     let ativo = true
-    let id
-    try { id = sessionStorage.getItem(armazenamento) } catch { /* A compra funciona sem armazenamento local. */ }
-    if (id) operarCheckout('consultar', { sessaoId: id }).then(dados => {
+    let guardada
+    try { guardada = lerTentativa(sessionStorage.getItem(armazenamento)) } catch { /* A compra funciona sem armazenamento local. */ }
+    if (guardada) tentativa.current = guardada
+    if (guardada) operarCheckout('consultar', { sessaoId: guardada.sessaoId }).then(dados => {
       if (!ativo) return
       if (dados.formulario) { setEndereco({ ...dados.formulario.endereco, cep: formatarCep(dados.formulario.endereco.cep) }); setCpf(dados.formulario.cpf); setTelefone(dados.formulario.telefone) }
       if (finais.includes(dados.estado)) {
@@ -111,10 +113,24 @@ export default function Checkout({ aoNavegar }) {
     }, 10000)
     return () => { ativo = false; clearInterval(timer) }
   }, [sessaoAtual, estadoAtual, conta?.id])
+  useEffect(() => {
+    if (estadoAtual !== 'aprovado' || !sessaoAtual || !armazenamento) return
+    // A aprovação encerra a compra: a aba volta a aceitar um novo pedido e
+    // o carrinho perde só as peças pagas, uma única vez.
+    try { sessionStorage.removeItem(armazenamento) } catch { /* Não bloquear a interface. */ }
+    if (tentativa.current?.sessaoId === sessaoAtual && tentativa.current.itens) {
+      const pagos = tentativa.current.itens
+      tentativa.current = { sessaoId: sessaoAtual, itens: null }
+      descontarPagos(pagos)
+    }
+  }, [estadoAtual, sessaoAtual, armazenamento, descontarPagos])
 
-  function guardar(dados) {
+  function guardar(dados, itensEnviados) {
+    if (itensEnviados) tentativa.current = { sessaoId: dados.sessaoId, itens: itensEnviados }
+    else if (tentativa.current?.sessaoId !== dados.sessaoId) tentativa.current = { sessaoId: dados.sessaoId, itens: null }
     setPagamento({ ...dados, dono: conta.id })
-    try { sessionStorage.setItem(armazenamento, dados.sessaoId) } catch { /* Não armazenar dados pessoais ou tokens no navegador. */ }
+    if (dados.estado === 'aprovado') return
+    try { sessionStorage.setItem(armazenamento, serializarTentativa(dados.sessaoId, tentativa.current.itens)) } catch { /* Não armazenar dados pessoais ou tokens no navegador. */ }
   }
   async function executar(operacao) {
     if (bloqueio.current) return
@@ -128,7 +144,8 @@ export default function Checkout({ aoNavegar }) {
     if (!frete.selecionada || !conta || recuperacaoVerificada !== conta.id) return
     await executar(async () => {
       if (chave.current?.dono !== conta.id) chave.current = { dono: conta.id, id: crypto.randomUUID() }
-      guardar(await operarCheckout('preparar', { chave: chave.current.id, itens: itens.map(i => ({ pecaId: i.id, quantidade: i.quantidade })), endereco, cpf, telefone, metodo, servicoFrete: frete.selecionada.id, totalExibidoCentavos: total }))
+      const enviados = itens.map(i => ({ pecaId: i.id, quantidade: i.quantidade }))
+      guardar(await operarCheckout('preparar', { chave: chave.current.id, itens: enviados, endereco, cpf, telefone, metodo, servicoFrete: frete.selecionada.id, totalExibidoCentavos: total }), enviados)
     })
   }
   async function pagar() {
@@ -146,7 +163,7 @@ export default function Checkout({ aoNavegar }) {
     })
   }
   function novaTentativa() {
-    versaoPagamento.current++; chave.current = null; token.current = null; setTokenPreparadoPara(null); setPagamento(null); setRetomada(null); setMensagem('')
+    versaoPagamento.current++; chave.current = null; tentativa.current = null; token.current = null; setTokenPreparadoPara(null); setPagamento(null); setRetomada(null); setMensagem('')
     try { sessionStorage.removeItem(armazenamento) } catch { /* Não bloquear a interface. */ }
   }
   async function trocarPagamento() {
