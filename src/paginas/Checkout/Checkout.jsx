@@ -5,6 +5,8 @@ import { useCotacaoFrete } from '../../carrinho/useCotacaoFrete'
 import { cepValido } from '../../servicos/freteModelo'
 import { supabase } from '../../servicos/supabase'
 import { operarCheckout } from '../../servicos/checkout'
+import { servicoReferenciasPedido } from '../../servicos/referenciasPedido'
+import { prepararCheckoutComReferencias } from '../../servicos/referenciasPedidoModelo'
 import { etapaDoCheckout, lerTentativa, serializarTentativa } from '../../servicos/checkoutModelo'
 import CartaoMercadoPago from './CartaoMercadoPago'
 import './Checkout.css'
@@ -145,7 +147,7 @@ export default function Checkout({ aoNavegar }) {
     await executar(async () => {
       if (chave.current?.dono !== conta.id) chave.current = { dono: conta.id, id: crypto.randomUUID() }
       const enviados = itens.map(i => ({ pecaId: i.id, quantidade: i.quantidade }))
-      guardar(await operarCheckout('preparar', { chave: chave.current.id, itens: enviados, endereco, cpf, telefone, metodo, servicoFrete: frete.selecionada.id, totalExibidoCentavos: total }), enviados)
+      guardar(await prepararCheckoutComReferencias({ servicoReferencias: servicoReferenciasPedido, operarCheckout, itens, usuarioId: conta.id, chave: chave.current.id, endereco, cpf, telefone, metodo, servicoFrete: frete.selecionada.id, totalExibidoCentavos: total }), enviados)
     })
   }
   async function pagar() {

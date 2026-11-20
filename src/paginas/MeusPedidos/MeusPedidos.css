@@ -88,3 +88,6 @@
 .meus-pedidos-card-topo > div { flex: 1; min-width: 0; }
 
 .meus-pedidos-total dd { font-size: var(--fonte-total); line-height: var(--entrelinha-titulo); }
+
+.meus-pedidos-item-conteudo { flex: 1; min-width: 0; }
+.meus-pedidos-item-personalizacao { white-space: pre-wrap; overflow-wrap: anywhere; }

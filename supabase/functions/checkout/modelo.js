@@ -9,7 +9,33 @@ function texto(valor, campo, minimo = 2, maximo = 150) {
   if (typeof valor !== 'string' || valor.trim().length < minimo || valor.trim().length > maximo) throw new ErroCheckout(400, 'DADOS_INVALIDOS', `Confira o campo ${campo}.`)
   return valor.trim()
 }
-export function validarPreparacao(body) {
+function personalizarItens(originais, normalizados, usuarioId, chave) {
+  const porPeca = new Map()
+  const caminhos = new Set()
+  for (const item of originais) {
+    const pecaId = item.pecaId.trim().toLowerCase()
+    const extras = {}
+    if (item.personalizacao !== undefined) {
+      if (typeof item.personalizacao !== 'string' || Array.from(item.personalizacao).length > 1000) throw new ErroCheckout(400, 'PERSONALIZACAO_INVALIDA', 'A observação de cada peça deve ter até 1000 caracteres.')
+      if (item.personalizacao.trim()) extras.personalizacao = item.personalizacao.trim()
+    }
+    if (item.referencias !== undefined) {
+      if (!Array.isArray(item.referencias) || item.referencias.length > 6) throw new ErroCheckout(400, 'REFERENCIAS_INVALIDAS', 'Envie até seis fotos de referência por peça.')
+      const referencias = item.referencias.map(ref => {
+        const prefixo = `${usuarioId}/${chave}/${pecaId}/`
+        if (!uuidValido(usuarioId) || !ref || typeof ref !== 'object' || Array.isArray(ref) || Object.keys(ref).some(k => !['caminho', 'nome'].includes(k)) || typeof ref.caminho !== 'string' || !ref.caminho.startsWith(prefixo) || !/^[a-f0-9]{64}\.(jpg|png|webp)$/.test(ref.caminho.slice(prefixo.length)) || typeof ref.nome !== 'string' || !ref.nome.trim() || Array.from(ref.nome).length > 120 || caminhos.has(ref.caminho)) throw new ErroCheckout(400, 'REFERENCIAS_INVALIDAS', 'Confira as fotos de referência de cada peça.')
+        caminhos.add(ref.caminho)
+        return { caminho: ref.caminho, nome: ref.nome.trim() }
+      })
+      if (referencias.length) extras.referencias = referencias
+    }
+    const anterior = porPeca.get(pecaId)
+    if (anterior && (Object.keys(anterior).length || Object.keys(extras).length)) throw new ErroCheckout(400, 'ITEM_DUPLICADO', 'Mantenha uma única entrada para cada peça personalizada.')
+    porPeca.set(pecaId, extras)
+  }
+  return normalizados.map(item => ({ ...item, ...porPeca.get(item.pecaId) }))
+}
+export function validarPreparacao(body, usuarioId) {
   if (!uuidValido(body?.chave)) throw new ErroCheckout(400, 'CHAVE_INVALIDA', 'Reabra o checkout para continuar.')
   const endereco = body.endereco || {}
   const pedido = validarPedido({ cepDestino: endereco.cep, itens: body.itens })
@@ -22,7 +48,7 @@ export function validarPreparacao(body) {
   if (!['pix', 'cartao_credito'].includes(body.metodo)) throw new ErroCheckout(400, 'METODO_INVALIDO', 'Escolha Pix ou cartão de crédito.')
   if (!Number.isSafeInteger(body.totalExibidoCentavos) || body.totalExibidoCentavos <= 0) throw new ErroCheckout(400, 'TOTAL_INVALIDO', 'Confira o resumo antes de pagar.')
   return {
-    chave: body.chave.toLowerCase(), itens: pedido.itens, metodo: body.metodo, cpf, telefone,
+    chave: body.chave.toLowerCase(), itens: personalizarItens(body.itens, pedido.itens, usuarioId, body.chave.toLowerCase()), metodo: body.metodo, cpf, telefone,
     servicoFrete: texto(body.servicoFrete, 'forma de envio', 1, 30), totalExibidoCentavos: body.totalExibidoCentavos,
     endereco: { nome: texto(endereco.nome, 'nome completo'), cep: pedido.cepDestino, logradouro: texto(endereco.logradouro, 'logradouro'), numero: texto(endereco.numero, 'número', 1, 20), complemento: texto(endereco.complemento || '', 'complemento', 0, 100), bairro: texto(endereco.bairro, 'bairro'), cidade: texto(endereco.cidade, 'cidade'), uf },
   }

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../../../servicos/supabase'
 import { atualizarPedidoAdmin, carregarPedidosAdmin } from '../../../servicos/pedidosAdmin.js'
+import ReferenciasPedido from '../../../componentes/ReferenciasPedido/ReferenciasPedido'
 import {
   STATUS_PEDIDO, calcularResumo, contarStatus, filtrarPedidos,
   formatarData, formatarMoeda, mudarStatus, obterBloqueioPagamento, obterStatusPagamento, salvarObservacao, salvarRastreio,
@@ -150,7 +151,7 @@ export function DetalhesPedido({ pedido, aoAlterar, aoFechar }) {
             <h3 id="orders-admin-items-title">Itens do pedido</h3>
             <ul className="orders-admin-detail-items">{pedido.itens.map(item => <li key={item.id}>
               {item.imagem ? <img src={item.imagem} alt={item.nome} width="64" height="64" /> : <span className="orders-admin-item-placeholder"><IconePedido nome="sacola" /></span>}
-              <div><strong>{item.nome}</strong><p>{item.quantidade} × {formatarMoeda(item.precoUnitario)}</p></div><strong>{formatarMoeda(item.quantidade * item.precoUnitario)}</strong>
+              <div className="orders-admin-item-content"><strong>{item.nome}</strong><p>{item.quantidade} × {formatarMoeda(item.precoUnitario)}</p>{item.personalizacao && <p className="orders-admin-item-personalizacao"><strong>Personalização:</strong> {item.personalizacao}</p>}<ReferenciasPedido referencias={item.referencias} /></div><strong>{formatarMoeda(item.quantidade * item.precoUnitario)}</strong>
             </li>)}</ul>
           </section>
           <section className="orders-admin-detail-section orders-admin-customer-note" aria-labelledby="orders-admin-customer-note-title"><h3 id="orders-admin-customer-note-title">Observações da cliente</h3><p>{pedido.observacaoCliente || 'A cliente não deixou observações neste pedido.'}</p></section>

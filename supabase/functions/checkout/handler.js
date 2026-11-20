@@ -2,7 +2,7 @@ import { ErroCheckout, uuidValido, validarPreparacao, montarOrder, resumirOrder,
 
 export const cors = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-retry-count, traceparent, tracestate, baggage', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' }
 export const json = (dados, status = 200) => new Response(JSON.stringify(dados), { status, headers: cors })
-export async function lerJson(req, limite = 24000) {
+export async function lerJson(req, limite = 512000) {
   if (!req.headers.get('content-type')?.includes('application/json')) throw new ErroCheckout(400, 'FORMATO_INVALIDO', 'Envie os dados no formato correto.')
   const leitor = req.body?.getReader()
   if (!leitor) throw new ErroCheckout(400, 'CORPO_INVALIDO', 'Os dados não foram enviados.')
@@ -62,7 +62,7 @@ export function criarHandlerCheckout(deps) {
       const usuario = await deps.autenticar(req.headers.get('authorization'))
       if (!usuario?.id || !usuario.email) throw new ErroCheckout(401, 'LOGIN_NECESSARIO', 'Entre na sua conta para finalizar a compra.')
       if (body.acao === 'preparar') {
-        const dados = validarPreparacao(body)
+        const dados = validarPreparacao(body, usuario.id)
         const existente = await deps.buscarSessao(dados.chave, usuario.id)
         if (existente) {
           if (JSON.stringify(existente.requisicao) !== JSON.stringify(JSON.parse(JSON.stringify(dados)))) {
