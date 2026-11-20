@@ -38,7 +38,7 @@ export function seoDaRota(caminho) {
   if (/^\/catalogo\/[^/]+$/.test(rota)) return null
   if (rota === '/admin' || rota.startsWith('/admin/')) return { titulo: montarTitulo('Painel do ateliê'), descricao: DESCRICAO_PADRAO, indexar: false }
   const pagina = PAGINAS.find(item => item.caminho === rota)
-  if (!pagina) return { titulo: montarTitulo(''), descricao: DESCRICAO_PADRAO, indexar: false }
+  if (!pagina) return { titulo: montarTitulo('Página não encontrada'), descricao: DESCRICAO_PADRAO, indexar: false }
   return { titulo: montarTitulo(pagina.titulo), descricao: pagina.descricao || DESCRICAO_PADRAO, indexar: !pagina.privada }
 }
 

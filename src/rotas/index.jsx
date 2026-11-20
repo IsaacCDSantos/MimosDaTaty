@@ -1,6 +1,7 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import { rotasPublicas } from './rotasPublicas/rotasPublicas'
 import { rotasPrivadas } from './rotasPrivadas/rotasPrivadas'
+import NaoEncontrada from '../paginas/NaoEncontrada/NaoEncontrada'
 
 export default function Rotas() {
   return (
@@ -11,8 +12,8 @@ export default function Rotas() {
       {/* 2. Suas Rotas Privadas */}
       {rotasPrivadas}
 
-      {/* 3. Se digitar um endereço que não existe, volta para o Início */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* 3. Endereço que não existe: página 404 */}
+      <Route path="*" element={<NaoEncontrada />} />
     </Routes>
   )
 }

@@ -31,3 +31,7 @@ test('página de peça fica a cargo do catálogo e usa o mesmo endereço do site
   assert.equal(seoDaRota('/catalogo/kit-berco-1'), null)
   assert.equal(slugDaPeca({ id: 'abc', nome: 'Kit Berço Florido' }), 'kit-berco-florido-abc')
 })
+
+test('endereço inexistente ganha título de página não encontrada e não é indexado', () => {
+  assert.deepEqual(seoDaRota('/pagina-que-nao-existe'), { titulo: 'Página não encontrada | Mimos da Tati', descricao: DESCRICAO_PADRAO, indexar: false })
+})
