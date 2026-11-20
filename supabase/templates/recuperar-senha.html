@@ -1,0 +1,82 @@
+<!doctype html>
+<!--
+  Template "Reset Password" do Supabase Auth (Authentication → Emails → Templates).
+  Origem: Figma 2eq2r1dwJz7TaYzD4evicy, frame 361:610 (modelo de e-mail transacional).
+  Layout em tabelas e CSS inline para Gmail, Outlook e Apple Mail. As imagens ficam em
+  public/email e só aparecem depois do deploy no Render.
+-->
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="supported-color-schemes" content="light">
+  <title>Redefina sua senha – Mimos da Tati</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    @media (max-width: 480px) { .conteudo { padding: 28px 24px 32px 24px !important; } }
+  </style>
+</head>
+<body style="margin:0;padding:0;background-color:#fdf4eb;">
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#fdf4eb;">Recebemos um pedido para criar uma nova senha. O link vale por tempo limitado.</div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#fdf4eb;">
+    <tr>
+      <td align="center" style="padding:32px 12px;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#ffffff;border-radius:30px;box-shadow:0 18px 50px rgba(140,88,70,0.08);">
+          <tr>
+            <td align="center" style="background-color:#f7d7b7;border-radius:30px 30px 0 0;font-size:0;line-height:0;">
+              <img src="https://mimosdataty.onrender.com/email/cabecalho-recado.png" width="440" alt="Mimos da Tati · Um novo começo, com o mesmo carinho." style="display:block;width:100%;max-width:440px;height:auto;border:0;outline:none;text-decoration:none;color:#8c5846;font-family:Georgia,serif;font-size:22px;line-height:1.3;">
+            </td>
+          </tr>
+          <tr>
+            <td class="conteudo" style="padding:32px 48px 40px 48px;font-family:Inter,Arial,Helvetica,sans-serif;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td align="center" style="padding-bottom:16px;">
+                    <img src="https://mimosdataty.onrender.com/email/icone-mail.png" width="64" height="64" alt="" style="display:block;border:0;">
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding-bottom:16px;font-family:Inter,Arial,Helvetica,sans-serif;font-size:24px;line-height:1.5;font-weight:600;color:#8c5846;">
+                    Vamos recuperar seu acesso?
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding-bottom:16px;font-family:Inter,Arial,Helvetica,sans-serif;font-size:14px;line-height:1.4;color:#736961;">
+                    {{ if .Data.nome }}Olá, {{ .Data.nome }}!{{ else }}Olá!{{ end }}<br><br>
+                    Recebemos um pedido para criar uma nova senha. Clique abaixo para continuar.
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding-bottom:16px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td align="center" bgcolor="#a95965" style="border-radius:25px;background-color:#a95965;">
+                          <a href="{{ .ConfirmationURL }}" target="_blank" style="display:block;padding:12px;font-family:Inter,Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;font-weight:600;color:#ffffff;text-decoration:none;border-radius:25px;">Redefinir minha senha</a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="font-family:Inter,Arial,Helvetica,sans-serif;font-size:12px;line-height:1.5;color:#736961;">
+                    Se você não fez esse pedido, pode ignorar esta mensagem.
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;">
+          <tr>
+            <td align="center" style="padding:20px 24px 0 24px;font-family:Inter,Arial,Helvetica,sans-serif;font-size:11px;line-height:1.6;color:#9a8f86;">
+              Este é um e-mail automático, não precisa responder.<br>
+              Dúvidas? Fale com a Tati pelo <a href="https://wa.me/5585999710182" style="color:#a95965;text-decoration:underline;">WhatsApp</a> ou no <a href="https://instagram.com/mimosdataty" style="color:#a95965;text-decoration:underline;">Instagram</a>.
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
