@@ -5,6 +5,23 @@ export function etapaDoCheckout(pagamento, recuperando, aguardandoEscolha) {
   return 'pagamento'
 }
 
+// A aba guarda a tentativa e as peças enviadas, sem dados pessoais. O formato
+// antigo (só o ID) continua aceito para não perder tentativas já abertas.
+export function serializarTentativa(sessaoId, itens) {
+  return JSON.stringify({ sessaoId, itens: Array.isArray(itens) ? itens.map(({ pecaId, quantidade }) => ({ pecaId, quantidade })) : null })
+}
+
+export function lerTentativa(valor) {
+  if (typeof valor !== 'string' || !valor) return null
+  try {
+    const dados = JSON.parse(valor)
+    if (dados && typeof dados.sessaoId === 'string' && dados.sessaoId) {
+      return { sessaoId: dados.sessaoId, itens: Array.isArray(dados.itens) ? dados.itens : null }
+    }
+  } catch { /* Formato antigo: o valor é o próprio ID. */ }
+  return { sessaoId: valor, itens: null }
+}
+
 export function criarServicoCheckout(cliente) {
   return async (acao, dados = {}) => {
     if (!cliente) throw new Error('O pagamento está indisponível no momento.')
