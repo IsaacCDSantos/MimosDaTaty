@@ -8,7 +8,6 @@ import { useCarrinho } from '../../carrinho/useCarrinho';
 import { LIMITE_POR_PECA } from '../../carrinho/modelo';
 import DetalhePeca from './DetalhePeca';
 import Header from '../../componentes/Header/Header';
-import { aplicarSeo, montarTitulo, resumirDescricao } from '../../servicos/seo';
 import MiniaturaProduto from './MiniaturaProduto';
 import {
   CATEGORIAS_CATALOGO,
@@ -70,14 +69,6 @@ export default function Catalogo() {
           slugDaPeca(item) === pecaSlug || String(item.id) === String(pecaSlug)
       ) || null
     : null;
-
-  // A página de cada peça aparece no Google com o nome e a descrição dela.
-  const tituloPeca = produtoSelecionado ? montarTitulo(produtoSelecionado.nome) : null;
-  const descricaoPeca = produtoSelecionado ? resumirDescricao(produtoSelecionado.descricao) : null;
-  const caminhoPeca = produtoSelecionado ? `/catalogo/${slugDaPeca(produtoSelecionado)}` : null;
-  useEffect(() => {
-    if (caminhoPeca) aplicarSeo({ titulo: tituloPeca, descricao: descricaoPeca, caminho: caminhoPeca, indexar: true });
-  }, [tituloPeca, descricaoPeca, caminhoPeca]);
 
   useEffect(() => {
     personalizacoesRef.current = personalizacoes;
@@ -277,7 +268,6 @@ export default function Catalogo() {
               faseTransicao === 'saindo-lista' ? 'listaSaindo' : 'listaEntrando'
             }`}
           >
-            <h1 className={'catalogoTituloOculto'}>Catálogo de enxoval de bebê em crochê e bordado</h1>
             {avisoCarrinho && (
               <p className={'catalogoEstado'} role="status">
                 {avisoCarrinho}
