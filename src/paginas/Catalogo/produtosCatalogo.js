@@ -50,5 +50,12 @@ export const PRODUTOS_INICIAIS = [
   },
 ];
 
-// Fica em um m\u00f3dulo sem imagens para o build tamb\u00e9m gerar o sitemap.xml com ele.
-export { slugDaPeca } from '../../servicos/slug.js';
+export function slugDaPeca(produto) {
+  const base = String(produto?.nome || 'peca')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+  return `${base || 'peca'}-${produto?.id}`;
+}
